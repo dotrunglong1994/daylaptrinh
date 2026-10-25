@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Cân Thăng Bằng</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Màn hình chọn mức độ -->
+  <section id="menu" class="screen">
+    <div class="panel">
+      <div class="dino menu-dino" data-dino></div>
+      <h1>⚖️ Cân Thăng Bằng</h1>
+      <p class="sub">Làm cho cân thăng bằng và tìm số bí ẩn trong hộp quà 🎁</p>
+
+      <h2>Chọn mức độ</h2>
+      <div class="choices levels">
+        <button data-level="1" class="active">🐣 Dễ<small>tới 10 · 🎁 + 3 = 7</small></button>
+        <button data-level="2">🐥 Vừa<small>tới 20 · hai bên nhiều quả cân</small></button>
+        <button data-level="3">🦅 Khó<small>🎁 + 🎁 + 2 = 10</small></button>
+      </div>
+
+      <button id="startBtn" class="big">Bắt đầu cân! ⚖️</button>
+      <p id="menuBest" class="best"></p>
+    </div>
+  </section>
+
+  <!-- Màn hình chơi -->
+  <section id="game" class="screen hidden">
+    <header class="hud">
+      <button id="homeBtn" class="icon" title="Về menu">🏠</button>
+      <div class="progress">
+        <div class="bar"><div id="progressFill"></div></div>
+        <span id="progressText"></span>
+      </div>
+      <span class="score">⭐ <b id="score">0</b></span>
+      <button id="soundBtn" class="icon" title="Âm thanh">🔊</button>
+      <button id="voiceBtn" class="icon" title="Đọc đề">🗣️</button>
+    </header>
+
+    <div class="guide">
+      <div id="mascot" class="dino mascot" data-dino></div>
+      <div id="bubble" class="bubble"></div>
+    </div>
+
+    <div class="stage">
+      <p id="question" class="question" title="Chạm để nghe lại"></p>
+      <p id="equation" class="equation"></p>
+      <div class="scale-wrap" id="scaleWrap"></div>
+      <p id="hint" class="hint"></p>
+      <div id="options" class="options"></div>
+    </div>
+  </section>
+
+  <!-- Màn hình kết quả -->
+  <section id="result" class="screen hidden">
+    <div class="panel">
+      <div class="dino menu-dino cheer" data-dino></div>
+      <h1 id="resultTitle"></h1>
+      <div id="stars" class="stars"></div>
+      <p class="stat" id="rCorrect"></p>
+      <p class="stat">Điểm: <b id="rScore">0</b></p>
+      <p id="rBest" class="best"></p>
+      <div class="row">
+        <button id="againBtn" class="big">Chơi lại 🔁</button>
+        <button id="menuBtn" class="big ghost">Đổi mức độ 📚</button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

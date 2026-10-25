@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Đèn Giao Thông</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Màn hình chọn màn -->
+  <section id="levels" class="screen">
+    <div class="panel">
+      <div class="dino menu-dino" data-dino></div>
+      <h1>🚦 Đèn Giao Thông</h1>
+      <p class="sub">Viết luật NẾU… THÌ… để xe tự lái an toàn!</p>
+      <div id="levelGrid" class="level-grid"></div>
+    </div>
+  </section>
+
+  <!-- Màn hình chơi -->
+  <section id="play" class="screen hidden">
+    <header class="hud">
+      <button id="backBtn" class="icon" title="Chọn màn">🗺️</button>
+      <h2 id="levelTitle"></h2>
+      <button id="soundBtn" class="icon" title="Âm thanh">🔊</button>
+    </header>
+
+    <div class="guide">
+      <div id="mascot" class="dino mascot" data-dino></div>
+      <div id="bubble" class="bubble"></div>
+    </div>
+
+    <div class="road-wrap">
+      <div class="scene-head">
+        <span id="sceneCount"></span>
+        <span id="sceneDots" class="scene-dots"></span>
+      </div>
+      <div id="road" class="road">
+        <div class="lane"></div>
+        <div class="zebra"></div>
+        <div class="stopline"></div>
+        <div id="light" class="light"><i class="r"></i><i class="y"></i><i class="g"></i></div>
+        <div id="obstacle" class="obstacle"></div>
+        <div id="car" class="car"><span>🚗</span></div>
+        <div id="sceneMsg" class="scene-msg"></div>
+      </div>
+    </div>
+
+    <div class="rules-area">
+      <div class="rules-head">📜 Luật cho xe <small id="orderNote"></small></div>
+      <div id="rules" class="rules"></div>
+    </div>
+
+    <button id="runBtn" class="btn go">▶️ Cho xe chạy</button>
+  </section>
+
+  <!-- Bảng thắng màn -->
+  <div id="winModal" class="modal hidden">
+    <div class="panel">
+      <h1>Xe chạy an toàn! 🎉</h1>
+      <div id="winStars" class="stars"></div>
+      <p id="winText" class="sub"></p>
+      <div class="row">
+        <button id="replayBtn" class="btn ghost">🔁 Chơi lại</button>
+        <button id="nextBtn" class="btn go">Màn tiếp ➡️</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

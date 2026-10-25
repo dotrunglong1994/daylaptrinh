@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Họa Sĩ Rùa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Màn hình chọn màn -->
+  <section id="levels" class="screen">
+    <div class="panel">
+      <div class="dino menu-dino" data-dino></div>
+      <h1>🐢 Họa Sĩ Rùa</h1>
+      <p class="sub">Viết lệnh để bạn rùa vẽ theo hình mẫu!</p>
+      <div id="levelGrid" class="level-grid"></div>
+    </div>
+  </section>
+
+  <!-- Màn hình chơi -->
+  <section id="play" class="screen hidden">
+    <header class="hud">
+      <button id="backBtn" class="icon" title="Chọn màn">🗺️</button>
+      <h2 id="levelTitle"></h2>
+      <button id="soundBtn" class="icon" title="Âm thanh">🔊</button>
+    </header>
+
+    <div class="guide">
+      <div id="mascot" class="dino mascot" data-dino></div>
+      <div id="bubble" class="bubble"></div>
+    </div>
+
+    <div class="canvas-wrap"><svg id="canvas" class="canvas"></svg></div>
+
+    <div class="program-area">
+      <div class="program-head">
+        <span>📜 Chương trình</span>
+        <span id="slotInfo"></span>
+      </div>
+      <div id="loopBox" class="loop-box">
+        <div class="loop-head">
+          🔁 Lặp lại
+          <button id="loopDec" title="Bớt">−</button><b id="loopN">2</b><button id="loopInc" title="Thêm">+</button>
+          lần:
+        </div>
+        <div id="program" class="program"></div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div id="palette" class="palette"></div>
+      <div class="actions">
+        <button id="clearBtn" class="btn ghost">🗑️ Xóa</button>
+        <button id="runBtn" class="btn go">▶️ Vẽ</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bảng thắng màn -->
+  <div id="winModal" class="modal hidden">
+    <div class="panel">
+      <h1>Vẽ đẹp quá! 🎨</h1>
+      <div id="winStars" class="stars"></div>
+      <p id="winText" class="sub"></p>
+      <div class="row">
+        <button id="replayBtn" class="btn ghost">🔁 Chơi lại</button>
+        <button id="nextBtn" class="btn go">Màn tiếp ➡️</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Bắn Bóng Số</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="clouds" aria-hidden="true">
+    <span class="cloud c1"></span><span class="cloud c2"></span><span class="cloud c3"></span>
+  </div>
+
+  <!-- Màn hình chọn bài -->
+  <section id="menu" class="screen">
+    <div class="panel">
+      <div class="dino menu-dino" data-dino></div>
+      <h1>🎈 Bắn Bóng Số</h1>
+      <p class="sub">Chạm vào quả bóng có đáp án đúng nhé!</p>
+
+      <h2>Chọn phép tính</h2>
+      <div class="choices ops">
+        <button data-op="+" class="active">➕ Cộng</button>
+        <button data-op="−">➖ Trừ</button>
+        <button data-op="×">✖️ Nhân</button>
+        <button data-op="÷">➗ Chia</button>
+        <button data-op="mix">🎲 Trộn</button>
+      </div>
+
+      <h2>Chọn mức độ</h2>
+      <div class="choices levels">
+        <button data-level="1" class="active">🐣 Dễ<small>≤ 10 · bảng 2–5</small></button>
+        <button data-level="2">🐥 Vừa<small>≤ 20 · bảng 2–9</small></button>
+        <button data-level="3">🦅 Khó<small>≤ 100 · bảng 6–10</small></button>
+      </div>
+
+      <h2>Chọn chế độ</h2>
+      <div class="choices modes">
+        <button data-mode="practice" class="active">📚 Luyện tập<small>10 câu</small></button>
+        <button data-mode="timed">⏱️ Thử thách<small>60 giây</small></button>
+      </div>
+
+      <button id="startBtn" class="big">Chơi ngay! 🚀</button>
+      <p id="menuBest" class="best"></p>
+    </div>
+  </section>
+
+  <!-- Màn hình chơi -->
+  <section id="game" class="screen hidden">
+    <header class="hud">
+      <button id="homeBtn" class="icon" title="Về menu">🏠</button>
+      <div class="progress">
+        <div class="bar"><div id="progressFill"></div></div>
+        <span id="progressText">Câu 1/10</span>
+      </div>
+      <span id="combo" class="combo"></span>
+      <span class="score">⭐ <b id="score">0</b></span>
+      <button id="soundBtn" class="icon" title="Âm thanh">🔊</button>
+      <button id="voiceBtn" class="icon" title="Đọc đề">🗣️</button>
+    </header>
+
+    <div id="question" class="question" title="Chạm để nghe lại đề"></div>
+    <div id="field" class="field"></div>
+    <div class="mascot-wrap" aria-live="polite">
+      <div id="bubble" class="bubble"></div>
+      <div id="mascot" class="dino mascot" data-dino></div>
+    </div>
+  </section>
+
+  <!-- Màn hình kết quả -->
+  <section id="result" class="screen hidden">
+    <div class="panel">
+      <div class="dino menu-dino cheer" data-dino></div>
+      <h1 id="resultTitle">Hoàn thành!</h1>
+      <div id="stars" class="stars"></div>
+      <p class="stat" id="rCorrect"></p>
+      <p class="stat">Điểm: <b id="rScore">0</b></p>
+      <p id="rBest" class="best"></p>
+      <div class="row">
+        <button id="againBtn" class="big">Chơi lại 🔁</button>
+        <button id="menuBtn" class="big ghost">Đổi bài 📚</button>
+      </div>
+    </div>
+  </section>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
