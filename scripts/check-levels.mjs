@@ -118,6 +118,77 @@ let failures = 0;
   }
 }
 
+/* ---------- Thám Tử Hình Học ---------- */
+{
+  console.log("Thám Tử Hình Học");
+  const { LEVELS, SHAPES, COLORS, parseItems, matches, props } = loadSection("tham-tu-hinh-hoc/game.js", [
+    "LEVELS", "SHAPES", "COLORS", "parseItems", "matches", "props",
+  ]);
+  // Hình vuông cũng là hình chữ nhật/hình thoi đặc biệt, nên manh mối gọi tên
+  // "hình chữ nhật" hay "hình thoi" không được đặt cạnh hình vuông.
+  const AMBIGUOUS = { rect: ["square"], rhombus: ["square"], triangle: ["rtriangle"] };
+  // Tính chất hình phải đúng với tên gọi
+  const EXPECT = {
+    circle: [0, 0, false], triangle: [3, 0, true], rtriangle: [3, 1, false], square: [4, 4, true],
+    rect: [4, 4, false], rhombus: [4, 0, true], pentagon: [5, 0, true], hexagon: [6, 0, true],
+  };
+  for (const [type, [sides, right, equal]] of Object.entries(EXPECT)) {
+    const p = props(type);
+    if (p.sides !== sides || p.right !== right || p.equal !== equal) {
+      console.log(`  ✗ ${type}: ${JSON.stringify(p)}`);
+      failures++;
+    }
+  }
+  LEVELS.forEach((level, i) => {
+    const notes = level.rounds.map((round) => {
+      const items = parseItems(round.items);
+      const hit = items.filter((it) => matches(round.want, it)).length;
+      const bad = items.filter((it) => !SHAPES[it.type] || !COLORS[it.color]);
+      const clash = (AMBIGUOUS[round.want.shape] || []).filter((t) => items.some((it) => it.type === t));
+      const ok = hit >= 1 && items.length - hit >= 2 && !bad.length && !clash.length;
+      if (!ok) failures++;
+      return `${ok ? "" : "✗"}${hit}/${items.length}${clash.length ? ` (lẫn ${clash})` : ""}${bad.length ? " (hình/màu sai)" : ""}`;
+    });
+    console.log(`  ${notes.some((n) => n.startsWith("✗")) ? "✗" : "✓"} Vụ ${i + 1} (${level.name}): hình đúng ${notes.join(", ")}`);
+  });
+}
+
+/* ---------- Xây Cầu ---------- */
+{
+  console.log("Xây Cầu");
+  const { LEVELS, parseLen } = loadSection("xay-cau/game.js", ["LEVELS", "parseLen"]);
+  LEVELS.forEach((level, i) => {
+    const gap = parseLen(level.gap);
+    const planks = level.planks.map(parseLen);
+    // Số ván ít nhất để ghép vừa khít (mỗi loại dùng nhiều lần)
+    const best = Array(gap + 1).fill(Infinity);
+    best[0] = 0;
+    for (let n = 1; n <= gap; n++) for (const p of planks) if (p <= n) best[n] = Math.min(best[n], best[n - p] + 1);
+    const ok = best[gap] <= 16 && planks.every((p) => p < gap) && (!level.ruler || gap <= 20);
+    console.log(`  ${ok ? "✓" : "✗"} Màn ${i + 1}: khe ${gap} cm, ${best[gap] === Infinity ? "KHÔNG ghép được" : `ít nhất ${best[gap]} tấm ván`}`);
+    if (!ok) failures++;
+  });
+}
+
+/* ---------- Đầu Bếp Nhí ---------- */
+{
+  console.log("Đầu Bếp Nhí");
+  const { LEVELS, cardsOf, checkPlan } = loadSection("dau-bep-nhi/game.js", ["LEVELS", "cardsOf", "checkPlan"]);
+  const permutations = (arr) =>
+    arr.length <= 1 ? [arr] : arr.flatMap((x, i) => permutations([...arr.slice(0, i), ...arr.slice(i + 1)]).map((p) => [x, ...p]));
+  LEVELS.forEach((level, i) => {
+    const ids = level.steps.map((s) => s[0]);
+    const unique = new Set(ids).size === ids.length;
+    const depsOk = level.steps.every(([, , , after = []], k) => after.every((d) => ids.slice(0, k).includes(d)));
+    const extras = cardsOf(level).filter((c) => c.extra).map((c) => c.id);
+    const extraFails = extras.every((x) => !checkPlan(level, [...ids.slice(0, -1), x]).ok);
+    const valid = permutations(ids).filter((p) => checkPlan(level, p).ok).length;
+    const ok = unique && depsOk && extraFails && checkPlan(level, ids).ok && valid < permutations(ids).length;
+    console.log(`  ${ok ? "✓" : "✗"} Món ${i + 1} (${level.dish[1]}): ${ids.length} bước, ${extras.length} thẻ thừa, ${valid} thứ tự đúng`);
+    if (!ok) failures++;
+  });
+}
+
 if (failures) {
   console.log(`\n${failures} lỗi`);
   process.exit(1);

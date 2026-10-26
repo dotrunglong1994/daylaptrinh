@@ -1,0 +1,138 @@
+:root {
+  --sky1: #d0ebff;
+  --sky2: #e7f5ff;
+  --ink: #23395b;
+  --accent: #a0522d;
+  --good: #2bb673;
+  --card: rgba(255, 255, 255, 0.94);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Baloo 2', system-ui, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(var(--sky1), var(--sky2));
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+button { font: inherit; color: inherit; cursor: pointer; border: 0; }
+button:disabled { cursor: default; }
+.hidden { display: none !important; }
+
+.panel {
+  background: var(--card); border-radius: 28px; padding: 28px 24px; width: min(560px, 100%);
+  text-align: center; box-shadow: 0 12px 0 rgba(35, 57, 91, .12), 0 20px 40px rgba(35, 57, 91, .15);
+}
+h1 { font-size: clamp(1.8rem, 6vw, 2.5rem); line-height: 1.15; }
+.sub { opacity: .75; margin-top: 4px; }
+.row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+
+.btn {
+  font-size: 1.2rem; font-weight: 800; padding: 10px 24px; border-radius: 999px;
+  transition: transform .1s, box-shadow .1s;
+}
+.btn.go { background: var(--good); color: #fff; box-shadow: 0 5px 0 #1e8c57; }
+.btn.ghost { background: #eef3ff; box-shadow: 0 5px 0 #c9d4f2; }
+.btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0, 0, 0, .2); }
+.btn:disabled { opacity: .5; }
+
+/* ---------- Chọn màn ---------- */
+#levels { min-height: 100%; display: grid; place-items: center; padding: 16px; }
+.level-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+.level-grid button {
+  aspect-ratio: 1; border-radius: 18px; background: #eef3ff; font-size: 1.8rem; font-weight: 800;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;
+  box-shadow: 0 5px 0 #c9d4f2; transition: transform .12s;
+}
+.level-grid button:hover:not(:disabled) { transform: translateY(-3px); }
+.level-grid button small { font-size: .8rem; margin-top: 6px; letter-spacing: 1px; }
+.level-grid button.done { background: #e6fcf0; box-shadow: 0 5px 0 #a9e5c4; }
+.level-grid button:disabled { opacity: .45; }
+
+/* ---------- Màn chơi ---------- */
+#play { min-height: 100%; display: flex; flex-direction: column; gap: 10px; padding: 10px 16px 16px; max-width: 760px; margin: 0 auto; }
+.hud { display: flex; align-items: center; gap: 10px; }
+.hud h2 { flex: 1; text-align: center; font-size: 1.4rem; }
+.icon {
+  background: var(--card); width: 44px; height: 44px; border-radius: 14px; font-size: 1.3rem;
+  box-shadow: 0 3px 0 rgba(35, 57, 91, .15); flex-shrink: 0;
+}
+.icon.off { opacity: .4; }
+
+/* Khủng long đứng cạnh lời gợi ý thay vì nổi trên sân chơi */
+.guide { display: flex; align-items: center; gap: 4px; min-height: 76px; }
+.guide .mascot { width: 76px; height: 76px; }
+.guide .bubble { margin: 0; white-space: normal; font-size: 1.05rem; border-radius: 18px 18px 18px 4px; flex: 1; }
+/* ---------- Bảng thắng ---------- */
+.modal { position: fixed; inset: 0; background: rgba(35, 57, 91, .45); display: grid; place-items: center; padding: 16px; z-index: 10; }
+.modal .panel { animation: pop .3s; }
+@keyframes pop { from { transform: scale(.7); opacity: 0; } }
+.stars { font-size: 3.4rem; margin: 8px 0; letter-spacing: 6px; }
+.stars span { display: inline-block; filter: grayscale(1); opacity: .3; }
+.stars span.on { filter: none; opacity: 1; animation: starIn .5s backwards; }
+.stars span:nth-child(2) { animation-delay: .2s; }
+.stars span:nth-child(3) { animation-delay: .4s; }
+@keyframes starIn { from { transform: scale(0) rotate(-90deg); } 70% { transform: scale(1.3); } }
+
+/* ---------- Khung cảnh: hai vách núi và dòng sông ---------- */
+.scene {
+  position: relative; height: 240px; border-radius: 20px; overflow: hidden;
+  background: linear-gradient(#a5d8ff, #e7f5ff 60%);
+  box-shadow: 0 6px 0 #74c0fc, 0 10px 24px rgba(35, 57, 91, .18);
+}
+.river {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 56px;
+  background: repeating-linear-gradient(90deg, #339af0 0 30px, #4dabf7 30px 60px);
+  animation: flow 3s linear infinite;
+}
+@keyframes flow { to { background-position: 60px 0; } }
+.cliff {
+  position: absolute; top: 120px; bottom: 0; width: 64px; z-index: 1;
+  background: linear-gradient(#69db7c 0 12px, #a9744f 12px);
+}
+.cliff.left { left: 0; border-radius: 0 10px 0 0; }
+.cliff.right { right: 0; border-radius: 10px 0 0 0; }
+.cliff.right span { position: absolute; top: -40px; right: 10px; font-size: 1.9rem; }
+
+.measure { position: absolute; left: 64px; right: 64px; top: 150px; z-index: 1; }
+.measure.label { text-align: center; font-weight: 800; font-size: 1.3rem; color: #fff; text-shadow: 0 2px 0 rgba(0, 0, 0, .3); }
+.measure.ruler { height: 34px; background: #fff3bf; border: 2px solid #e67700; border-radius: 6px; }
+.measure.ruler i { position: absolute; top: 0; width: 2px; height: 12px; background: #23395b; transform: translateX(-1px); }
+.measure.ruler b { position: absolute; top: 12px; font-size: .75rem; transform: translateX(-50%); }
+
+.bridge { position: absolute; left: 64px; top: 120px; display: flex; z-index: 2; height: 18px; }
+.bridge.wobble { animation: wobble .5s 2; }
+@keyframes wobble { 25% { transform: rotate(-3deg) translateY(-6px); } 75% { transform: rotate(2deg) translateY(-3px); } }
+.plank {
+  height: 18px; flex-shrink: 0; border-radius: 4px; font-size: .75rem; font-weight: 800; color: #fff;
+  background: repeating-linear-gradient(90deg, #c0803f 0 6px, #b0703a 6px 8px);
+  border: 2px solid #7c4a1e; line-height: 1; white-space: nowrap; overflow: hidden; animation: drop .25s;
+}
+.plank.over { background: #ff8787; border-color: #c92a2a; }
+@keyframes drop { from { transform: translateY(-30px); opacity: 0; } }
+
+.car { position: absolute; left: 0; top: 74px; width: 48px; height: 46px; z-index: 3; font-size: 2.4rem; line-height: 46px; text-align: center; }
+.car span { display: inline-block; transform: scaleX(-1); } /* emoji 🚗 quay trái, lật lại cho chạy sang phải */
+.car.win span { animation: hop .5s 2; }
+@keyframes hop { 50% { transform: scaleX(-1) translateY(-14px); } }
+
+.build-info { display: flex; justify-content: center; gap: 8px 20px; flex-wrap: wrap; font-size: 1.1rem; }
+.build-info strong { color: var(--accent); }
+
+/* ---------- Kho ván ---------- */
+.shelf-area { background: var(--card); border-radius: 20px; padding: 10px 12px; }
+.shelf-head { font-weight: 800; margin-bottom: 8px; }
+.shelf-head small { font-weight: 500; opacity: .65; }
+.shelf { display: flex; flex-wrap: wrap; gap: 10px; }
+.stock {
+  height: 44px; max-width: 100%; border-radius: 10px; font-weight: 800; font-size: 1.1rem; color: #fff;
+  background: repeating-linear-gradient(90deg, #c0803f 0 10px, #b0703a 10px 13px);
+  border: 3px solid #7c4a1e; box-shadow: 0 4px 0 #7c4a1e; text-shadow: 0 1px 0 rgba(0, 0, 0, .35);
+}
+.stock:active { transform: translateY(3px); box-shadow: 0 1px 0 #7c4a1e; }
+.running .stock, .running .plank { pointer-events: none; }
+
+.controls { display: flex; gap: 12px; justify-content: center; }
+.equation { font-size: 1.3rem; font-weight: 800; color: var(--accent); margin-top: 4px; }

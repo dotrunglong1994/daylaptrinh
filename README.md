@@ -30,10 +30,13 @@ npm run build          # build production
 | 🛒 Siêu Thị Mini | Toán | Cộng trừ, tính tiền và thối tiền Việt Nam |
 | 🍕 Chia Bánh Pizza | Toán | Phân số: tô, đọc, chia đều, so sánh |
 | ⚖️ Cân Thăng Bằng | Toán | Làm quen phương trình (🎁 + 3 = 7) |
+| 🔍 Thám Tử Hình Học | Toán | Nhận biết hình theo tên, màu, số cạnh, góc vuông, cạnh bằng nhau |
+| 🌉 Xây Cầu | Toán | Đo bằng thước, cộng độ dài, đổi m – dm – cm |
 | 🤖 Robot Tìm Đường | Lập trình | Tuần tự, vòng lặp |
 | 🚦 Đèn Giao Thông | Lập trình | NẾU… THÌ…, NGƯỢC LẠI, thứ tự ưu tiên |
 | 🐞 Bắt Bọ | Lập trình | Tìm và sửa lỗi chương trình (debug) |
 | 🐢 Họa Sĩ Rùa | Lập trình | Vẽ hình bằng lệnh, vòng lặp, góc quay |
+| 👩‍🍳 Đầu Bếp Nhí | Lập trình | Thuật toán: sắp thứ tự các bước, bước nào phụ thuộc bước nào, loại bước thừa |
 
 ## Cấu trúc
 
@@ -61,6 +64,8 @@ scripts/check-levels.mjs    kiểm tra màn chơi: đọc đoạn giữa `// LEV
 
 - Bản Next.js này (16, Cache Components) khác bản cũ, đọc `node_modules/next/dist/docs/` trước khi sửa.
   Không gọi `Date.now()` khi render component (dùng `useNow`); đọc `params` bên trong `<Suspense>`.
+- Thám Tử Hình Học: không đặt manh mối gọi tên "hình chữ nhật"/"hình thoi" cạnh hình vuông (hình vuông
+  cũng là hai loại đó), `check:levels` sẽ báo lỗi. Số cạnh, góc vuông được tính từ tọa độ đỉnh.
 - Đèn vàng trong Đèn Giao Thông chấp nhận cả "Đi chậm" lẫn "Dừng lại", vì luật Việt Nam yêu cầu dừng.
 - Nếu server dev hiện lỗi hydration do HTML cũ, khởi động lại `npm run dev`.
 
@@ -68,5 +73,5 @@ scripts/check-levels.mjs    kiểm tra màn chơi: đọc đoạn giữa `// LEV
 
 - **Tài khoản phụ huynh bằng Supabase**, để tiến độ không mất khi đổi máy. Cần Project URL + anon key
   và chọn cách đăng nhập (email + mã OTP hoặc Google). Chỉ cần thay phần đọc/ghi trong `src/lib/progress.ts`.
-- Thêm game, ví dụ Thám tử hình học, Xây cầu (đo lường), Nấu ăn theo công thức (thuật toán cho bé nhỏ).
+- Thêm game, ví dụ Xem đồng hồ, So sánh số / làm tròn, Vòng lặp lồng nhau.
 - Bám theo chương trình SGK, thêm lớp học cho giáo viên.

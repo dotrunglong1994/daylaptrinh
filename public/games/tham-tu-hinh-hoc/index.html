@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Thám Tử Hình Học</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Màn hình chọn vụ án -->
+  <section id="levels" class="screen">
+    <div class="panel">
+      <div class="dino menu-dino" data-dino></div>
+      <h1>🔍 Thám Tử Hình Học</h1>
+      <p class="sub">Đọc manh mối, tìm đúng tất cả các hình bị giấu!</p>
+      <div id="levelGrid" class="level-grid"></div>
+    </div>
+  </section>
+
+  <!-- Màn hình chơi -->
+  <section id="play" class="screen hidden">
+    <header class="hud">
+      <button id="backBtn" class="icon" title="Chọn vụ án">🗺️</button>
+      <h2 id="levelTitle"></h2>
+      <button id="soundBtn" class="icon" title="Âm thanh">🔊</button>
+    </header>
+
+    <div class="guide">
+      <div id="mascot" class="dino mascot" data-dino></div>
+      <div id="bubble" class="bubble"></div>
+    </div>
+
+    <div class="clue">
+      <span class="clue-tag">📜 Manh mối <span id="roundInfo"></span></span>
+      <strong id="clueText"></strong>
+      <span id="foundInfo" class="found-info"></span>
+    </div>
+
+    <div id="scene" class="scene"></div>
+  </section>
+
+  <!-- Bảng phá án -->
+  <div id="winModal" class="modal hidden">
+    <div class="panel">
+      <h1>Phá án thành công! 🕵️✨</h1>
+      <div id="winStars" class="stars"></div>
+      <p id="winText" class="sub"></p>
+      <div class="row">
+        <button id="replayBtn" class="btn ghost">🔁 Chơi lại</button>
+        <button id="nextBtn" class="btn go">Vụ tiếp ➡️</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Đầu Bếp Nhí</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Màn hình chọn món -->
+  <section id="levels" class="screen">
+    <div class="panel">
+      <div class="dino menu-dino" data-dino></div>
+      <h1>👩‍🍳 Đầu Bếp Nhí</h1>
+      <p class="sub">Xếp các bước thành công thức để robot đầu bếp nấu món ngon!</p>
+      <div id="levelGrid" class="level-grid"></div>
+    </div>
+  </section>
+
+  <!-- Màn hình chơi -->
+  <section id="play" class="screen hidden">
+    <header class="hud">
+      <button id="backBtn" class="icon" title="Chọn món">🗺️</button>
+      <h2 id="levelTitle"></h2>
+      <button id="soundBtn" class="icon" title="Âm thanh">🔊</button>
+    </header>
+
+    <div class="guide">
+      <div id="mascot" class="dino mascot" data-dino></div>
+      <div id="bubble" class="bubble"></div>
+    </div>
+
+    <div class="kitchen">
+      <div class="chef">🤖<span>👨‍🍳</span></div>
+      <div id="stove" class="stove"><span id="stoveIcon"></span><small id="stoveText"></small></div>
+    </div>
+
+    <div class="recipe-area">
+      <div class="area-head">📜 Công thức <small id="slotInfo"></small></div>
+      <ol id="recipe" class="recipe"></ol>
+    </div>
+
+    <div class="pool-area">
+      <div class="area-head">🃏 Thẻ bước <small>(chạm để thêm vào công thức, chạm lại để bỏ ra)</small></div>
+      <div id="pool" class="pool"></div>
+    </div>
+
+    <div class="controls">
+      <button id="clearBtn" class="btn ghost">🧹 Làm lại</button>
+      <button id="runBtn" class="btn go">🍳 Nấu thử</button>
+    </div>
+  </section>
+
+  <!-- Bảng thắng màn -->
+  <div id="winModal" class="modal hidden">
+    <div class="panel">
+      <div id="winDish" class="win-dish"></div>
+      <h1 id="winTitle"></h1>
+      <div id="winStars" class="stars"></div>
+      <p id="winText" class="sub"></p>
+      <div class="row">
+        <button id="replayBtn" class="btn ghost">🔁 Chơi lại</button>
+        <button id="nextBtn" class="btn go">Món tiếp ➡️</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

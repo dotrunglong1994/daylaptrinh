@@ -64,6 +64,24 @@ export const GAMES: Game[] = [
     src: "/games/can-thang-bang/index.html",
   },
   {
+    id: "tham-tu-hinh-hoc",
+    title: "Thám Tử Hình Học",
+    emoji: "🔍",
+    subject: "toan",
+    description: "Đọc manh mối, tìm đúng các hình bị giấu",
+    skills: ["Hình học", "Cạnh và góc"],
+    src: "/games/tham-tu-hinh-hoc/index.html",
+  },
+  {
+    id: "xay-cau",
+    title: "Xây Cầu",
+    emoji: "🌉",
+    subject: "toan",
+    description: "Đo khe núi, ghép ván vừa khít cho xe qua",
+    skills: ["Đo lường", "Đổi đơn vị"],
+    src: "/games/xay-cau/index.html",
+  },
+  {
     id: "robot-tim-duong",
     title: "Robot Tìm Đường",
     emoji: "🤖",
@@ -98,6 +116,15 @@ export const GAMES: Game[] = [
     description: "Viết lệnh cho rùa vẽ hình",
     skills: ["Vòng lặp", "Góc quay"],
     src: "/games/hoa-si-rua/index.html",
+  },
+  {
+    id: "dau-bep-nhi",
+    title: "Đầu Bếp Nhí",
+    emoji: "👩‍🍳",
+    subject: "lap-trinh",
+    description: "Xếp các bước thành công thức nấu ăn",
+    skills: ["Thuật toán", "Thứ tự"],
+    src: "/games/dau-bep-nhi/index.html",
   },
 ];
 

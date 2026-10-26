@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Xây Cầu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Màn hình chọn màn -->
+  <section id="levels" class="screen">
+    <div class="panel">
+      <div class="dino menu-dino" data-dino></div>
+      <h1>🌉 Xây Cầu</h1>
+      <p class="sub">Đo khe núi, ghép ván thật vừa khít để xe qua sông!</p>
+      <div id="levelGrid" class="level-grid"></div>
+    </div>
+  </section>
+
+  <!-- Màn hình chơi -->
+  <section id="play" class="screen hidden">
+    <header class="hud">
+      <button id="backBtn" class="icon" title="Chọn màn">🗺️</button>
+      <h2 id="levelTitle"></h2>
+      <button id="soundBtn" class="icon" title="Âm thanh">🔊</button>
+    </header>
+
+    <div class="guide">
+      <div id="mascot" class="dino mascot" data-dino></div>
+      <div id="bubble" class="bubble"></div>
+    </div>
+
+    <div id="scene" class="scene">
+      <div class="river"></div>
+      <div class="cliff left"></div>
+      <div class="cliff right"><span>🏁</span></div>
+      <div id="measure" class="measure"></div>
+      <div id="bridge" class="bridge"></div>
+      <div id="car" class="car"><span>🚗</span></div>
+    </div>
+
+    <div class="build-info">
+      <span>Khe núi: <strong id="gapLen"></strong></span>
+      <span>Đã đặt: <strong id="plankCount">0 tấm ván</strong></span>
+    </div>
+
+    <div class="shelf-area">
+      <div class="shelf-head">🪵 Kho ván <small>(chạm để đặt ván, chạm ván trên cầu để gỡ)</small></div>
+      <div id="shelf" class="shelf"></div>
+    </div>
+
+    <div class="controls">
+      <button id="clearBtn" class="btn ghost">🧹 Dỡ cầu</button>
+      <button id="runBtn" class="btn go">🚗 Cho xe chạy</button>
+    </div>
+  </section>
+
+  <!-- Bảng thắng màn -->
+  <div id="winModal" class="modal hidden">
+    <div class="panel">
+      <h1>Xe qua sông rồi! 🌉✨</h1>
+      <div id="winStars" class="stars"></div>
+      <p id="winEq" class="equation"></p>
+      <p id="winText" class="sub"></p>
+      <div class="row">
+        <button id="replayBtn" class="btn ghost">🔁 Chơi lại</button>
+        <button id="nextBtn" class="btn go">Màn tiếp ➡️</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+:root {
+  --sky1: #ffe3e3;
+  --sky2: #fff5f5;
+  --ink: #23395b;
+  --accent: #d6336c;
+  --good: #2bb673;
+  --card: rgba(255, 255, 255, 0.94);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Baloo 2', system-ui, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(var(--sky1), var(--sky2));
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+button { font: inherit; color: inherit; cursor: pointer; border: 0; }
+button:disabled { cursor: default; }
+.hidden { display: none !important; }
+
+.panel {
+  background: var(--card); border-radius: 28px; padding: 28px 24px; width: min(560px, 100%);
+  text-align: center; box-shadow: 0 12px 0 rgba(35, 57, 91, .12), 0 20px 40px rgba(35, 57, 91, .15);
+}
+h1 { font-size: clamp(1.8rem, 6vw, 2.5rem); line-height: 1.15; }
+.sub { opacity: .75; margin-top: 4px; }
+.row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+
+.btn {
+  font-size: 1.2rem; font-weight: 800; padding: 10px 24px; border-radius: 999px;
+  transition: transform .1s, box-shadow .1s;
+}
+.btn.go { background: var(--good); color: #fff; box-shadow: 0 5px 0 #1e8c57; }
+.btn.ghost { background: #eef3ff; box-shadow: 0 5px 0 #c9d4f2; }
+.btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0, 0, 0, .2); }
+.btn:disabled { opacity: .5; }
+
+/* ---------- Chọn màn ---------- */
+#levels { min-height: 100%; display: grid; place-items: center; padding: 16px; }
+.level-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+.level-grid button {
+  aspect-ratio: 1; border-radius: 18px; background: #eef3ff; font-size: 1.8rem; font-weight: 800;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;
+  box-shadow: 0 5px 0 #c9d4f2; transition: transform .12s;
+}
+.level-grid button:hover:not(:disabled) { transform: translateY(-3px); }
+.level-grid button small { font-size: .8rem; margin-top: 6px; letter-spacing: 1px; }
+.level-grid button.done { background: #e6fcf0; box-shadow: 0 5px 0 #a9e5c4; }
+.level-grid button:disabled { opacity: .45; }
+
+/* ---------- Màn chơi ---------- */
+#play { min-height: 100%; display: flex; flex-direction: column; gap: 10px; padding: 10px 16px 16px; max-width: 760px; margin: 0 auto; }
+.hud { display: flex; align-items: center; gap: 10px; }
+.hud h2 { flex: 1; text-align: center; font-size: 1.4rem; }
+.icon {
+  background: var(--card); width: 44px; height: 44px; border-radius: 14px; font-size: 1.3rem;
+  box-shadow: 0 3px 0 rgba(35, 57, 91, .15); flex-shrink: 0;
+}
+.icon.off { opacity: .4; }
+
+/* Khủng long đứng cạnh lời gợi ý thay vì nổi trên sân chơi */
+.guide { display: flex; align-items: center; gap: 4px; min-height: 76px; }
+.guide .mascot { width: 76px; height: 76px; }
+.guide .bubble { margin: 0; white-space: normal; font-size: 1.05rem; border-radius: 18px 18px 18px 4px; flex: 1; }
+/* ---------- Bảng thắng ---------- */
+.modal { position: fixed; inset: 0; background: rgba(35, 57, 91, .45); display: grid; place-items: center; padding: 16px; z-index: 10; }
+.modal .panel { animation: pop .3s; }
+@keyframes pop { from { transform: scale(.7); opacity: 0; } }
+.stars { font-size: 3.4rem; margin: 8px 0; letter-spacing: 6px; }
+.stars span { display: inline-block; filter: grayscale(1); opacity: .3; }
+.stars span.on { filter: none; opacity: 1; animation: starIn .5s backwards; }
+.stars span:nth-child(2) { animation-delay: .2s; }
+.stars span:nth-child(3) { animation-delay: .4s; }
+@keyframes starIn { from { transform: scale(0) rotate(-90deg); } 70% { transform: scale(1.3); } }
+
+/* ---------- Gian bếp ---------- */
+.kitchen {
+  display: flex; align-items: center; justify-content: center; gap: 18px; padding: 12px;
+  background: repeating-linear-gradient(90deg, #fff 0 24px, #f1f3f5 24px 48px); border-radius: 20px;
+  box-shadow: 0 6px 0 #dee2e6, 0 10px 24px rgba(35, 57, 91, .12);
+}
+.chef { font-size: 3.4rem; position: relative; line-height: 1; }
+.chef span { position: absolute; top: -26px; left: 10px; font-size: 1.6rem; }
+.running .chef { animation: chef-bob .5s ease-in-out infinite alternate; }
+@keyframes chef-bob { to { transform: translateY(-6px) rotate(-4deg); } }
+.stove {
+  width: 190px; min-height: 110px; background: #343a40; border-radius: 18px; color: #fff; padding: 8px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  box-shadow: inset 0 -6px 0 #212529;
+}
+#stoveIcon { font-size: 3rem; line-height: 1.1; }
+#stoveText { font-size: .95rem; font-weight: 700; line-height: 1.2; }
+.stove.cook #stoveIcon { animation: pop-in .35s; }
+.stove.boom { background: #c92a2a; animation: shake .45s; }
+.stove.done { background: #2b8a3e; }
+.stove.done #stoveIcon { animation: pop-in .5s; font-size: 3.6rem; }
+@keyframes pop-in { from { transform: scale(.2) rotate(-30deg); opacity: 0; } 70% { transform: scale(1.2); } }
+@keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+
+/* ---------- Công thức và thẻ bước ---------- */
+.recipe-area, .pool-area { background: var(--card); border-radius: 20px; padding: 10px 12px; }
+.area-head { font-weight: 800; margin-bottom: 8px; }
+.area-head small { font-weight: 500; opacity: .65; }
+.recipe { list-style: none; counter-reset: step; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.recipe li { counter-increment: step; position: relative; min-height: 64px; }
+.recipe li::before {
+  content: counter(step); position: absolute; top: -8px; left: -6px; z-index: 1; width: 24px; height: 24px;
+  border-radius: 50%; background: var(--accent); color: #fff; font-size: .8rem; font-weight: 800; display: grid; place-items: center;
+}
+.recipe li.slot { border: 3px dashed #fcc2d7; border-radius: 14px; }
+.pool { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.empty { opacity: .6; }
+
+.card {
+  width: 100%; height: 100%; min-height: 64px; display: flex; align-items: center; gap: 8px; text-align: left;
+  padding: 6px 10px; border-radius: 14px; background: #fff0f6; box-shadow: 0 4px 0 #fcc2d7;
+  border: 3px solid transparent; line-height: 1.2; font-weight: 700; animation: pop-in .25s;
+}
+.c-icon { font-size: 1.8rem; flex-shrink: 0; }
+.c-text { font-size: .98rem; }
+.card.active { border-color: #f0c419; background: #fff3bf; }
+.card.cooked { background: #ebfbee; box-shadow: 0 4px 0 #b2f2bb; }
+.card.fail { border-color: #fa5252; background: #ffe3e3; animation: shake .45s; }
+.running .card { pointer-events: none; }
+
+.controls { display: flex; gap: 12px; justify-content: center; }
+.win-dish { font-size: 4.5rem; line-height: 1; animation: pop-in .6s; }
+
+@media (max-width: 520px) {
+  .recipe, .pool { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .c-icon { font-size: 1.5rem; }
+  .c-text { font-size: .88rem; }
+  .stove { width: 160px; }
+}
