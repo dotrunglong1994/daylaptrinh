@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Baloo_2 } from "next/font/google";
+import CloudSync from "@/components/CloudSync";
 import Header from "@/components/Header";
 import { SITE_NAME } from "@/lib/games";
 import "./globals.css";
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="vi" className={baloo.variable}>
       <body>
+        <CloudSync />
         <Header />
         <main>{children}</main>
       </body>

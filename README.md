@@ -12,6 +12,23 @@ npm run check:levels   # kiểm tra dữ liệu màn chơi của các game
 npm run build          # build production
 ```
 
+## Tài khoản phụ huynh (không bắt buộc)
+
+Mặc định tiến độ chỉ lưu trong trình duyệt, không cần đăng nhập. Nếu cấu hình Supabase, Góc phụ huynh hiện thêm
+phần đăng nhập bằng mã OTP gửi qua email để đồng bộ tiến độ giữa các máy.
+
+1. Chép `.env.example` thành `.env.local`, điền Project URL (`https://<ref>.supabase.co`) và anon key.
+2. Supabase → SQL Editor: chạy `supabase/schema.sql` (tạo bảng `progress` có RLS, mỗi tài khoản một dòng).
+3. Supabase → Authentication → Emails → mẫu **Magic Link**: thêm `{{ .Token }}` để email có mã số.
+   Bấm vào liên kết trong email cũng đăng nhập được.
+4. Supabase → Authentication → URL Configuration: thêm địa chỉ website (vd. `http://localhost:3000/**`) vào Redirect URLs.
+5. Khởi động lại `npm run dev` để nạp biến môi trường.
+
+Cách đồng bộ (`src/lib/cloud.ts`): localStorage vẫn là nơi lưu chính, mỗi lần ghi sẽ đẩy lên sau 1,5 giây.
+Khi đăng nhập hoặc quay lại tab, bản nào có `savedAt` mới hơn sẽ thắng. Lần đầu nối một máy đã có dữ liệu với
+tài khoản cũng đã có dữ liệu khác, website hỏi phụ huynh muốn giữ bản nào.
+Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng thật nên cấu hình SMTP riêng.
+
 ## Các trang
 
 | Đường dẫn | Nội dung |
@@ -44,7 +61,8 @@ npm run build          # build production
 public/games/<game-id>/     mỗi game là một trang HTML/CSS/JS độc lập
 public/games/shared/        khủng long cổ vũ (mascot.js/.css) và bridge.js gửi kết quả về website
 src/lib/games.ts            danh sách game và đảo; game không có `src` hiện "Sắp ra mắt"
-src/lib/progress.ts         lưu tiến độ (hiện dùng localStorage, sau thay bằng backend)
+src/lib/progress.ts         lưu tiến độ trong localStorage
+src/lib/cloud.ts            đăng nhập OTP và đồng bộ tiến độ với Supabase (bảng trong supabase/schema.sql)
 src/lib/pet.ts              thú cưng: loài, thức ăn, đồ trong cửa hàng, cách chỉ số giảm theo giờ
 src/lib/useNow.ts           đồng hồ dùng chung (chỉ đọc giờ trên trình duyệt)
 scripts/check-levels.mjs    kiểm tra màn chơi: đọc đoạn giữa `// LEVELS-START` và `// LEVELS-END` trong game.js
@@ -71,7 +89,6 @@ scripts/check-levels.mjs    kiểm tra màn chơi: đọc đoạn giữa `// LEV
 
 ## Việc tiếp theo
 
-- **Tài khoản phụ huynh bằng Supabase**, để tiến độ không mất khi đổi máy. Cần Project URL + anon key
-  và chọn cách đăng nhập (email + mã OTP hoặc Google). Chỉ cần thay phần đọc/ghi trong `src/lib/progress.ts`.
+- Một tài khoản phụ huynh quản lý nhiều bé (hiện mỗi tài khoản một hồ sơ bé).
 - Thêm game, ví dụ Xem đồng hồ, So sánh số / làm tròn, Vòng lặp lồng nhau.
 - Bám theo chương trình SGK, thêm lớp học cho giáo viên.

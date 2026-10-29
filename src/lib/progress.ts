@@ -13,8 +13,8 @@ import {
   type SpeciesId,
 } from "./pet";
 
-// Tiến độ của bé, hiện lưu trong localStorage của trình duyệt.
-// Khi có backend (Supabase/Firebase) chỉ cần thay read/write trong file này.
+// Tiến độ của bé, luôn lưu trong localStorage của trình duyệt.
+// Nếu phụ huynh đăng nhập, src/lib/cloud.ts đồng bộ thêm bản sao lên Supabase.
 
 export type Profile = { name: string; avatar: string };
 
@@ -35,6 +35,8 @@ export type Progress = {
   pet: PetState | null;
   inventory: string[];
   daily: Daily | null;
+  /** Lần ghi gần nhất, dùng để biết bản trên máy hay trên tài khoản mới hơn */
+  savedAt: string | null;
   /** false khi render phía server, trước khi đọc được localStorage */
   loaded: boolean;
 };
@@ -42,11 +44,17 @@ export type Progress = {
 export type GameResult = { stars: number; score: number; progressText?: string };
 
 const KEY = "dlt-progress-v1";
-const SERVER: Progress = { profile: null, coins: 0, games: {}, pet: null, inventory: [], daily: null, loaded: false };
+const SERVER: Progress = {
+  profile: null, coins: 0, games: {}, pet: null, inventory: [], daily: null, savedAt: null, loaded: false,
+};
 const EMPTY: Progress = { ...SERVER, loaded: true };
+
+/** Phần được lưu xuống localStorage và lên tài khoản */
+export type SavedData = Omit<Progress, "loaded">;
 
 let cache: Progress | null = null;
 const listeners = new Set<() => void>();
+const writeListeners = new Set<() => void>();
 
 function read(): Progress {
   if (cache) return cache;
@@ -59,14 +67,39 @@ function read(): Progress {
   return cache!;
 }
 
-function write(next: Progress) {
+function store(next: Progress) {
   cache = next;
   try {
-    const { profile, coins, games, pet, inventory, daily } = next;
-    localStorage.setItem(KEY, JSON.stringify({ profile, coins, games, pet, inventory, daily }));
+    localStorage.setItem(KEY, JSON.stringify(getSavedData()));
   } catch {}
   listeners.forEach((l) => l());
 }
+
+function write(next: Progress) {
+  store({ ...next, savedAt: new Date().toISOString() });
+  writeListeners.forEach((l) => l());
+}
+
+export function getSavedData(): SavedData {
+  const { profile, coins, games, pet, inventory, daily, savedAt } = read();
+  return { profile, coins, games, pet, inventory, daily, savedAt };
+}
+
+/** Thay toàn bộ tiến độ bằng bản tải từ tài khoản (không tính là một lần ghi mới). */
+export function replaceSavedData(data: SavedData) {
+  store({ ...EMPTY, ...data, loaded: true });
+}
+
+/** Gọi lại mỗi khi bé chơi, mua đồ… (không gọi khi tải bản từ tài khoản về). */
+export function onLocalWrite(listener: () => void) {
+  writeListeners.add(listener);
+  return () => {
+    writeListeners.delete(listener);
+  };
+}
+
+/** Máy này chưa có gì đáng giữ: chưa hồ sơ, chưa chơi, chưa nuôi thú cưng. */
+export const isBlank = (d: SavedData) => !d.profile && !d.pet && Object.keys(d.games).length === 0 && d.coins === 0;
 
 function subscribe(listener: () => void) {
   listeners.add(listener);

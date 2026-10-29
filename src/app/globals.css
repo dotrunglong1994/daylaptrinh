@@ -178,6 +178,25 @@ th, td { text-align: left; padding: 10px 8px; border-bottom: 2px solid var(--lin
 th { font-size: .95rem; color: var(--muted); }
 tr:last-child td { border-bottom: 0; }
 
+.cloud-card { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+.cloud-card h2 { font-size: 1.4rem; }
+.cloud-form { display: flex; flex-direction: column; gap: 8px; }
+.cloud-form label { font-weight: 700; }
+.cloud-inputs { display: flex; gap: 10px; flex-wrap: wrap; }
+.cloud-inputs .name-input { flex: 1 1 240px; width: auto; font-size: 1.15rem; text-align: left; }
+.cloud-inputs .otp-input { flex: 0 1 220px; text-align: center; letter-spacing: 6px; font-size: 1.4rem; }
+.small-note { font-size: .9rem; }
+.link-btn { color: var(--primary); font-weight: 700; text-decoration: underline; }
+.form-error { color: #c92a2a; font-weight: 700; }
+.sync-status { font-weight: 700; }
+.sync-status.error { color: #c92a2a; }
+.sync-status.synced { color: #2b8a3e; }
+.conflict { background: #fff9db; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.conflict-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.conflict-option { background: #fff; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 2px; align-items: flex-start; }
+.conflict-option h3 { font-size: 1.1rem; }
+.conflict-option .btn { margin-top: 8px; }
+
 /* ---------- Thú cưng ---------- */
 .adopt { max-width: 560px; margin: 0 auto; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px; }
 .species-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 100%; }

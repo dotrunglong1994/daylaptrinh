@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import CloudPanel from "@/components/CloudPanel";
 import Stars from "@/components/Stars";
 import { GAMES } from "@/lib/games";
+import { useCloud } from "@/lib/cloud";
 import { resetProgress, totalStars, useProgress } from "@/lib/progress";
 import { streakOf, useNow } from "@/lib/useNow";
 
@@ -10,6 +12,7 @@ const dateFmt = new Intl.DateTimeFormat("vi-VN", { dateStyle: "short", timeStyle
 
 export default function ParentPage() {
   const progress = useProgress();
+  const cloud = useCloud();
   const [confirming, setConfirming] = useState(false);
   const { streak } = streakOf(progress.daily, useNow());
   const plays = Object.values(progress.games).reduce((sum, g) => sum + g.plays, 0);
@@ -19,8 +22,8 @@ export default function ParentPage() {
     <div className="page">
       <h1 className="page-title">👨‍👩‍👧 Góc phụ huynh</h1>
       <p className="muted">
-        {progress.profile ? `Tiến độ học của ${progress.profile.name}.` : "Bé chưa tạo hồ sơ."} Dữ liệu đang lưu trên trình
-        duyệt này.
+        {progress.profile ? `Tiến độ học của ${progress.profile.name}.` : "Bé chưa tạo hồ sơ."}{" "}
+        {cloud.email ? `Dữ liệu được lưu trên máy này và tài khoản ${cloud.email}.` : "Dữ liệu đang lưu trên trình duyệt này."}
       </p>
 
       <div className="stats">
@@ -75,10 +78,14 @@ export default function ParentPage() {
         </table>
       </div>
 
+      <CloudPanel />
+
       <div className="row left">
         {confirming ? (
           <>
-            <span>Xóa toàn bộ sao, xu, thú cưng và lịch sử chơi?</span>
+            <span>
+              Xóa toàn bộ sao, xu, thú cưng và lịch sử chơi{cloud.email ? " (cả trên tài khoản)" : ""}?
+            </span>
             <button
               className="btn danger small"
               onClick={() => {
