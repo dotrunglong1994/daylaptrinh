@@ -1,0 +1,18 @@
+:root { --sky1: #fff3bf; --sky2: #fff9db; --accent: #e8590c; }
+
+.clock-wrap { display: grid; place-items: center; }
+.clock { width: min(320px, 80vw); height: auto; touch-action: none; }
+.clock .rim { fill: #ff922b; }
+.clock .face { fill: #fff; }
+.clock .tick { stroke: #adb5bd; stroke-width: 1.2; }
+.clock .tick.big { stroke: #23395b; stroke-width: 2.6; }
+.clock .num { font: 800 15px 'Baloo 2', sans-serif; fill: #23395b; text-anchor: middle; dominant-baseline: central; }
+.clock .num.roman { font-size: 13px; font-family: Georgia, serif; font-weight: 700; }
+.clock .hand .ink { stroke-linecap: round; }
+.clock .hand .hit { stroke: transparent; stroke-width: 26; stroke-linecap: round; }
+.clock .hour .ink { stroke: #23395b; stroke-width: 7; }
+.clock .minute .ink { stroke: #e8590c; stroke-width: 4.5; }
+.clock.can-drag .hand { cursor: grab; }
+.clock.can-drag .hand:hover .ink { filter: drop-shadow(0 0 3px rgba(232, 89, 12, .6)); }
+.clock .pin { fill: #23395b; }
+.clock.ok .face { fill: #ebfbee; transition: fill .3s; }

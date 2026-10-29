@@ -41,25 +41,41 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 
 ## Các game
 
-| Game | Đảo | Dạy gì |
-|---|---|---|
-| 🎈 Bắn Bóng Số | Toán | Tính nhẩm 4 phép tính, chế độ thử thách 60 giây |
-| 🛒 Siêu Thị Mini | Toán | Cộng trừ, tính tiền và thối tiền Việt Nam |
-| 🍕 Chia Bánh Pizza | Toán | Phân số: tô, đọc, chia đều, so sánh |
-| ⚖️ Cân Thăng Bằng | Toán | Làm quen phương trình (🎁 + 3 = 7) |
-| 🔍 Thám Tử Hình Học | Toán | Nhận biết hình theo tên, màu, số cạnh, góc vuông, cạnh bằng nhau |
-| 🌉 Xây Cầu | Toán | Đo bằng thước, cộng độ dài, đổi m – dm – cm |
-| 🤖 Robot Tìm Đường | Lập trình | Tuần tự, vòng lặp |
-| 🚦 Đèn Giao Thông | Lập trình | NẾU… THÌ…, NGƯỢC LẠI, thứ tự ưu tiên |
-| 🐞 Bắt Bọ | Lập trình | Tìm và sửa lỗi chương trình (debug) |
-| 🐢 Họa Sĩ Rùa | Lập trình | Vẽ hình bằng lệnh, vòng lặp, góc quay |
-| 👩‍🍳 Đầu Bếp Nhí | Lập trình | Thuật toán: sắp thứ tự các bước, bước nào phụ thuộc bước nào, loại bước thừa |
+23 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
+Bản đồ có bộ lọc theo lớp.
+
+| Game | Đảo | Lớp | Dạy gì |
+|---|---|---|---|
+| 🎈 Bắn Bóng Số | Toán | 1–4 | Tính nhẩm 4 phép tính, chế độ thử thách 60 giây |
+| 🕰️ Đồng Hồ Thần Kỳ | Toán | 1–3 | Quay kim, đọc giờ (rưỡi, kém), số La Mã, tính thời gian trôi |
+| 🚂 Tàu Hỏa Số | Toán | 1–4 | Giá trị theo hàng, đọc số bằng chữ, so sánh, sắp xếp, làm tròn |
+| 🔍 Thám Tử Hình Học | Toán | 1–3 | Nhận biết hình theo tên, màu, số cạnh, góc vuông, cạnh bằng nhau |
+| 🛒 Siêu Thị Mini | Toán | 1–3 | Cộng trừ, tính tiền và thối tiền Việt Nam |
+| 🌉 Xây Cầu | Toán | 2–3 | Đo bằng thước, cộng độ dài, đổi m – dm – cm |
+| 🧁 Bếp Cân Đong | Toán | 2–3 | Đọc cân đồng hồ, ca đong, đổi kg – g, l – ml |
+| 🐄 Nông Trại Biểu Đồ | Toán | 2–4 | Đếm, vẽ biểu đồ tranh / cột, đọc biểu đồ, trung bình cộng |
+| ⚖️ Cân Thăng Bằng | Toán | 2–4 | Làm quen phương trình (🎁 + 3 = 7) |
+| 🍬 Hũ Kẹo May Mắn | Toán | 2–5 | Chắc chắn / có thể / không thể, so sánh khả năng, tỉ số |
+| 🍕 Chia Bánh Pizza | Toán | 3–5 | Phân số: tô, đọc, chia đều, so sánh |
+| 🌻 Khu Vườn Diện Tích | Toán | 3–5 | Đếm ô, chu vi, diện tích, công thức, tính ngược |
+| 🏷️ Cửa Hàng Giảm Giá | Toán | 5 | Số thập phân, phần trăm, tính giá sau giảm |
+| 🤖 Robot Tìm Đường | Lập trình | 1–3 | Tuần tự, vòng lặp |
+| 🚦 Đèn Giao Thông | Lập trình | 2–4 | NẾU… THÌ…, NGƯỢC LẠI, thứ tự ưu tiên |
+| 👩‍🍳 Đầu Bếp Nhí | Lập trình | 2–4 | Thuật toán: sắp thứ tự các bước, bước nào phụ thuộc bước nào, loại bước thừa |
+| 🧵 Thợ Dệt Hoa Văn | Lập trình | 2–5 | Quy luật, vòng lặp, vòng lặp lồng nhau, hàm |
+| 🐞 Bắt Bọ | Lập trình | 3–5 | Tìm và sửa lỗi chương trình (debug) |
+| 🐢 Họa Sĩ Rùa | Lập trình | 3–5 | Vẽ hình bằng lệnh, vòng lặp, góc quay |
+| 🎬 Thị Trấn Sự Kiện | Lập trình | 3–5 | Sự kiện như Scratch: cờ xanh, bấm vào nhân vật, phím, gửi / nhận tin |
+| 💡 Bóng Đèn Nhị Phân | Lập trình | 3–5 | Số nhị phân (hoạt động "Đếm chấm" của CS Unplugged), mật thư |
+| 📏 Xếp Hàng Thông Minh | Lập trình | 3–5 | Sắp xếp nổi bọt, tìm kiếm tuần tự và tìm kiếm nhị phân |
+| 📦 Rô-bốt Nhà Kho | Lập trình | 4–5 | Biến: gán, cộng dồn, biến trong vòng lặp, đổi chỗ hai biến |
 
 ## Cấu trúc
 
 ```
 public/games/<game-id>/     mỗi game là một trang HTML/CSS/JS độc lập
-public/games/shared/        khủng long cổ vũ (mascot.js/.css) và bridge.js gửi kết quả về website
+public/games/shared/        khủng long cổ vũ và đọc to (mascot.js/.css), bridge.js gửi kết quả về website,
+                            kit.js/.css khung chung cho game mới (chọn màn, bảng thắng, âm thanh, nút đáp án)
 src/lib/games.ts            danh sách game và đảo; game không có `src` hiện "Sắp ra mắt"
 src/lib/progress.ts         lưu tiến độ trong localStorage
 src/lib/cloud.ts            đăng nhập OTP và đồng bộ tiến độ với Supabase (bảng trong supabase/schema.sql)
@@ -70,13 +86,24 @@ scripts/check-levels.mjs    kiểm tra màn chơi: đọc đoạn giữa `// LEV
 
 ## Thêm một game mới
 
-1. Tạo `public/games/<game-id>/index.html`, `style.css`, `game.js`. Nên chép một game có sẵn làm khung.
-2. Nạp `../shared/mascot.css`, `../shared/mascot.js`, `../shared/bridge.js`.
-3. Khi bé chơi xong, gọi `window.reportResult?.({ gameId, stars, score, progressText? })`.
-   Website cộng 5 xu cho mỗi sao, và thêm 10 xu cho game đầu tiên trong ngày.
-4. Khai báo game trong `src/lib/games.ts` (kèm `src`).
-5. Nếu game có dữ liệu màn chơi, đặt nó giữa `// LEVELS-START` và `// LEVELS-END` (không dùng DOM)
-   rồi thêm phần kiểm tra vào `scripts/check-levels.mjs`.
+1. Tạo `public/games/<game-id>/index.html`, `style.css`, `game.js`. Nên chép một game dùng kit (vd. `dong-ho`) làm khung.
+2. Nạp `../shared/mascot.css`, `../shared/kit.css`, rồi `../shared/mascot.js`, `../shared/bridge.js`, `../shared/kit.js`.
+   Trang chỉ cần `<div id="stage">` chứa phần chơi; kit tự dựng màn chọn màn, thanh trên, khủng long và bảng thắng.
+3. Trong `game.js`: `const game = createGame({ id, title, sub, levels, unit, winTitle, start(idx) })`.
+   Dùng `game.say()`, `game.sfx.good()`, `game.rounds(i, n)`, `await game.wait(ms)` (trả `false` nếu bé đã rời màn),
+   `renderChoices(el, labels, onPick)`, và gọi `game.win({ stars, eq, text })` khi xong màn. Kit tự lưu sao
+   (`<game-id>-progress`) và gọi `reportResult`; website cộng 5 xu cho mỗi sao, thêm 10 xu cho game đầu tiên trong ngày.
+4. Khai báo game trong `src/lib/games.ts` (kèm `src` và `grades`).
+5. Đặt dữ liệu màn chơi giữa `// LEVELS-START` và `// LEVELS-END` (không dùng DOM)
+   rồi thêm phần kiểm tra vào `scripts/check-levels.mjs`. Game sinh đề ngẫu nhiên thì để hàm sinh đề nhận `rand`
+   để script kiểm tra hàng nghìn đề với hạt giống cố định.
+6. Khi bắt đầu màn, đặt lại mọi cờ đang chạy (`busy`, `running`): bé có thể bấm 🗺️ giữa lúc game đang chạy hiệu ứng.
+
+## Đọc to
+
+`mascot.js` đọc to mọi lời khủng long bằng giọng tiếng Việt của trình duyệt (Web Speech API), bé chạm vào bong bóng
+để nghe lại. Nếu máy không có giọng tiếng Việt thì im lặng (không đọc bằng giọng tiếng Anh). Nút "Đọc to" trên thanh
+chơi game lưu lựa chọn vào localStorage `bhv-read-aloud`.
 
 ## Lưu ý
 
@@ -90,5 +117,5 @@ scripts/check-levels.mjs    kiểm tra màn chơi: đọc đoạn giữa `// LEV
 ## Việc tiếp theo
 
 - Một tài khoản phụ huynh quản lý nhiều bé (hiện mỗi tài khoản một hồ sơ bé).
-- Thêm game, ví dụ Xem đồng hồ, So sánh số / làm tròn, Vòng lặp lồng nhau.
-- Bám theo chương trình SGK, thêm lớp học cho giáo viên.
+- Chọn lớp của bé trong hồ sơ để bản đồ tự lọc, gợi ý game theo lớp.
+- Thêm lớp học cho giáo viên.

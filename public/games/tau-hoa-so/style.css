@@ -1,0 +1,54 @@
+:root { --sky1: #ffe3e3; --sky2: #fff5f5; --accent: #e03131; }
+
+.board { display: flex; flex-direction: column; gap: 14px; }
+
+/* ---------- Đoàn tàu ---------- */
+.train { display: flex; align-items: flex-end; gap: 4px; padding: 6px 0 14px; position: relative; }
+.train::after { content: ''; position: absolute; left: 0; right: 0; bottom: 6px; height: 4px; background: repeating-linear-gradient(90deg, #495057 0 14px, transparent 14px 20px); }
+.engine { font-size: clamp(2.2rem, 9vw, 3.4rem); line-height: 1; transform: scaleX(-1); flex-shrink: 0; }
+.wagon {
+  flex: 1; min-width: 0; border-radius: 12px 12px 6px 6px; padding: 6px 6px 10px; text-align: center; position: relative;
+  background: var(--wc); box-shadow: 0 5px 0 rgba(0, 0, 0, .2); color: #fff;
+}
+.wagon::before, .wagon::after { content: ''; position: absolute; bottom: -8px; width: 14px; height: 14px; border-radius: 50%; background: #343a40; }
+.wagon::before { left: 14px; }
+.wagon::after { right: 14px; }
+.wagon .place { font-weight: 800; font-size: .9rem; text-shadow: 0 1px 0 rgba(0, 0, 0, .3); }
+.wagon .cargo { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; min-height: 50px; align-content: center; background: rgba(255, 255, 255, .85); border-radius: 8px; padding: 4px; }
+.wagon .cargo i { display: block; border-radius: 3px; background: var(--wc); }
+.wagon .cargo i.p1000 { width: 22px; height: 22px; box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .25), 3px -3px 0 rgba(0, 0, 0, .15); }
+.wagon .cargo i.p100 { width: 18px; height: 18px; box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .25); }
+.wagon .cargo i.p10 { width: 6px; height: 20px; }
+.wagon .cargo i.p1 { width: 7px; height: 7px; }
+.wagon .digit { font-size: 2rem; font-weight: 800; line-height: 1.1; text-shadow: 0 2px 0 rgba(0, 0, 0, .25); }
+.wagon .pm { display: flex; justify-content: center; gap: 6px; margin-top: 6px; }
+.wagon .pm { gap: 4px; }
+.wagon .pm button { width: 34px; height: 34px; border-radius: 10px; background: #fff; color: var(--ink); font-size: 1.3rem; font-weight: 800; box-shadow: 0 3px 0 rgba(0, 0, 0, .2); }
+.wagon .pm button:active { transform: translateY(2px); box-shadow: none; }
+.train-label { font-weight: 800; font-size: 1.1rem; text-align: center; }
+
+/* So sánh */
+.vs { display: grid; gap: 4px; }
+.vs .num-train { display: flex; align-items: center; gap: 8px; justify-content: center; }
+.num-train .engine { font-size: 2.6rem; }
+.num-train .plate { font-size: 2.2rem; font-weight: 800; background: #fff; border-radius: 14px; padding: 2px 18px; box-shadow: 0 4px 0 #ffc9c9; letter-spacing: 2px; }
+.vs .mid { text-align: center; font-size: 2rem; font-weight: 800; color: var(--accent); min-height: 2.4rem; }
+
+/* Sắp xếp */
+.order { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.order button { background: #fff; border-radius: 16px; padding: 10px; font-size: 1.6rem; font-weight: 800; box-shadow: 0 5px 0 #ffc9c9; position: relative; }
+.order button small { display: block; font-size: 1.8rem; line-height: 1; }
+.order button.picked { background: #d3f9d8; box-shadow: 0 5px 0 #8ce99a; }
+.order button .badge { position: absolute; top: -8px; right: -8px; width: 30px; height: 30px; border-radius: 50%; background: var(--good); color: #fff; font-size: 1rem; line-height: 30px; }
+
+/* Tia số */
+.line-card { padding: 30px 30px 16px; }
+.numline { position: relative; height: 70px; margin: 0 10px; }
+.numline .rail { position: absolute; left: 0; right: 0; top: 34px; height: 6px; background: #495057; border-radius: 3px; }
+.numline .tick { position: absolute; top: 28px; width: 2px; height: 18px; background: #495057; transform: translateX(-1px); }
+.numline .tick.mid { height: 12px; top: 31px; background: #adb5bd; }
+.numline .st { position: absolute; top: 50px; transform: translateX(-50%); font-weight: 800; font-size: 1.1rem; white-space: nowrap; }
+.numline .st.mid { opacity: .5; font-size: .9rem; }
+.numline .marker { position: absolute; top: -8px; transform: translateX(-50%); text-align: center; font-weight: 800; transition: left .6s; }
+.numline .marker span { display: block; font-size: 2rem; line-height: 1; }
+.numline .marker b { background: var(--accent); color: #fff; border-radius: 8px; padding: 0 8px; }

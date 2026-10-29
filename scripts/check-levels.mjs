@@ -1,4 +1,4 @@
-// Kiểm tra dữ liệu màn chơi của các game lập trình: npm run check:levels
+// Kiểm tra dữ liệu màn chơi của các game: npm run check:levels
 // Đọc đoạn code giữa "// LEVELS-START" và "// LEVELS-END" trong game.js (đoạn này không dùng DOM).
 import { readFileSync } from "node:fs";
 
@@ -186,6 +186,277 @@ let failures = 0;
     const ok = unique && depsOk && extraFails && checkPlan(level, ids).ok && valid < permutations(ids).length;
     console.log(`  ${ok ? "✓" : "✗"} Món ${i + 1} (${level.dish[1]}): ${ids.length} bước, ${extras.length} thẻ thừa, ${valid} thứ tự đúng`);
     if (!ok) failures++;
+  });
+}
+
+/* ---------- Dùng chung cho các game mới ---------- */
+const report = (ok, text) => {
+  console.log(`  ${ok ? "✓" : "✗"} ${text}`);
+  if (!ok) failures++;
+};
+// 4 đáp án khác nhau và có đáp án đúng
+const optionsOk = (opts, ans) => opts.length === 4 && new Set(opts.map(String)).size === 4 && opts.filter((o) => o === ans).length === 1;
+// Bộ sinh số giả ngẫu nhiên có hạt giống, để lần chạy nào cũng kiểm cùng một bộ đề
+function seeded(seed) {
+  return () => {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return seed / 4294967296;
+  };
+}
+
+/* ---------- Đồng Hồ Thần Kỳ ---------- */
+{
+  console.log("Đồng Hồ Thần Kỳ");
+  const { LEVELS, parseTime, answerOf, readOptions } = loadSection("dong-ho/game.js", ["LEVELS", "parseTime", "answerOf", "readOptions"]);
+  LEVELS.forEach((L, i) => {
+    const notes = L.rounds.map((r) => {
+      const t = answerOf(r);
+      if (r.type !== "after") parseTime(r.time);
+      // Kim phút chỉ nhảy theo bước của màn nên đáp án phải nằm đúng bước
+      const onStep = (t % 60) % Math.min(L.step, 60) === 0 && (r.type !== "after" || parseTime(r.from) % Math.min(L.step, 60) === 0);
+      const opts = r.type === "read" ? readOptions(r, L) : null;
+      return onStep && (!opts || optionsOk(opts, t));
+    });
+    report(notes.every(Boolean), `Màn ${i + 1} (${L.name}): ${L.rounds.length} câu, bước ${L.step} phút`);
+  });
+}
+
+/* ---------- Thị Trấn Sự Kiện ---------- */
+{
+  console.log("Thị Trấn Sự Kiện");
+  const { LEVELS, goalMet } = loadSection("thi-tran-su-kien/game.js", ["LEVELS", "goalMet"]);
+  LEVELS.forEach((L, i) => {
+    const sol = L.solution;
+    const inPalette = sol.every((s) => L.actors.includes(s.actor) && L.events.includes(s.event) && s.actions.every((a) => L.actions.includes(a)) && s.actions.length <= L.actionSlots);
+    // Kịch bản có sẵn (khóa) phải khớp lời giải
+    const locksOk = (L.scripts || []).every((s, k) => (!s.actor || s.actor === sol[k].actor) && (!s.actions || s.actions.every((a, j) => a === sol[k].actions[j])));
+    const empty = Array.from({ length: L.slots }, (_, k) => ({ ...(L.scripts?.[k] || {}), actions: L.scripts?.[k]?.actions || [] }));
+    const solved = L.goals.every((g) => goalMet(sol, g));
+    const notFree = !L.goals.every((g) => goalMet(empty, g));
+    report(solved && notFree && inPalette && locksOk && sol.length <= L.slots, `Màn ${i + 1}: ${L.goals.length} yêu cầu, lời giải ${sol.length}/${L.slots} kịch bản`);
+  });
+}
+
+/* ---------- Rô-bốt Nhà Kho ---------- */
+{
+  console.log("Rô-bốt Nhà Kho");
+  const { LEVELS, run, answerOf, predictOptions, reached } = loadSection("robot-nha-kho/game.js", ["LEVELS", "run", "answerOf", "predictOptions", "reached"]);
+  // Số lệnh ít nhất để đạt đích (mỗi thẻ dùng nhiều lần)
+  function minLines(r) {
+    let frontier = [{ ...r.start }];
+    for (let depth = 0; depth <= 6; depth++) {
+      if (frontier.some((v) => reached(v, r.target))) return depth;
+      const next = new Map();
+      for (const v of frontier) for (const c of r.cards) {
+        const out = run([c], v).vars;
+        next.set(JSON.stringify(out), out);
+      }
+      frontier = [...next.values()];
+    }
+    return Infinity;
+  }
+  LEVELS.forEach((L, i) => {
+    const notes = L.rounds.map((r) => {
+      if (r.type === "predict") {
+        const ok = optionsOk(predictOptions(r), answerOf(r));
+        if (!ok) failures++;
+        return `${ok ? "" : "✗"}đoán=${answerOf(r)}`;
+      }
+      const min = minLines(r);
+      const ok = min >= 1 && min <= r.max;
+      if (!ok) failures++;
+      return `${ok ? "" : "✗"}ghép ≥${min}/${r.max}`;
+    });
+    console.log(`  ${notes.some((n) => n.startsWith("✗")) ? "✗" : "✓"} Màn ${i + 1} (${L.name}): ${notes.join(", ")}`);
+  });
+}
+
+/* ---------- Tàu Hỏa Số (sinh đề ngẫu nhiên) ---------- */
+{
+  console.log("Tàu Hỏa Số");
+  const { LEVELS, ROUNDS_PER_LEVEL, makeRound, readNumber, roundOptions, roundTo } = loadSection("tau-hoa-so/game.js", [
+    "LEVELS", "ROUNDS_PER_LEVEL", "makeRound", "readNumber", "roundOptions", "roundTo",
+  ]);
+  const READ = {
+    15: "mười lăm", 21: "hai mươi mốt", 24: "hai mươi tư", 105: "một trăm linh năm", 110: "một trăm mười",
+    1005: "một nghìn không trăm linh năm", 2050: "hai nghìn không trăm năm mươi", 45021: "bốn mươi lăm nghìn không trăm hai mươi mốt",
+  };
+  const readBad = Object.entries(READ).filter(([n, t]) => readNumber(Number(n)) !== t);
+  report(!readBad.length, `Đọc số: ${Object.keys(READ).length} số mẫu${readBad.length ? `, sai ${readBad.map(([n]) => n)}` : ""}`);
+  const rand = seeded(7);
+  LEVELS.forEach((L, i) => {
+    const problems = [];
+    for (let n = 0; n < 2000; n++) {
+      const r = makeRound(i, n % ROUNDS_PER_LEVEL, rand);
+      const inRange = (v) => v >= L.min && v <= L.max;
+      let ok = true;
+      if (r.kind === "build") ok = inRange(r.n) && r.n < 10 * Math.max(...L.places);
+      if (r.kind === "compare") ok = inRange(r.a) && inRange(r.b);
+      if (r.kind === "order") ok = r.nums.length === 4 && new Set(r.nums).size === 4 && r.nums.every(inRange);
+      // Ga để chọn phải là bội của hàng làm tròn, không được trùng chính số đề cho
+      if (r.kind === "round") ok = r.n % r.to !== 0 && optionsOk(roundOptions(r), roundTo(r.n, r.to)) && !roundOptions(r).includes(r.n);
+      if (!ok) problems.push(JSON.stringify(r));
+    }
+    report(!problems.length, `Màn ${i + 1} (${L.name}): 2000 đề, ${problems.length} đề lỗi${problems.length ? ` (vd ${problems[0]})` : ""}`);
+  });
+}
+
+/* ---------- Nông Trại Biểu Đồ ---------- */
+{
+  console.log("Nông Trại Biểu Đồ");
+  const { LEVELS, ANIMALS, answerOf, questionOptions } = loadSection("nong-trai-bieu-do/game.js", ["LEVELS", "ANIMALS", "answerOf", "questionOptions"]);
+  LEVELS.forEach((L, i) => {
+    const counts = Object.values(L.counts);
+    const animalsOk = Object.keys(L.counts).every((k) => ANIMALS[k]);
+    const scaleOk = counts.every((c) => c % L.scale === 0 && c > 0);
+    // Bé phải tự đếm ở màn không vẽ sẵn: tối đa 30 con, mỗi loại tối đa 30
+    const fieldOk = L.read || counts.reduce((a, b) => a + b, 0) <= 30;
+    const qOk = L.questions.every((q) => {
+      const ans = answerOf(L, q);
+      if (q.q === "most" || q.q === "least") return counts.filter((c) => c === L.counts[ans]).length === 1;
+      return Number.isInteger(ans) && ans > 0 && optionsOk(questionOptions(L, q), ans);
+    });
+    report(animalsOk && scaleOk && fieldOk && qOk, `Màn ${i + 1}: biểu đồ ${L.chart}, ${counts.length} loại, ${L.questions.length} câu hỏi`);
+  });
+}
+
+/* ---------- Thợ Dệt Hoa Văn ---------- */
+{
+  console.log("Thợ Dệt Hoa Văn");
+  const { LEVELS, MAX_LOOP, COLORS, slotsOf, weave, sameRows } = loadSection("tho-det-hoa-van/game.js", ["LEVELS", "MAX_LOOP", "COLORS", "slotsOf", "weave", "sameRows"]);
+  LEVELS.forEach((L, i) => {
+    const slots = slotsOf(L);
+    const valid = L.solution.length === slots.length && L.solution.every((v, k) =>
+      slots[k].kind === "color" ? L.palette.includes(v) && COLORS.includes(v) : Number.isInteger(v) && v >= 1 && v <= MAX_LOOP);
+    const ok = valid && sameRows(weave(L, L.solution), L.target);
+    report(ok, `Màn ${i + 1} (${L.name}): ${slots.length} ô trống, mẫu ${L.target.join("/")}`);
+  });
+}
+
+/* ---------- Bếp Cân Đong ---------- */
+{
+  console.log("Bếp Cân Đong");
+  const { LEVELS, parseAmt, quizOptions } = loadSection("bep-can-dong/game.js", ["LEVELS", "parseAmt", "quizOptions"]);
+  LEVELS.forEach((L, i) => {
+    const notes = L.steps.map((s) => {
+      const amt = parseAmt(s.amount);
+      if (s.tool === "quiz") return optionsOk(quizOptions(s), amt);
+      const scoops = s.scoops.map(parseAmt);
+      const reach = Array(amt + 1).fill(false);
+      reach[0] = true;
+      for (let n = 1; n <= amt; n++) reach[n] = scoops.some((x) => x <= n && reach[n - x]);
+      const tick = parseAmt(s.tick);
+      // Màn giấu số: lượng cần đong phải rơi đúng vào một vạch để bé đọc được
+      return reach[amt] && amt <= parseAmt(s.max) && parseAmt(s.max) % tick === 0 && (!s.hide || amt % (tick / 2) === 0);
+    });
+    report(notes.every(Boolean), `Món ${i + 1} (${L.dish[1]}): ${L.steps.length} bước`);
+  });
+}
+
+/* ---------- Khu Vườn Diện Tích ---------- */
+{
+  console.log("Khu Vườn Diện Tích");
+  const { LEVELS, GRID_W, GRID_H, answerOf, numberOptions, drawOk } = loadSection("khu-vuon-dien-tich/game.js", [
+    "LEVELS", "GRID_W", "GRID_H", "answerOf", "numberOptions", "drawOk",
+  ]);
+  LEVELS.forEach((L, i) => {
+    const notes = L.rounds.map((r) => {
+      if (r.type === "draw") {
+        let n = 0;
+        for (let w = 1; w <= GRID_W; w++) for (let h = 1; h <= GRID_H; h++) if (drawOk(r, w, h)) n++;
+        return n > 0;
+      }
+      if (r.type === "compare") return [-1, 0, 1].includes(answerOf(r));
+      return optionsOk(numberOptions(r), answerOf(r));
+    });
+    const kinds = L.rounds.map((r) => (r.type === "compare" ? answerOf(r) : null)).filter((v) => v !== null);
+    // Không để hai câu so sánh liền nhau cùng đáp án
+    const varied = kinds.every((v, k) => k === 0 || v !== kinds[k - 1]);
+    report(notes.every(Boolean) && varied, `Màn ${i + 1} (${L.name}): ${L.rounds.map((r) => r.type).join(", ")}`);
+  });
+}
+
+/* ---------- Bóng Đèn Nhị Phân ---------- */
+{
+  console.log("Bóng Đèn Nhị Phân");
+  const { LEVELS, LETTERS, answerOf, readOptions, valueOf } = loadSection("bong-den-nhi-phan/game.js", ["LEVELS", "LETTERS", "answerOf", "readOptions", "valueOf"]);
+  LEVELS.forEach((L, i) => {
+    const max = 2 ** L.bits - 1;
+    const ok = L.rounds.every((r) => {
+      const ans = answerOf(r);
+      if (r.make !== undefined) return ans >= 1 && ans <= max && (!r.from || (r.from.length === L.bits && valueOf(r.from) !== ans));
+      const bits = r.read ?? r.letter;
+      return bits.length === L.bits && optionsOk(readOptions(r, L.bits), ans) && (!r.letter || ans <= LETTERS.length);
+    });
+    const word = L.word ? L.rounds.map((r) => LETTERS[answerOf(r) - 1]).join("") : null;
+    report(ok && (!L.word || word === L.word), `Màn ${i + 1}: ${L.bits} bóng${word ? `, mật thư ${word}` : ""}`);
+  });
+}
+
+/* ---------- Xếp Hàng Thông Minh ---------- */
+{
+  console.log("Xếp Hàng Thông Minh");
+  const { LEVELS, makeDoors, isSorted, searchLimit } = loadSection("xep-hang-thong-minh/game.js", ["LEVELS", "makeDoors", "isSorted", "searchLimit"]);
+  const rand = seeded(11);
+  LEVELS.forEach((L, i) => {
+    const ok = L.rounds.every((r) => {
+      if (r.sort) return !isSorted(r.sort) && new Set(r.sort).size === r.sort.length && r.sort.every((h) => h >= 1 && h <= 8);
+      for (let n = 0; n < 300; n++) {
+        const { values, target } = makeDoors(r.search, rand);
+        if (values.length !== r.search.n || new Set(values).size !== values.length || !values.includes(target)) return false;
+        if (r.search.sorted && !isSorted(values)) return false;
+      }
+      return true;
+    });
+    const doors = L.rounds.filter((r) => r.search?.sorted).map((r) => `${r.search.n} cửa ≤ ${searchLimit(r.search.n)} lần`);
+    report(ok, `Màn ${i + 1} (${L.name})${doors.length ? `: ${[...new Set(doors)].join(", ")}` : ""}`);
+  });
+}
+
+/* ---------- Hũ Kẹo May Mắn ---------- */
+{
+  console.log("Hũ Kẹo May Mắn");
+  const { LEVELS, MAX_JAR, NAMES, fillOk, ratioOptions, totalOf, countOf } = loadSection("hu-keo-may-man/game.js", [
+    "LEVELS", "MAX_JAR", "NAMES", "fillOk", "ratioOptions", "totalOf", "countOf",
+  ]);
+  // Mọi cách bỏ kẹo (mỗi màu 0…MAX_JAR viên) để xem yêu cầu fill có làm được không
+  function fillable(r) {
+    const jars = r.palette.reduce((acc, c) => acc.flatMap((j) => Array.from({ length: MAX_JAR + 1 }, (_, n) => ({ ...j, ...(n ? { [c]: n } : {}) }))), [{}]);
+    return jars.some((j) => fillOk(r, j));
+  }
+  LEVELS.forEach((L, i) => {
+    const ok = L.rounds.every((r) => {
+      const jars = [r.jar, r.a, r.b].filter(Boolean);
+      if (!jars.every((j) => Object.keys(j).every((c) => NAMES[c]) && totalOf(j) <= MAX_JAR)) return false;
+      if (r.type === "fill") return fillable(r) && !fillOk(r, {});
+      if (r.type === "ratio") return countOf(r.jar, r.c) > 0 && optionsOk(ratioOptions(r), `${countOf(r.jar, r.c)}/${totalOf(r.jar)}`);
+      return true;
+    });
+    report(ok, `Màn ${i + 1} (${L.name}): ${L.rounds.map((r) => r.type).join(", ")}`);
+  });
+}
+
+/* ---------- Cửa Hàng Giảm Giá (sinh đề ngẫu nhiên) ---------- */
+{
+  console.log("Cửa Hàng Giảm Giá");
+  const { LEVELS, makeRound, answerOf, numberOptions } = loadSection("cua-hang-giam-gia/game.js", ["LEVELS", "makeRound", "answerOf", "numberOptions"]);
+  const rand = seeded(3);
+  LEVELS.forEach((L, i) => {
+    const problems = [];
+    for (let n = 0; n < 2000; n++) {
+      L.kinds.forEach((_, k) => {
+        const r = makeRound(i, k, rand);
+        const ans = answerOf(r);
+        let ok = true;
+        if (["add", "sub", "off", "pay", "pct"].includes(r.kind)) ok = ans > 0 && Number.isInteger(ans) && optionsOk(numberOptions(r), ans);
+        if (["off", "pay"].includes(r.kind)) ok &&= ans % 1000 === 0;
+        if (r.kind === "best") ok = r.payA !== r.payB && r.payA % 1000 === 0 && r.payB > 0;
+        if (r.kind === "compare") ok = r.a.v > 0 && r.b.v > 0;
+        if (r.kind === "grid") ok = r.p > 0 && r.p < 100;
+        if (!ok) problems.push(JSON.stringify(r));
+      });
+    }
+    report(!problems.length, `Màn ${i + 1} (${L.name}): ${2000 * L.kinds.length} đề, ${problems.length} đề lỗi${problems.length ? ` (vd ${problems[0]})` : ""}`);
   });
 }
 

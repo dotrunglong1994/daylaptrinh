@@ -1,15 +1,39 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import type { Game } from "@/lib/games";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { gradeText, type Game } from "@/lib/games";
 import { recordResult } from "@/lib/progress";
 
 type Reward = { id: number; coins: number; bonus: number; stars: number };
 
+// Bật/tắt đọc to lời khủng long; game đọc khóa này mỗi lần nói (public/games/shared/mascot.js)
+const READ_KEY = "bhv-read-aloud";
+const readListeners = new Set<() => void>();
+function subscribeRead(cb: () => void) {
+  readListeners.add(cb);
+  return () => readListeners.delete(cb);
+}
+function readAloudOn() {
+  try {
+    return localStorage.getItem(READ_KEY) !== "off";
+  } catch {
+    return true;
+  }
+}
+
 export default function GamePlayer({ game }: { game: Game }) {
   const frame = useRef<HTMLIFrameElement>(null);
   const [reward, setReward] = useState<Reward | null>(null);
+  const readAloud = useSyncExternalStore(subscribeRead, readAloudOn, () => true);
+
+  function toggleRead() {
+    try {
+      localStorage.setItem(READ_KEY, readAloud ? "off" : "on");
+    } catch {}
+    if (readAloud) frame.current?.contentWindow?.speechSynthesis?.cancel();
+    readListeners.forEach((l) => l());
+  }
 
   // Nhận kết quả từ game (public/games/shared/bridge.js)
   useEffect(() => {
@@ -44,7 +68,16 @@ export default function GamePlayer({ game }: { game: Game }) {
         <h1>
           {game.emoji} {game.title}
         </h1>
+        <button
+          className="btn ghost small"
+          onClick={toggleRead}
+          aria-pressed={readAloud}
+          title="Đọc to lời khủng long (cần giọng tiếng Việt trên máy)"
+        >
+          {readAloud ? "🔊 Đọc to: Bật" : "🔇 Đọc to: Tắt"}
+        </button>
         <span className="skills">
+          <span className="chip">{gradeText(game.grades)}</span>
           {game.skills.map((s) => (
             <span key={s} className="chip">
               {s}

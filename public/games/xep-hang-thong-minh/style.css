@@ -1,0 +1,35 @@
+:root { --sky1: #e3fafc; --sky2: #f3f0ff; --accent: #1098ad; }
+
+.board { min-height: 220px; display: flex; align-items: flex-end; justify-content: center; }
+.counter { text-align: center; font-weight: 800; font-size: 1.15rem; color: var(--accent); }
+
+/* ---------- Xếp hàng theo chiều cao ---------- */
+.line { display: flex; align-items: flex-end; justify-content: center; gap: 0; width: 100%; }
+.kid { display: flex; flex-direction: column; align-items: center; width: min(64px, 11vw); transition: transform .3s; }
+.kid .body {
+  width: 80%; border-radius: 14px 14px 4px 4px; background: var(--kc); display: flex; align-items: flex-start; justify-content: center;
+  color: #fff; font-weight: 800; font-size: 1.2rem; padding-top: 4px; box-shadow: 0 4px 0 rgba(0, 0, 0, .15); transition: height .3s;
+}
+.kid .face { font-size: 1.8rem; line-height: 1; }
+.kid.ok .body { box-shadow: 0 0 0 3px #8ce99a, 0 4px 0 rgba(0, 0, 0, .15); }
+.swap {
+  align-self: center; width: 30px; height: 30px; border-radius: 50%; background: #fff; font-weight: 800; font-size: .95rem;
+  box-shadow: 0 3px 0 #99e9f2; flex-shrink: 0; margin: 0 -4px; position: relative; z-index: 1;
+}
+.swap:active { transform: translateY(2px); box-shadow: none; }
+.swap.pair { background: #ffe066; }
+
+/* ---------- Dãy cửa ---------- */
+.doors { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; width: 100%; }
+.door {
+  width: min(52px, 15vw); height: 72px; border-radius: 10px 10px 4px 4px; background: #a0522d; color: #fff; position: relative;
+  font-weight: 800; font-size: .8rem; box-shadow: inset 0 0 0 4px #7c4a1e, 0 4px 0 #5c3a17; transition: opacity .3s, background .2s;
+}
+.door::after { content: ''; position: absolute; right: 8px; top: 38px; width: 6px; height: 6px; border-radius: 50%; background: #ffd43b; }
+.door small { position: absolute; top: 4px; left: 0; right: 0; opacity: .7; }
+.door.open { background: #fff9db; color: var(--ink); box-shadow: inset 0 0 0 4px #ffd43b, 0 4px 0 #fab005; font-size: 1.3rem; }
+.door.open::after { display: none; }
+.door.found { background: #d3f9d8; box-shadow: inset 0 0 0 4px #51cf66, 0 4px 0 #2f9e44; }
+.door.out { opacity: .25; pointer-events: none; }
+.doors.many .door { width: min(40px, 10.5vw); height: 58px; font-size: .7rem; }
+.doors.many .door.open { font-size: 1rem; }

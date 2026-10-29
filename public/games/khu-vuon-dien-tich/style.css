@@ -1,0 +1,34 @@
+:root { --sky1: #e6fcf5; --sky2: #f8f0e3; --accent: #0ca678; }
+
+.board { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.plot-card { background: var(--card); border-radius: 20px; padding: 12px; box-shadow: 0 6px 0 rgba(35, 57, 91, .1); text-align: center; }
+.plot-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
+
+/* ---------- Lưới ô vuông ---------- */
+.grid { display: grid; grid-template-columns: repeat(var(--cols), var(--cell)); gap: 0; justify-content: center; --cell: min(36px, 8.4vw); }
+.grid.small { --cell: min(26px, 6vw); }
+.cell {
+  width: var(--cell); height: var(--cell); background: #e9d8b4; border: 1px solid rgba(124, 74, 30, .18);
+  font-size: calc(var(--cell) * .6); line-height: 1; display: grid; place-items: center; padding: 0;
+}
+.cell.in { background: #8ce99a; border-color: rgba(43, 138, 62, .35); }
+.cell.planted::after { content: '🌷'; }
+.cell.pick { background: #ffe066; }
+.cell.sel { background: #74c0fc; border-color: #1c7ed6; }
+.cell.ft { border-top: 3px solid #a0522d; }
+.cell.fb { border-bottom: 3px solid #a0522d; }
+.cell.fl { border-left: 3px solid #a0522d; }
+.cell.fr { border-right: 3px solid #a0522d; }
+.size-note { margin-top: 6px; font-weight: 800; color: var(--accent); min-height: 1.5rem; }
+
+/* ---------- Hình có số đo ---------- */
+.calc { position: relative; margin: 26px 50px 30px; }
+.calc .shape {
+  background: repeating-linear-gradient(45deg, #8ce99a 0 10px, #69db7c 10px 20px); border: 4px solid #a0522d; border-radius: 4px;
+  display: grid; place-items: center; font-size: 2rem;
+}
+.calc .side { position: absolute; font-weight: 800; font-size: 1.15rem; background: #fff; border-radius: 8px; padding: 0 8px; white-space: nowrap; }
+.calc .side.top { top: -30px; left: 50%; transform: translateX(-50%); }
+.calc .side.left { left: -10px; top: 50%; transform: translate(-100%, -50%); }
+.calc .side.q { color: var(--bad); }
+.calc .info { position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%); font-weight: 800; white-space: nowrap; }

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Thợ Dệt Hoa Văn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="../shared/kit.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="stage">
+    <div class="looms">
+      <div id="targetCard" class="card loom">
+        <div class="label">🎯 Mẫu cần dệt</div>
+        <div id="target" class="grid"></div>
+      </div>
+      <div class="card loom">
+        <div class="label">🧵 Tấm vải của bé</div>
+        <div id="result" class="grid"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">📜 Chương trình <small>(chạm ❓ để đổi màu hạt, chạm số để đổi số lần lặp)</small></div>
+      <div id="program" class="program"></div>
+    </div>
+
+    <div class="controls">
+      <button id="weaveBtn" class="btn go">🧶 Dệt thử</button>
+    </div>
+  </div>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="../shared/kit.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

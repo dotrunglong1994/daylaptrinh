@@ -1,0 +1,43 @@
+:root { --sky1: #ffdeeb; --sky2: #fff0f6; --accent: #d6336c; }
+
+.label { font-weight: 800; margin-bottom: 8px; }
+.label small { font-weight: 500; opacity: .65; }
+
+.looms { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.loom { min-height: 110px; }
+.grid { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.grid .row { display: flex; gap: 4px; min-height: 26px; }
+.grid .row.hint { opacity: .5; }
+.dot { width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .2); flex-shrink: 0; }
+.dot.new { animation: dot-in .25s; }
+.dot.wrong { outline: 3px solid #fa5252; outline-offset: 1px; }
+.dot.ask { background: #fff; border: 2px dashed #adb5bd; box-shadow: none; display: grid; place-items: center; font-size: .8rem; font-weight: 800; color: #868e96; }
+@keyframes dot-in { from { transform: scale(0); } }
+.c-r { background: #fa5252; } .c-b { background: #339af0; } .c-y { background: #fcc419; }
+.c-g { background: #51cf66; } .c-p { background: #9775fa; } .c-w { background: #f1f3f5; }
+
+/* ---------- Chương trình (khối lồng nhau) ---------- */
+.program { display: flex; flex-direction: column; gap: 10px; }
+.blocks { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.blk {
+  display: inline-flex; align-items: center; gap: 6px; border-radius: 12px; padding: 6px 10px; font-weight: 800; color: #fff;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, .18);
+}
+.blk.loop { background: #f59f00; flex-direction: column; align-items: stretch; padding: 6px 8px 8px; }
+.blk.loop > .head { display: flex; align-items: center; gap: 6px; }
+.blk.loop > .blocks { background: rgba(255, 255, 255, .35); border-radius: 10px; padding: 6px; min-height: 40px; }
+.blk.nl { background: #495057; }
+.blk.call, .func { background: #7048e8; }
+.func { border-radius: 16px; padding: 8px 10px 10px; color: #fff; font-weight: 800; box-shadow: 0 4px 0 #5f3dc4; }
+.func > .blocks { background: rgba(255, 255, 255, .3); border-radius: 10px; padding: 6px; margin-top: 4px; }
+.main { border-radius: 16px; padding: 8px 10px 10px; background: #e9ecef; font-weight: 800; }
+.main > .blocks { margin-top: 4px; }
+
+.bead { width: 38px; height: 38px; border-radius: 50%; box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .2), 0 3px 0 rgba(0, 0, 0, .15); }
+.bead.slot.unset { background: #fff; border: 3px dashed #adb5bd; box-shadow: none; font-size: 1rem; }
+.bead.slot:not(.unset) { outline: 3px dashed rgba(0, 0, 0, .25); outline-offset: 2px; }
+.count { min-width: 40px; height: 34px; border-radius: 10px; background: #fff; color: var(--ink); font-size: 1.2rem; font-weight: 800; }
+.count.slot { outline: 3px dashed rgba(0, 0, 0, .3); outline-offset: 1px; }
+.count.unset { color: #adb5bd; }
+.fixed { cursor: default; }
+.running .slot { pointer-events: none; }

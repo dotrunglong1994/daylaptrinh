@@ -1,0 +1,48 @@
+:root { --sky1: #d3f9d8; --sky2: #ebfbee; --accent: #2f9e44; }
+
+.label { font-weight: 800; margin-bottom: 6px; }
+.label small { font-weight: 500; opacity: .65; }
+
+/* ---------- Nhà kho và các hộp biến ---------- */
+.warehouse {
+  display: flex; align-items: flex-end; gap: 12px; padding: 14px; border-radius: 20px; min-height: 140px;
+  background: repeating-linear-gradient(90deg, #ffe8cc 0 40px, #ffd8a8 40px 42px);
+  box-shadow: 0 6px 0 #e8590c33;
+}
+.robot { font-size: 3.4rem; line-height: 1; transition: transform .3s; }
+.robot.work { animation: work .4s; }
+@keyframes work { 50% { transform: translateY(-10px) rotate(-8deg); } }
+.boxes { display: flex; flex-wrap: wrap; gap: 12px; flex: 1; justify-content: center; }
+.box {
+  min-width: 92px; padding: 8px 10px 10px; border-radius: 14px; text-align: center;
+  background: #c0803f; color: #fff; box-shadow: 0 5px 0 #7c4a1e; position: relative;
+}
+.box .tag { display: inline-block; background: #fff; color: var(--ink); border-radius: 8px; padding: 0 8px; font-weight: 800; font-size: .95rem; }
+.box .val { display: block; font-size: 2rem; font-weight: 800; line-height: 1.1; text-shadow: 0 2px 0 rgba(0, 0, 0, .25); }
+.box .val.secret { opacity: .7; }
+.box.changed { animation: changed .5s; }
+.box.goal { outline: 3px dashed #2f9e44; outline-offset: 3px; }
+.box small { display: block; font-size: .78rem; font-weight: 700; }
+@keyframes changed { 40% { transform: scale(1.15); background: #f08c00; } }
+
+/* ---------- Chương trình ---------- */
+.code { list-style: none; counter-reset: line; font-family: ui-monospace, Menlo, monospace; font-size: 1.15rem; font-weight: 700; }
+.code li {
+  counter-increment: line; padding: 4px 10px 4px 40px; border-radius: 10px; position: relative; white-space: pre;
+}
+.code li::before { content: counter(line); position: absolute; left: 10px; opacity: .4; }
+.code li.now { background: #fff3bf; }
+.code li.loop { color: #e8590c; }
+.code li.removable { cursor: pointer; }
+.code li.removable:hover { background: #ffe3e3; }
+.code li.empty { opacity: .5; font-family: 'Baloo 2', sans-serif; }
+.code .kw { color: #e8590c; }
+.code .num { color: #1971c2; }
+
+.cards { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+.cmd {
+  font-family: ui-monospace, Menlo, monospace; font-weight: 800; font-size: 1.05rem; padding: 8px 14px; border-radius: 12px;
+  background: #4c6ef5; color: #fff; box-shadow: 0 4px 0 #364fc7;
+}
+.cmd:active { transform: translateY(3px); box-shadow: none; }
+.running .cmd, .running .code li { pointer-events: none; }

@@ -1,5 +1,7 @@
 // Khủng long cổ vũ dùng chung cho các game.
 // Gắn hình vào mọi phần tử có [data-dino]; mascotSay() cần #mascot và #bubble trong trang.
+// Lời khủng long được đọc to bằng giọng tiếng Việt của trình duyệt (nếu máy có), bé chạm bong bóng để nghe lại.
+// Website bật/tắt đọc to bằng localStorage "bhv-read-aloud" (cùng origin với game).
 (function () {
   const SVG = `
 <svg viewBox="0 0 120 120" aria-hidden="true">
@@ -24,7 +26,41 @@
   <path class="m-sad" d="M89 65 Q96 59 103 64" stroke="#23395b" stroke-width="3" fill="none" stroke-linecap="round" />
   <path d="M68 82 q9 2 11 -7" stroke="#3fae68" stroke-width="6" fill="none" stroke-linecap="round" />
 </svg>`;
-  document.querySelectorAll('[data-dino]').forEach((el) => (el.innerHTML = SVG));
+  window.mountDino = (root = document) => root.querySelectorAll('[data-dino]').forEach((el) => (el.innerHTML = SVG));
+  window.mountDino();
+
+  /* ---------- Đọc to ---------- */
+  const synth = window.speechSynthesis;
+  let voice = null;
+  function pickVoice() {
+    voice = synth?.getVoices().find((v) => v.lang.toLowerCase().replace('_', '-').startsWith('vi')) || null;
+  }
+  if (synth) {
+    pickVoice();
+    synth.addEventListener?.('voiceschanged', pickVoice);
+  }
+  const SPOKEN = [
+    [/\p{Extended_Pictographic}|\uFE0F|\u200D/gu, ''],
+    [/ \+ /g, ' cộng '], [/ [−-] /g, ' trừ '], [/ × /g, ' nhân '], [/ [:÷] /g, ' chia '],
+    [/ = /g, ' bằng '], [/ > /g, ' lớn hơn '], [/ < /g, ' bé hơn '], [/\?{2,}|…/g, ' '],
+  ];
+  window.speak = function (text) {
+    try {
+      if (!synth || !voice || localStorage.getItem('bhv-read-aloud') === 'off') return;
+      const clean = SPOKEN.reduce((t, [re, to]) => t.replace(re, to), String(text)).trim();
+      synth.cancel();
+      if (!clean) return;
+      const u = new SpeechSynthesisUtterance(clean);
+      u.voice = voice;
+      u.lang = voice.lang;
+      u.rate = 0.95;
+      synth.speak(u);
+    } catch {}
+  };
+  document.addEventListener('click', (e) => {
+    const bubble = e.target.closest?.('#bubble');
+    if (bubble) window.speak(bubble.textContent);
+  });
 
   const MOODS = ['happy', 'cheer', 'sad'];
   let timer;
@@ -38,6 +74,7 @@
     if (mood) mascot.classList.add(mood);
     bubble.textContent = text;
     bubble.className = `bubble show ${kind}`;
+    window.speak(text);
     clearTimeout(timer);
     if (duration > 0) {
       timer = setTimeout(() => {

@@ -1,0 +1,47 @@
+:root { --sky1: #d8f5a2; --sky2: #f4fce3; --accent: #5c940d; }
+
+.label { font-weight: 800; margin-bottom: 8px; text-align: center; }
+
+/* ---------- Cánh đồng ---------- */
+.field {
+  position: relative; height: 210px; border-radius: 20px; overflow: hidden;
+  background: radial-gradient(circle at 20% 30%, #b2f2bb 0 12%, transparent 13%), radial-gradient(circle at 80% 70%, #b2f2bb 0 14%, transparent 15%), #8ce99a;
+  box-shadow: 0 6px 0 #51cf66;
+}
+.field .ani {
+  position: absolute; font-size: 1.9rem; line-height: 1; background: none; transform: translate(-50%, -50%);
+  transition: transform .15s;
+}
+.field .ani.counted { filter: grayscale(.8) opacity(.55); }
+.field .ani.counted::after { content: '✓'; position: absolute; right: -6px; top: -6px; font-size: .9rem; font-weight: 800; color: #fff; background: var(--good); border-radius: 50%; width: 18px; height: 18px; line-height: 18px; text-align: center; }
+.field .ani:active { transform: translate(-50%, -50%) scale(.85); }
+
+/* ---------- Biểu đồ tranh ---------- */
+.pic-rows { display: flex; flex-direction: column; gap: 8px; }
+.pic-row { display: flex; align-items: center; gap: 8px; }
+.pic-row .name { width: 74px; font-weight: 800; flex-shrink: 0; }
+.pic-row .icons { flex: 1; min-height: 40px; display: flex; flex-wrap: wrap; gap: 2px; align-items: center; background: #f8f9fa; border-radius: 10px; padding: 2px 6px; font-size: 1.6rem; line-height: 1; }
+.legend { text-align: center; margin-top: 8px; font-weight: 700; opacity: .8; }
+
+.pm { display: flex; gap: 4px; flex-shrink: 0; }
+.pm button { width: 36px; height: 36px; border-radius: 10px; background: #eef3ff; font-size: 1.3rem; font-weight: 800; box-shadow: 0 3px 0 #c9d4f2; }
+.pm button:active { transform: translateY(2px); box-shadow: none; }
+
+/* ---------- Biểu đồ cột ---------- */
+.plot { display: flex; flex-direction: column; margin: 18px 0 0 34px; }
+.plot-area .yl { position: absolute; left: -36px; width: 30px; text-align: right; transform: translateY(50%); font-size: .8rem; font-weight: 700; }
+.plot-area {
+  position: relative; height: var(--h, 200px); display: flex; justify-content: space-around; align-items: flex-end;
+  border-left: 2px solid #495057; border-bottom: 2px solid #495057;
+  background-image: linear-gradient(#dee2e6 1px, transparent 1px); background-size: 100% calc(100% / var(--rows));
+  background-position: 0 -1px;
+}
+.bar { width: min(56px, 18%); background: var(--accent); border-radius: 8px 8px 0 0; position: relative; transition: height .25s; }
+.bar.c1 { background: #f76707; } .bar.c2 { background: #1c7ed6; } .bar.c3 { background: #ae3ec9; } .bar.c4 { background: #e8590c; }
+.x-axis { display: flex; justify-content: space-around; padding-top: 4px; }
+.x-axis div { width: 70px; text-align: center; }
+.x-axis .em { font-size: 1.6rem; line-height: 1; }
+.x-axis small { display: block; font-weight: 800; }
+.x-axis .pm { justify-content: center; margin-top: 4px; }
+
+.chart-card.ok { box-shadow: 0 0 0 4px #8ce99a, 0 6px 0 rgba(35, 57, 91, .1); }

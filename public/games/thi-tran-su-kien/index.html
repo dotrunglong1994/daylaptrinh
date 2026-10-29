@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Thị Trấn Sự Kiện</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="../shared/kit.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="stage">
+    <div class="card goals">
+      <div class="label">🎯 Yêu cầu</div>
+      <ul id="goals"></ul>
+    </div>
+
+    <div class="town-wrap">
+      <div id="town" class="town"></div>
+      <div class="triggers">
+        <button id="flagBtn" class="trig flag" title="Bấm cờ 🏁">🏁</button>
+        <span id="keyBtns"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="label">🧩 Chương trình <small>(chạm vào ô ❓ để chọn khối)</small></div>
+      <div id="scripts" class="scripts"></div>
+    </div>
+
+    <div class="controls">
+      <button id="testBtn" class="btn go">▶ Kiểm tra</button>
+    </div>
+  </div>
+
+  <div id="picker" class="modal hidden">
+    <div class="panel picker">
+      <h3 id="pickTitle"></h3>
+      <div id="pickList" class="pick-list"></div>
+      <button id="pickCancel" class="btn ghost">Đóng</button>
+    </div>
+  </div>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="../shared/kit.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Bếp Cân Đong</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="../shared/kit.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="stage">
+    <div class="card recipe">
+      <div id="dish" class="dish"></div>
+      <ul id="steps"></ul>
+    </div>
+    <p id="question" class="question card"></p>
+
+    <div id="tool" class="tool"></div>
+    <div id="readout" class="readout"></div>
+
+    <div id="scoopRow" class="controls"></div>
+    <div id="doneRow" class="controls">
+      <button id="undoBtn" class="btn ghost">↩ Bớt ra</button>
+      <button id="doneBtn" class="btn go">✅ Đủ rồi</button>
+    </div>
+    <div id="choices" class="choices"></div>
+  </div>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="../shared/kit.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

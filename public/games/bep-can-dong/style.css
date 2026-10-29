@@ -1,0 +1,47 @@
+:root { --sky1: #fff0f6; --sky2: #fff9db; --accent: #f76707; }
+
+.recipe { display: flex; flex-direction: column; gap: 4px; }
+.dish { font-size: 1.3rem; font-weight: 800; text-align: center; }
+.recipe ul { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; }
+.recipe li { font-weight: 700; opacity: .55; }
+.recipe li.now { opacity: 1; color: var(--accent); }
+.recipe li.done { opacity: 1; }
+.recipe li.done::before { content: '✅ '; }
+
+.tool { display: grid; place-items: center; min-height: 220px; }
+
+/* ---------- Cân đồng hồ ---------- */
+.scale { width: min(340px, 90vw); }
+.scale svg { width: 100%; height: auto; display: block; }
+.scale .body { fill: #ff8787; }
+.scale .dial { fill: #fff; stroke: #c92a2a; stroke-width: 3; }
+.scale .tk { stroke: #495057; stroke-width: 1.2; }
+.scale .tk.major { stroke: #23395b; stroke-width: 2.5; }
+.scale .lb { font: 800 10px 'Baloo 2', sans-serif; fill: #23395b; text-anchor: middle; }
+.scale .needle { stroke: #e03131; stroke-width: 3; stroke-linecap: round; transition: transform .5s cubic-bezier(.3, 1.6, .6, 1); }
+.scale .unit { font: 800 11px 'Baloo 2', sans-serif; fill: #868e96; text-anchor: middle; }
+.scale .bowl { font-size: 34px; text-anchor: middle; }
+
+/* ---------- Ca đong ---------- */
+.jug { display: flex; align-items: flex-end; gap: 6px; }
+.jug .glass {
+  position: relative; width: 130px; height: 220px; border: 4px solid #74c0fc; border-top: 0; border-radius: 0 0 22px 22px;
+  background: rgba(255, 255, 255, .7); overflow: hidden;
+}
+.jug .water { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(#74c0fc, #339af0); transition: height .5s; }
+.jug .water.milk { background: linear-gradient(#fff, #f1f3f5); box-shadow: inset 0 0 0 2px #dee2e6; }
+.jug .water.juice { background: linear-gradient(#ffc078, #fd7e14); }
+.jug .mark { position: absolute; left: 0; width: 22px; height: 2px; background: #1c7ed6; z-index: 1; }
+.jug .mark.minor { width: 12px; opacity: .7; }
+.jug .mark span { position: absolute; left: 26px; top: -9px; font-size: .78rem; font-weight: 800; white-space: nowrap; color: #1864ab; }
+.jug .handle { width: 26px; height: 110px; border: 6px solid #74c0fc; border-left: 0; border-radius: 0 30px 30px 0; margin-bottom: 60px; }
+
+.readout { text-align: center; font-size: 1.4rem; font-weight: 800; color: var(--accent); min-height: 1.8rem; }
+.readout.secret { color: #adb5bd; }
+
+.scoop {
+  font-size: 1.15rem; font-weight: 800; padding: 10px 18px; border-radius: 16px; background: #fff;
+  box-shadow: 0 5px 0 #ffd8a8;
+}
+.scoop:active { transform: translateY(3px); box-shadow: 0 2px 0 #ffd8a8; }
+.running .scoop, .running #doneRow button { pointer-events: none; }

@@ -1,0 +1,113 @@
+/* ---------- Khung dùng chung cho game dựng bằng kit.js ---------- */
+/* Mỗi game có thể đặt lại --sky1, --sky2, --accent trong style.css của mình. */
+:root {
+  --sky1: #d0ebff;
+  --sky2: #e7f5ff;
+  --ink: #23395b;
+  --accent: #4c6ef5;
+  --good: #2bb673;
+  --bad: #fa5252;
+  --card: rgba(255, 255, 255, 0.94);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Baloo 2', system-ui, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(var(--sky1), var(--sky2));
+  background-attachment: fixed;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+button { font: inherit; color: inherit; cursor: pointer; border: 0; }
+button:disabled { cursor: default; }
+.hidden { display: none !important; }
+
+.panel {
+  background: var(--card); border-radius: 28px; padding: 28px 24px; width: min(560px, 100%);
+  text-align: center; box-shadow: 0 12px 0 rgba(35, 57, 91, .12), 0 20px 40px rgba(35, 57, 91, .15);
+}
+h1 { font-size: clamp(1.8rem, 6vw, 2.5rem); line-height: 1.15; }
+.sub { opacity: .75; margin-top: 4px; }
+.row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+
+.btn {
+  font-size: 1.2rem; font-weight: 800; padding: 10px 24px; border-radius: 999px;
+  transition: transform .1s, box-shadow .1s;
+}
+.btn.go { background: var(--good); color: #fff; box-shadow: 0 5px 0 #1e8c57; }
+.btn.ghost { background: #eef3ff; box-shadow: 0 5px 0 #c9d4f2; }
+.btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0, 0, 0, .2); }
+.btn:disabled { opacity: .5; }
+
+/* ---------- Chọn màn ---------- */
+#levels { min-height: 100%; display: grid; place-items: center; padding: 16px; }
+.level-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+.level-grid button {
+  aspect-ratio: 1; border-radius: 18px; background: #eef3ff; font-size: 1.8rem; font-weight: 800;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1;
+  box-shadow: 0 5px 0 #c9d4f2; transition: transform .12s;
+}
+.level-grid button:hover:not(:disabled) { transform: translateY(-3px); }
+.level-grid button small { font-size: .8rem; margin-top: 6px; letter-spacing: 1px; }
+.level-grid button.done { background: #e6fcf0; box-shadow: 0 5px 0 #a9e5c4; }
+.level-grid button:disabled { opacity: .45; }
+
+/* ---------- Màn chơi ---------- */
+#play { min-height: 100%; display: flex; flex-direction: column; gap: 10px; padding: 10px 16px 16px; max-width: 760px; margin: 0 auto; }
+.hud { display: flex; align-items: center; gap: 10px; }
+.hud h2 { flex: 1; text-align: center; font-size: 1.4rem; }
+.icon {
+  background: var(--card); width: 44px; height: 44px; border-radius: 14px; font-size: 1.3rem;
+  box-shadow: 0 3px 0 rgba(35, 57, 91, .15); flex-shrink: 0;
+}
+.icon.off { opacity: .4; }
+
+.round-dots { display: flex; justify-content: center; gap: 6px; min-height: 0; }
+.round-dots:empty { display: none; }
+.round-dots i { width: 12px; height: 12px; border-radius: 50%; background: rgba(35, 57, 91, .15); }
+.round-dots i.done { background: var(--good); }
+.round-dots i.now { background: var(--accent); transform: scale(1.25); }
+
+.guide { display: flex; align-items: center; gap: 4px; min-height: 76px; }
+.guide .mascot { width: 76px; height: 76px; }
+.guide .bubble { margin: 0; white-space: normal; font-size: 1.05rem; border-radius: 18px 18px 18px 4px; flex: 1; }
+
+#stage { display: flex; flex-direction: column; gap: 12px; }
+.card { background: var(--card); border-radius: 20px; padding: 14px; box-shadow: 0 6px 0 rgba(35, 57, 91, .1); }
+.question { font-size: 1.25rem; font-weight: 800; text-align: center; line-height: 1.35; }
+.controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* Nút đáp án (renderChoices) */
+.choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.choice {
+  background: #fff; border-radius: 16px; padding: 10px 8px; font-size: 1.3rem; font-weight: 800;
+  box-shadow: 0 5px 0 #c9d4f2; transition: transform .1s;
+}
+.choice:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 #c9d4f2; }
+.choice.right { background: #d3f9d8; box-shadow: 0 5px 0 #8ce99a; animation: bounce .4s; }
+.choice.wrong { background: #ffe3e3; box-shadow: 0 5px 0 #ffa8a8; opacity: .7; animation: shake .35s; }
+.choices.locked .choice:not(.right) { opacity: .45; }
+@keyframes bounce { 40% { transform: scale(1.08); } }
+@keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.shake { animation: shake .35s; }
+
+/* ---------- Bảng thắng ---------- */
+.modal { position: fixed; inset: 0; background: rgba(35, 57, 91, .45); display: grid; place-items: center; padding: 16px; z-index: 10; }
+.modal .panel { animation: pop .3s; }
+@keyframes pop { from { transform: scale(.7); opacity: 0; } }
+.stars { font-size: 3.4rem; margin: 8px 0; letter-spacing: 6px; }
+.stars span { display: inline-block; filter: grayscale(1); opacity: .3; }
+.stars span.on { filter: none; opacity: 1; animation: starIn .5s backwards; }
+.stars span:nth-child(2) { animation-delay: .2s; }
+.stars span:nth-child(3) { animation-delay: .4s; }
+@keyframes starIn { from { transform: scale(0) rotate(-90deg); } 70% { transform: scale(1.3); } }
+.equation { font-size: 1.3rem; font-weight: 800; color: var(--accent); margin-top: 4px; }
+.equation:empty { display: none; }
+
+@media (max-width: 520px) {
+  .question { font-size: 1.1rem; }
+  .choice { font-size: 1.15rem; }
+}

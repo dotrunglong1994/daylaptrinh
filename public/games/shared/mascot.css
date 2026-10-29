@@ -25,7 +25,7 @@
   box-shadow: 0 4px 0 rgba(35, 57, 91, .12);
   opacity: 0; transform: scale(.6); transform-origin: bottom left; transition: .2s;
 }
-.bubble.show { opacity: 1; transform: scale(1); }
+.bubble.show { opacity: 1; transform: scale(1); cursor: pointer; }
 .bubble.good { color: var(--good, #2bb673); }
 .bubble.soft { color: #e8590c; }
 

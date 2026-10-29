@@ -1,0 +1,78 @@
+:root { --sky1: #e5dbff; --sky2: #f3f0ff; --accent: #7048e8; }
+
+.label { font-weight: 800; margin-bottom: 6px; }
+.label small { font-weight: 500; opacity: .65; }
+
+.goals ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.goals li { font-size: 1.05rem; padding-left: 30px; position: relative; }
+.goals li::before { content: '⬜'; position: absolute; left: 0; }
+.goals li.ok::before { content: '✅'; }
+.goals li.bad::before { content: '❌'; }
+
+/* ---------- Thị trấn ---------- */
+.town-wrap { position: relative; }
+.town {
+  position: relative; height: 190px; border-radius: 20px; overflow: hidden;
+  background: linear-gradient(#a5d8ff 0 62%, #8ce99a 62%);
+  box-shadow: 0 6px 0 #69db7c; display: flex; align-items: flex-end; justify-content: space-around; padding-bottom: 26px;
+}
+.actor {
+  position: relative; font-size: 3.2rem; line-height: 1; width: 72px; text-align: center;
+  background: none; transition: transform .35s, opacity .3s;
+}
+.actor .name { display: block; font-size: .8rem; font-weight: 800; color: #2b8a3e; }
+.actor .say {
+  position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) scale(0); transform-origin: bottom center;
+  background: #fff; border-radius: 12px; padding: 2px 10px; font-size: .95rem; font-weight: 800; white-space: nowrap;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, .12); transition: transform .2s;
+}
+.actor .say.show { transform: translateX(-50%) scale(1); }
+.actor.a-jump { animation: a-jump .6s; }
+.actor.a-spin { animation: a-spin .6s; }
+.actor.a-grow { animation: a-grow .6s; }
+.actor.a-up { animation: a-up .8s; }
+.actor.a-left { animation: a-left .7s; }
+.actor.a-right { animation: a-right .7s; }
+.actor.a-hide { animation: a-hide .9s; }
+.actor.a-send { animation: a-send .6s; }
+.actor.tapped { animation: tapped .3s; }
+@keyframes a-jump { 40% { transform: translateY(-46px); } }
+@keyframes a-spin { to { transform: rotate(360deg); } }
+@keyframes a-grow { 50% { transform: scale(1.6); } }
+@keyframes a-up { 50% { transform: translateY(-90px); } }
+@keyframes a-left { 50% { transform: translateX(-60px); } }
+@keyframes a-right { 50% { transform: translateX(60px); } }
+@keyframes a-hide { 30%, 70% { opacity: 0; } }
+@keyframes a-send { 30%, 60% { filter: drop-shadow(0 0 10px #ffd43b); transform: scale(1.15); } }
+@keyframes tapped { 50% { transform: scale(.85); } }
+
+.triggers { position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; }
+.triggers span { display: flex; gap: 6px; }
+.trig {
+  background: #fff; border-radius: 12px; min-width: 44px; height: 44px; padding: 0 8px;
+  font-size: 1.3rem; font-weight: 800; box-shadow: 0 3px 0 rgba(0, 0, 0, .15);
+}
+.trig.flag { background: #d3f9d8; }
+.trig.pressed { animation: tapped .3s; background: #ffe066; }
+
+/* ---------- Khối lệnh ---------- */
+.scripts { display: flex; flex-direction: column; gap: 10px; }
+.script { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; background: #f8f9ff; border-radius: 16px; padding: 8px; }
+.script .arrow { font-weight: 800; opacity: .5; }
+.chip {
+  border-radius: 12px; padding: 6px 12px; font-weight: 800; font-size: 1rem; min-width: 52px;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, .18); color: #fff;
+}
+.chip.actor-chip { background: #fff; color: var(--ink); box-shadow: 0 4px 0 #ced4da; font-size: 1.4rem; padding: 2px 10px; }
+.chip.event { background: #f59f00; box-shadow: 0 4px 0 #c77c02; border-radius: 18px 18px 12px 12px; }
+.chip.action { background: #4c6ef5; box-shadow: 0 4px 0 #364fc7; }
+.chip.empty { background: #e9ecef; color: #868e96; box-shadow: 0 4px 0 #ced4da; }
+.chip.locked { cursor: default; }
+.chip.locked::after { content: ' 🔒'; font-size: .75rem; }
+.chip:active:not(.locked) { transform: translateY(3px); box-shadow: none; }
+.running .chip { pointer-events: none; }
+
+/* ---------- Bảng chọn khối ---------- */
+.picker h3 { font-size: 1.3rem; margin-bottom: 12px; }
+.pick-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 16px; }
+.pick-list .chip { font-size: 1.1rem; padding: 10px 14px; }

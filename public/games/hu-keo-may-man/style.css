@@ -1,0 +1,29 @@
+:root { --sky1: #fff0f6; --sky2: #e5dbff; --accent: #ae3ec9; }
+
+.jars { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.jar-wrap { text-align: center; }
+.jar-wrap h3 { font-size: 1.1rem; }
+.jar {
+  position: relative; width: 170px; min-height: 170px; padding: 26px 12px 12px; border-radius: 26px 26px 36px 36px;
+  background: rgba(255, 255, 255, .6); border: 4px solid #cc5de8; display: flex; flex-wrap: wrap-reverse; align-content: flex-start;
+  justify-content: center; gap: 4px;
+}
+.jar::before { content: ''; position: absolute; top: -14px; left: 30px; right: 30px; height: 16px; border-radius: 8px; background: #cc5de8; }
+.jar.pick { animation: shake .4s 2; }
+.candy { width: 30px; height: 30px; border-radius: 50%; box-shadow: inset -4px -4px 0 rgba(0, 0, 0, .15), inset 4px 4px 0 rgba(255, 255, 255, .5); padding: 0; }
+.candy.new { animation: drop .3s; }
+.candy.drawn { outline: 4px solid #ffd43b; outline-offset: 2px; transform: scale(1.2); }
+.jar.edit .candy { cursor: pointer; }
+@keyframes drop { from { transform: translateY(-40px); opacity: 0; } }
+.k-r { background: #fa5252; } .k-b { background: #339af0; } .k-y { background: #fcc419; } .k-g { background: #51cf66; }
+
+.add { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 14px; background: #fff; font-weight: 800; box-shadow: 0 4px 0 #e5dbff; }
+.add .candy { width: 22px; height: 22px; display: inline-block; }
+.add:active { transform: translateY(3px); box-shadow: none; }
+
+.draw-card { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.tally { display: flex; gap: 10px; font-weight: 800; flex-wrap: wrap; }
+.tally span { display: inline-flex; align-items: center; gap: 4px; }
+.tally .candy { width: 18px; height: 18px; display: inline-block; }
+.frac { display: inline-flex; flex-direction: column; align-items: center; line-height: 1; vertical-align: middle; }
+.frac i { font-style: normal; border-top: 2px solid currentColor; padding-top: 2px; }

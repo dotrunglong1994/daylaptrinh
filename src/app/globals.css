@@ -130,8 +130,15 @@ a.node:hover { transform: translateX(6px) scale(1.02); }
 .node-info { display: flex; flex-direction: column; line-height: 1.25; }
 .node-info strong { font-size: 1.2rem; }
 .node-info small { color: var(--muted); }
-.node-meta { display: flex; gap: 8px; align-items: center; margin-top: 2px; }
+.node-meta { display: flex; gap: 8px; align-items: center; margin-top: 2px; flex-wrap: wrap; }
 .node-meta em { font-style: normal; font-size: .85rem; font-weight: 700; color: var(--c); }
+.grade-chip { font-size: .75rem; font-weight: 800; border-radius: 999px; padding: 0 8px; background: color-mix(in srgb, var(--c) 15%, white); color: var(--c); white-space: nowrap; }
+.grade-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.grade-filter button {
+  font: inherit; font-weight: 800; border: 0; cursor: pointer; border-radius: 999px; padding: 6px 16px;
+  background: #fff; box-shadow: 0 3px 0 #c5d8ee;
+}
+.grade-filter button.on { background: var(--primary); color: #fff; box-shadow: 0 3px 0 var(--primary-shadow); }
 
 .star-row span { filter: grayscale(1); opacity: .3; }
 .star-row span.on { filter: none; opacity: 1; }
