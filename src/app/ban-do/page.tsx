@@ -8,7 +8,10 @@ import { useProgress } from "@/lib/progress";
 
 export default function MapPage() {
   const progress = useProgress();
-  const [grade, setGrade] = useState<number | null>(null);
+  // undefined = bé chưa tự bấm lọc, dùng lớp trong hồ sơ
+  const [picked, setGrade] = useState<number | null | undefined>(undefined);
+  const myGrade = progress.profile?.grade ?? null;
+  const grade = picked === undefined ? myGrade : picked;
 
   return (
     <div className="page">
@@ -22,11 +25,19 @@ export default function MapPage() {
           Tất cả
         </button>
         {GRADES.map((n) => (
-          <button key={n} className={grade === n ? "on" : ""} onClick={() => setGrade(n)}>
+          <button
+            key={n}
+            className={[grade === n && "on", myGrade === n && "mine"].filter(Boolean).join(" ")}
+            onClick={() => setGrade(n)}
+          >
             Lớp {n}
+            {myGrade === n && " ⭐"}
           </button>
         ))}
       </div>
+      {progress.loaded && progress.profile && myGrade === null && (
+        <p className="muted map-hint">Bấm vào tên bé ở góc trên để chọn lớp, bản đồ sẽ chỉ hiện game hợp với bé.</p>
+      )}
 
       <div className="islands">
         {SUBJECTS.map((s) => (

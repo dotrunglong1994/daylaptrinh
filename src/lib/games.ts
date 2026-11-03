@@ -272,3 +272,30 @@ export function gradeText(grades: number[]) {
   const hi = Math.max(...grades);
   return lo === hi ? `Lớp ${lo}` : `Lớp ${lo}–${hi}`;
 }
+
+/** Game chơi được, hợp với lớp của bé */
+export const gamesForGrade = (grade: number) => GAMES.filter((g) => g.src && g.grades.includes(grade));
+
+type Played = Record<string, { bestStars: number; lastPlayed: string }>;
+
+/**
+ * Gợi ý game cho bé: game hợp lớp mà bé chưa chơi đứng trước, rồi tới game còn ít sao,
+ * cùng số sao thì game lâu chưa chơi đứng trước. Mỗi đảo lấy xen kẽ để có cả toán lẫn lập trình.
+ */
+export function suggestGames(grade: number, played: Played, count = 3): Game[] {
+  const rank = (g: Game) => {
+    const r = played[g.id];
+    return r ? [1 + r.bestStars, Date.parse(r.lastPlayed)] : [0, 0];
+  };
+  const byNeed = (a: Game, b: Game) => {
+    const [x, y] = [rank(a), rank(b)];
+    return x[0] - y[0] || x[1] - y[1];
+  };
+  const pending = gamesForGrade(grade).filter((g) => (played[g.id]?.bestStars ?? 0) < 3);
+  const lists = SUBJECTS.map((s) => pending.filter((g) => g.subject === s.id).sort(byNeed));
+  const picked: Game[] = [];
+  for (let i = 0; picked.length < count && lists.some((l) => i < l.length); i++) {
+    for (const l of lists) if (l[i] && picked.length < count) picked.push(l[i]);
+  }
+  return picked;
+}

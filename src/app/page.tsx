@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Dino from "@/components/Dino";
+import Suggestions from "@/components/Suggestions";
 import { GAMES, SITE_NAME, SUBJECTS } from "@/lib/games";
 
 const FEATURES = [
@@ -23,6 +24,8 @@ export default function Home() {
           </Link>
         </div>
       </section>
+
+      <Suggestions />
 
       <section className="features">
         {FEATURES.map((f) => (

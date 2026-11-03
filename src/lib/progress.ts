@@ -16,7 +16,12 @@ import {
 // Tiến độ của bé, luôn lưu trong localStorage của trình duyệt.
 // Nếu phụ huynh đăng nhập, src/lib/cloud.ts đồng bộ thêm bản sao lên Supabase.
 
-export type Profile = { name: string; avatar: string };
+export type Profile = {
+  name: string;
+  avatar: string;
+  /** Lớp của bé (1–5). Không có = chưa chọn, bản đồ hiện mọi game. */
+  grade?: number;
+};
 
 export type GameRecord = {
   bestStars: number;

@@ -33,16 +33,17 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 
 | Đường dẫn | Nội dung |
 |---|---|
-| `/` | Trang chủ |
-| `/ban-do` | Bản đồ phiêu lưu: Đảo Toán Học và Đảo Lập Trình |
+| `/` | Trang chủ, gợi ý game hôm nay theo lớp của bé |
+| `/ban-do` | Bản đồ phiêu lưu: Đảo Toán Học và Đảo Lập Trình, tự lọc theo lớp của bé |
 | `/choi/[gameId]` | Chơi một game (game chạy trong iframe) |
 | `/thu-cung` | Thú cưng ảo: cho ăn, vuốt ve, cửa hàng, chuỗi ngày học |
-| `/phu-huynh` | Góc phụ huynh: sao, xu, lượt chơi, chuỗi ngày học |
+| `/phu-huynh` | Góc phụ huynh: sao, xu, lượt chơi, chuỗi ngày học, tiến độ theo lớp |
 
 ## Các game
 
 23 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
-Bản đồ có bộ lọc theo lớp.
+Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bản đồ mặc định lọc theo lớp đó, trang chủ gợi ý
+3 game hợp lớp mà bé chưa chơi hoặc chưa đủ 3 sao (`suggestGames` trong `src/lib/games.ts`, xen kẽ toán và lập trình).
 
 | Game | Đảo | Lớp | Dạy gì |
 |---|---|---|---|
@@ -117,5 +118,5 @@ chơi game lưu lựa chọn vào localStorage `bhv-read-aloud`.
 ## Việc tiếp theo
 
 - Một tài khoản phụ huynh quản lý nhiều bé (hiện mỗi tài khoản một hồ sơ bé).
-- Chọn lớp của bé trong hồ sơ để bản đồ tự lọc, gợi ý game theo lớp.
+- Thêm game cho lớp 1 (hiện chỉ 6 game, 1 game lập trình) và các chủ đề lớp 4–5 còn thiếu: góc, thể tích, vận tốc.
 - Thêm lớp học cho giáo viên.

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { GRADES } from "@/lib/games";
 import { setProfile, type Profile } from "@/lib/progress";
 import Dino from "./Dino";
 
@@ -9,12 +10,13 @@ const AVATARS = ["🦖", "🐱", "🐶", "🐰", "🦊", "🐼", "🐯", "🦄"]
 export default function ProfileModal({ initial, onDone }: { initial: Profile | null; onDone: () => void }) {
   const [name, setName] = useState(initial?.name ?? "");
   const [avatar, setAvatar] = useState(initial?.avatar ?? AVATARS[0]);
+  const [grade, setGrade] = useState<number | undefined>(initial?.grade);
   const trimmed = name.trim();
 
   function save(e: React.FormEvent) {
     e.preventDefault();
     if (!trimmed) return;
-    setProfile({ name: trimmed, avatar });
+    setProfile({ name: trimmed, avatar, ...(grade && { grade }) });
     onDone();
   }
 
@@ -42,6 +44,20 @@ export default function ProfileModal({ initial, onDone }: { initial: Profile | n
               aria-label={`Chọn ${a}`}
             >
               {a}
+            </button>
+          ))}
+        </div>
+        <p className="muted">Bé đang học lớp mấy?</p>
+        <div className="grade-filter grade-pick" role="group" aria-label="Lớp của bé">
+          {GRADES.map((n) => (
+            <button
+              type="button"
+              key={n}
+              className={grade === n ? "on" : ""}
+              aria-pressed={grade === n}
+              onClick={() => setGrade(grade === n ? undefined : n)}
+            >
+              Lớp {n}
             </button>
           ))}
         </div>
