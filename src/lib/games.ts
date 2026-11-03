@@ -173,6 +173,16 @@ export const GAMES: Game[] = [
     src: "/games/cua-hang-giam-gia/index.html",
   },
   {
+    id: "chu-ech-nhay",
+    title: "Chú Ếch Nhảy",
+    emoji: "🐸",
+    subject: "lap-trinh",
+    description: "Đọc lệnh, tìm quy luật, giúp ếch nhảy qua lá sen",
+    skills: ["Đọc lệnh", "Quy luật", "Tuần tự", "Sửa lỗi"],
+    grades: [1, 2],
+    src: "/games/chu-ech-nhay/index.html",
+  },
+  {
     id: "robot-tim-duong",
     title: "Robot Tìm Đường",
     emoji: "🤖",

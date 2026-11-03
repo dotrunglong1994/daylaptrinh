@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Chú Ếch Nhảy</title>
+  <link rel="icon" href="data:," />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="../shared/kit.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="stage">
+    <p id="question" class="question card" title="Chạm để nghe lại"></p>
+    <div id="program" class="program hidden"></div>
+    <div id="pond" class="pond hidden"></div>
+    <div id="palette" class="palette hidden">
+      <button class="pal" data-dir="up" aria-label="Lên">⬆️</button>
+      <button class="pal" data-dir="down" aria-label="Xuống">⬇️</button>
+      <button class="pal" data-dir="left" aria-label="Sang trái">⬅️</button>
+      <button class="pal" data-dir="right" aria-label="Sang phải">➡️</button>
+      <button class="pal back" data-dir="back" id="backBtn2" aria-label="Xóa lệnh cuối">⌫</button>
+    </div>
+    <div id="runRow" class="controls hidden">
+      <button id="clearBtn" class="btn ghost">🧹 Xóa hết</button>
+      <button id="runBtn" class="btn go">▶️ Nhảy!</button>
+    </div>
+    <div id="choices" class="choices"></div>
+  </div>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="../shared/kit.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

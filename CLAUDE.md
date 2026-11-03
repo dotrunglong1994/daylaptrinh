@@ -61,8 +61,8 @@ Game mới hoặc game sửa logic: chơi thử thật trên trình duyệt (xem
 
 ## Kế hoạch còn lại
 
-1. Game lập trình lớp 1 "Chú Ếch Nhảy" (không chữ: làm theo dãy mũi tên, quy luật).
-2. Game lớp 4–5 còn thiếu: góc và thước đo độ, thể tích hình hộp, vận tốc – quãng đường – thời gian.
-3. Một tài khoản phụ huynh quản lý nhiều bé (mỗi bé có lớp riêng).
+1. Game lớp 4–5 còn thiếu: góc và thước đo độ, thể tích hình hộp, vận tốc – quãng đường – thời gian.
+2. Một tài khoản phụ huynh quản lý nhiều bé (mỗi bé có lớp riêng).
+3. Thêm game cho Phòng Tập Trí Não (vd. tìm cặp hình, logic sắp xếp).
 4. Cấu hình SMTP riêng cho Supabase (email miễn phí bị giới hạn vài email/giờ).
 5. Lớp học cho giáo viên.

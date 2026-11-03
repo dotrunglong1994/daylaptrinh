@@ -43,7 +43,7 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 
 ## Các game
 
-24 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
+25 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
 Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bản đồ mặc định lọc theo lớp đó, trang chủ gợi ý
 3 game hợp lớp mà bé chưa chơi hoặc chưa đủ 3 sao (`suggestGames` trong `src/lib/games.ts`, xen kẽ toán và lập trình).
 
@@ -63,6 +63,7 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 | 🍕 Chia Bánh Pizza | Toán | 3–5 | Phân số: tô, đọc, chia đều, so sánh |
 | 🌻 Khu Vườn Diện Tích | Toán | 3–5 | Đếm ô, chu vi, diện tích, công thức, tính ngược |
 | 🏷️ Cửa Hàng Giảm Giá | Toán | 5 | Số thập phân, phần trăm, tính giá sau giảm |
+| 🐸 Chú Ếch Nhảy | Lập trình | 1–2 | Đọc lệnh (ếch dừng ở đâu), quy luật mũi tên, chọn chương trình đúng, xếp lệnh, sửa một lệnh sai |
 | 🤖 Robot Tìm Đường | Lập trình | 1–3 | Tuần tự, vòng lặp |
 | 🚦 Đèn Giao Thông | Lập trình | 2–4 | NẾU… THÌ…, NGƯỢC LẠI, thứ tự ưu tiên |
 | 👩‍🍳 Đầu Bếp Nhí | Lập trình | 2–4 | Thuật toán: sắp thứ tự các bước, bước nào phụ thuộc bước nào, loại bước thừa |
@@ -137,5 +138,5 @@ chơi game lưu lựa chọn vào localStorage `bhv-read-aloud`.
 ## Việc tiếp theo
 
 - Một tài khoản phụ huynh quản lý nhiều bé (hiện mỗi tài khoản một hồ sơ bé).
-- Thêm game lập trình cho lớp 1 ("Chú Ếch Nhảy": làm theo dãy mũi tên) và các chủ đề lớp 4–5 còn thiếu: góc, thể tích, vận tốc.
+- Thêm game cho các chủ đề lớp 4–5 còn thiếu: góc và thước đo độ, thể tích hình hộp, vận tốc – quãng đường – thời gian.
 - Thêm lớp học cho giáo viên.
