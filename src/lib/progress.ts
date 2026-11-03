@@ -33,6 +33,15 @@ export type GameRecord = {
 
 export type Daily = { lastDay: string; streak: number };
 
+/** Kết quả game Phòng Tập Trí Não (người lớn): điểm càng cao càng tốt, không tính sao và xu */
+export type BrainRecord = {
+  best: number;
+  plays: number;
+  lastPlayed: string;
+  /** Điểm cao nhất mỗi ngày, tối đa 30 ngày gần nhất, cũ trước mới sau */
+  history: { day: string; score: number }[];
+};
+
 export type Progress = {
   profile: Profile | null;
   coins: number;
@@ -40,6 +49,9 @@ export type Progress = {
   pet: PetState | null;
   inventory: string[];
   daily: Daily | null;
+  brain: Record<string, BrainRecord>;
+  /** Chuỗi ngày tập trí não, tính riêng với chuỗi ngày học của bé */
+  brainDaily: Daily | null;
   /** Lần ghi gần nhất, dùng để biết bản trên máy hay trên tài khoản mới hơn */
   savedAt: string | null;
   /** false khi render phía server, trước khi đọc được localStorage */
@@ -50,7 +62,8 @@ export type GameResult = { stars: number; score: number; progressText?: string }
 
 const KEY = "dlt-progress-v1";
 const SERVER: Progress = {
-  profile: null, coins: 0, games: {}, pet: null, inventory: [], daily: null, savedAt: null, loaded: false,
+  profile: null, coins: 0, games: {}, pet: null, inventory: [], daily: null, brain: {}, brainDaily: null, savedAt: null,
+  loaded: false,
 };
 const EMPTY: Progress = { ...SERVER, loaded: true };
 
@@ -86,8 +99,8 @@ function write(next: Progress) {
 }
 
 export function getSavedData(): SavedData {
-  const { profile, coins, games, pet, inventory, daily, savedAt } = read();
-  return { profile, coins, games, pet, inventory, daily, savedAt };
+  const { profile, coins, games, pet, inventory, daily, brain, brainDaily, savedAt } = read();
+  return { profile, coins, games, pet, inventory, daily, brain, brainDaily, savedAt };
 }
 
 /** Thay toàn bộ tiến độ bằng bản tải từ tài khoản (không tính là một lần ghi mới). */
@@ -104,7 +117,8 @@ export function onLocalWrite(listener: () => void) {
 }
 
 /** Máy này chưa có gì đáng giữ: chưa hồ sơ, chưa chơi, chưa nuôi thú cưng. */
-export const isBlank = (d: SavedData) => !d.profile && !d.pet && Object.keys(d.games).length === 0 && d.coins === 0;
+export const isBlank = (d: SavedData) =>
+  !d.profile && !d.pet && Object.keys(d.games).length === 0 && d.coins === 0 && Object.keys(d.brain ?? {}).length === 0;
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
@@ -162,6 +176,30 @@ export function recordResult(gameId: string, result: GameResult): { coins: numbe
     },
   });
   return { coins, bonus };
+}
+
+/** Ghi điểm một lượt chơi game trí não. Trả về true nếu là kỷ lục mới. */
+export function recordBrain(gameId: string, score: number): boolean {
+  const current = read();
+  const now = Date.now();
+  const today = dayKey(now);
+  const prev = current.brain[gameId];
+  const history = (prev?.history ?? []).filter((h) => h.day !== today);
+  const todayBest = Math.max(score, prev?.history.find((h) => h.day === today)?.score ?? 0);
+  write({
+    ...current,
+    brainDaily: nextDaily(current.brainDaily, now),
+    brain: {
+      ...current.brain,
+      [gameId]: {
+        best: Math.max(prev?.best ?? 0, score),
+        plays: (prev?.plays ?? 0) + 1,
+        lastPlayed: new Date(now).toISOString(),
+        history: [...history, { day: today, score: todayBest }].slice(-30),
+      },
+    },
+  });
+  return score > (prev?.best ?? 0);
 }
 
 /* ---------- Thú cưng ---------- */
@@ -242,8 +280,10 @@ export function equipItem(slot: ItemSlot, itemId: string | null) {
   write({ ...current, pet: { ...current.pet, equipped } });
 }
 
+/** Xóa tiến độ của bé; giữ hồ sơ và điểm trí não của người lớn. */
 export function resetProgress() {
-  write({ ...EMPTY, profile: read().profile });
+  const { profile, brain, brainDaily } = read();
+  write({ ...EMPTY, profile, brain, brainDaily });
 }
 
 export const totalStars = (p: Progress) =>

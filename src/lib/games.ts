@@ -33,6 +33,16 @@ export const SUBJECTS: Subject[] = [
 // Mỗi đảo xếp game từ lớp nhỏ đến lớp lớn
 export const GAMES: Game[] = [
   {
+    id: "ngoi-nha-so",
+    title: "Ngôi Nhà Số",
+    emoji: "🏠",
+    subject: "toan",
+    description: "Đếm các bạn thú, tách gộp số, tìm xem ai ở đâu",
+    skills: ["Đếm đến 10", "Tách gộp số", "Cộng trừ trong 10", "Vị trí"],
+    grades: [1],
+    src: "/games/ngoi-nha-so/index.html",
+  },
+  {
     id: "ban-bong-so",
     title: "Bắn Bóng Số",
     emoji: "🎈",

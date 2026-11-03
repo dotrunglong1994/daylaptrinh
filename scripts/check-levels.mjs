@@ -1,6 +1,6 @@
 // Kiểm tra dữ liệu màn chơi của các game: npm run check:levels
 // Đọc đoạn code giữa "// LEVELS-START" và "// LEVELS-END" trong game.js (đoạn này không dùng DOM).
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 
 function loadSection(file, names) {
   const src = readFileSync(new URL(`../public/games/${file}`, import.meta.url), "utf8");
@@ -458,6 +458,47 @@ function seeded(seed) {
     }
     report(!problems.length, `Màn ${i + 1} (${L.name}): ${2000 * L.kinds.length} đề, ${problems.length} đề lỗi${problems.length ? ` (vd ${problems[0]})` : ""}`);
   });
+}
+
+/* ---------- Ngôi Nhà Số (sinh đề ngẫu nhiên) ---------- */
+{
+  console.log("Ngôi Nhà Số");
+  const { LEVELS, ROUNDS, ANIMALS, makeRound, answerOf, optionsOf, neighborOf } = loadSection("ngoi-nha-so/game.js", [
+    "LEVELS", "ROUNDS", "ANIMALS", "makeRound", "answerOf", "optionsOf", "neighborOf",
+  ]);
+  const rand = seeded(11);
+  const inTen = (n) => Number.isInteger(n) && n >= 1 && n <= 10;
+  LEVELS.forEach((L, i) => {
+    const problems = [];
+    const seen = new Set();
+    for (let n = 0; n < 2000; n++) {
+      for (let k = 0; k < ROUNDS; k++) {
+        const r = makeRound(i, k, rand);
+        const ans = answerOf(r);
+        const opts = optionsOf(r);
+        seen.add(`${r.kind}:${ans}`);
+        let ok = opts.filter((o) => o === ans).length === 1 && new Set(opts).size === opts.length;
+        if (["count", "build", "split", "add", "sub"].includes(r.kind)) ok &&= inTen(ans) && opts.length === 4 && opts.every(inTen);
+        if (r.kind === "count") ok &&= r.n <= L.max;
+        if (r.kind === "add") ok &&= r.a + r.b <= 10;
+        if (r.kind === "compare" || r.kind === "symbol") ok &&= inTen(r.a) && inTen(r.b);
+        if (r.grid) {
+          ok &&= new Set(r.grid).size === 9 && r.grid.every((a) => a >= 0 && a < ANIMALS.length);
+          if (r.kind === "floor") ok &&= opts.length === 3;
+          else ok &&= neighborOf(r.target, r.kind) >= 0 && ans !== r.grid[r.target] && opts.length === 4;
+        }
+        if (!ok) problems.push(JSON.stringify(r));
+      }
+    }
+    report(!problems.length, `Màn ${i + 1} (${L.name}): ${2000 * ROUNDS} đề, ${problems.length} đề lỗi, ${seen.size} kiểu đáp án${problems.length ? ` (vd ${problems[0]})` : ""}`);
+  });
+}
+
+/* ---------- Kiểm tra riêng của từng game trong scripts/checks/<game-id>.mjs ---------- */
+// Mỗi file export default ({ loadSection, report, seeded, optionsOk }) => void
+for (const file of readdirSync(new URL("./checks/", import.meta.url)).filter((f) => f.endsWith(".mjs")).sort()) {
+  const { default: check } = await import(new URL(`./checks/${file}`, import.meta.url));
+  check({ loadSection, report, seeded, optionsOk });
 }
 
 if (failures) {

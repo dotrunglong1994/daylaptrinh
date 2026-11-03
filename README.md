@@ -38,15 +38,18 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 | `/choi/[gameId]` | Chơi một game (game chạy trong iframe) |
 | `/thu-cung` | Thú cưng ảo: cho ăn, vuốt ve, cửa hàng, chuỗi ngày học |
 | `/phu-huynh` | Góc phụ huynh: sao, xu, lượt chơi, chuỗi ngày học, tiến độ theo lớp |
+| `/tri-nao` | Phòng Tập Trí Não cho người lớn: kỷ lục, điểm hôm nay, chuỗi ngày tập |
+| `/tri-nao/[gameId]` | Chơi một game trí não |
 
 ## Các game
 
-23 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
+24 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
 Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bản đồ mặc định lọc theo lớp đó, trang chủ gợi ý
 3 game hợp lớp mà bé chưa chơi hoặc chưa đủ 3 sao (`suggestGames` trong `src/lib/games.ts`, xen kẽ toán và lập trình).
 
 | Game | Đảo | Lớp | Dạy gì |
 |---|---|---|---|
+| 🏠 Ngôi Nhà Số | Toán | 1 | Đếm đến 10 (chạm để đếm), so sánh, tách gộp số, cộng trừ trong 10, vị trí trên/dưới/trái/phải |
 | 🎈 Bắn Bóng Số | Toán | 1–4 | Tính nhẩm 4 phép tính, chế độ thử thách 60 giây |
 | 🕰️ Đồng Hồ Thần Kỳ | Toán | 1–3 | Quay kim, đọc giờ (rưỡi, kém), số La Mã, tính thời gian trôi |
 | 🚂 Tàu Hỏa Số | Toán | 1–4 | Giá trị theo hàng, đọc số bằng chữ, so sánh, sắp xếp, làm tròn |
@@ -71,6 +74,20 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 | 📏 Xếp Hàng Thông Minh | Lập trình | 3–5 | Sắp xếp nổi bọt, tìm kiếm tuần tự và tìm kiếm nhị phân |
 | 📦 Rô-bốt Nhà Kho | Lập trình | 4–5 | Biến: gán, cộng dồn, biến trong vòng lặp, đổi chỗ hai biến |
 
+## Phòng Tập Trí Não (người lớn)
+
+| Game | Kỹ năng | Cách chơi |
+|---|---|---|
+| 🟦 Nhớ Ô Sáng | Trí nhớ | Nhớ thứ tự các ô sáng, bấm lại; dãy dài dần, 3 mạng |
+| 🎨 Màu Và Chữ | Tập trung | Chọn màu của chữ (không phải nghĩa), 60 giây, có lúc đổi luật |
+| ⚡ Tính Nhẩm Nhanh | Tốc độ | Phép tính liên tục trong 60 giây, khó dần theo chuỗi đúng |
+| 🔁 Nhớ Lùi N Bước | Trí nhớ làm việc | Bấm khi ô hiện tại trùng ô cách đó N bước; N tự tăng giảm |
+
+Danh sách trong `src/lib/brain.ts`. Game dùng khung `public/games/shared/brain.js/.css` (màn giới thiệu, đếm ngược,
+màn kết quả, kỷ lục `<game-id>-best`), gửi điểm qua `bridge.js`; website lưu vào `progress.brain` (kỷ lục, lượt chơi,
+điểm cao nhất mỗi ngày trong 30 ngày) và `progress.brainDaily` (chuỗi ngày tập), đồng bộ Supabase cùng tiến độ của bé
+nhưng không cộng sao, xu. "Xóa tiến độ" ở Góc phụ huynh giữ lại điểm trí não.
+
 ## Cấu trúc
 
 ```
@@ -82,7 +99,9 @@ src/lib/progress.ts         lưu tiến độ trong localStorage
 src/lib/cloud.ts            đăng nhập OTP và đồng bộ tiến độ với Supabase (bảng trong supabase/schema.sql)
 src/lib/pet.ts              thú cưng: loài, thức ăn, đồ trong cửa hàng, cách chỉ số giảm theo giờ
 src/lib/useNow.ts           đồng hồ dùng chung (chỉ đọc giờ trên trình duyệt)
+src/lib/brain.ts            danh sách game Phòng Tập Trí Não
 scripts/check-levels.mjs    kiểm tra màn chơi: đọc đoạn giữa `// LEVELS-START` và `// LEVELS-END` trong game.js
+scripts/checks/<id>.mjs     kiểm tra riêng của từng game mới, check-levels tự nạp (export default ({ loadSection, report, seeded, optionsOk }))
 ```
 
 ## Thêm một game mới
@@ -118,5 +137,5 @@ chơi game lưu lựa chọn vào localStorage `bhv-read-aloud`.
 ## Việc tiếp theo
 
 - Một tài khoản phụ huynh quản lý nhiều bé (hiện mỗi tài khoản một hồ sơ bé).
-- Thêm game cho lớp 1 (hiện chỉ 6 game, 1 game lập trình) và các chủ đề lớp 4–5 còn thiếu: góc, thể tích, vận tốc.
+- Thêm game lập trình cho lớp 1 ("Chú Ếch Nhảy": làm theo dãy mũi tên) và các chủ đề lớp 4–5 còn thiếu: góc, thể tích, vận tốc.
 - Thêm lớp học cho giáo viên.

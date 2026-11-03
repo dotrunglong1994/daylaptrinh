@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Tính Nhẩm Nhanh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap">
+  <link rel="stylesheet" href="../shared/brain.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="stage">
+    <div class="streak" id="streak" aria-label="Chuỗi đúng"></div>
+    <div class="board" id="board">
+      <p class="problem" id="problem">&nbsp;</p>
+      <p class="answer" id="answer" aria-live="polite"><span class="caret"></span></p>
+    </div>
+    <div class="pad" id="pad">
+      <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+      <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+      <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+      <button data-k="-" class="fn" title="Dấu trừ (số âm)">−</button>
+      <button data-k="0">0</button>
+      <button data-k="del" class="fn" title="Xóa">⌫</button>
+    </div>
+    <button class="skip" id="skipBtn">Bỏ qua câu này</button>
+  </div>
+  <script src="../shared/bridge.js"></script>
+  <script src="../shared/brain.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

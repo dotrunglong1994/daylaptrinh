@@ -1,0 +1,53 @@
+/* Nhớ Ô Sáng: lưới ô vuông sáng lần lượt */
+:root { --accent: #4fc3f7; --lit: #8fdcff; }
+
+.status { min-height: 1.6em; font-weight: 700; color: var(--muted); text-align: center; transition: color .2s; }
+.status.watch { color: var(--accent); }
+.status.go { color: var(--ink); }
+.status.ok { color: var(--good); }
+.status.no { color: var(--bad); }
+
+.grid {
+  --n: 3;
+  display: grid;
+  grid-template-columns: repeat(var(--n), 1fr);
+  gap: clamp(6px, 2vw, 12px);
+  width: min(440px, 100%, calc(100vh - 220px));
+  min-width: 240px;
+  aspect-ratio: 1;
+  padding: clamp(8px, 2.4vw, 14px);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .3);
+}
+.grid.locked .cell { cursor: default; }
+
+.cell {
+  border-radius: clamp(8px, 2vw, 14px);
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid var(--line);
+  transition: transform .08s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.grid:not(.locked) .cell:hover { background: rgba(255, 255, 255, .09); }
+.grid:not(.locked) .cell:active { transform: scale(.95); }
+
+.cell.lit {
+  background: var(--lit);
+  border-color: var(--lit);
+  box-shadow: 0 0 22px var(--accent), inset 0 0 10px rgba(255, 255, 255, .6);
+}
+.cell.tap { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 14px var(--accent); }
+.cell.wrong { background: var(--bad); border-color: var(--bad); box-shadow: 0 0 18px var(--bad); animation: shake .3s; }
+.cell.answer { background: transparent; border: 3px dashed var(--good); box-shadow: 0 0 16px rgba(61, 220, 151, .5); }
+@keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+.progress { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; min-height: 10px; max-width: 100%; }
+.progress i { width: 10px; height: 10px; border-radius: 50%; background: var(--line); transition: background .15s; }
+.progress i.done { background: var(--accent); }
+
+.hud-info .lives { color: var(--bad); letter-spacing: 2px; }
+.hud-info .lives .lost { color: var(--line); }
+.intro .heart { color: var(--bad); }

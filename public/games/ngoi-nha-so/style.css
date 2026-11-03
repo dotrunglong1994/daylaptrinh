@@ -1,0 +1,85 @@
+:root { --sky1: #c5f6fa; --sky2: #d3f9d8; --accent: #f76707; --wall: #fff4e6; --roof: #e8590c; }
+
+.question { cursor: pointer; }
+.scene { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+
+/* ---------- Ngôi nhà ---------- */
+.house { display: flex; flex-direction: column; align-items: center; width: min(440px, 100%); }
+.roof {
+  width: 100%; height: 70px; background: var(--roof); clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  display: grid; place-items: end center; padding-bottom: 6px;
+}
+.roof span { font-size: 2rem; font-weight: 800; color: #fff; line-height: 1; min-height: 1em; }
+.rooms {
+  width: 92%; background: #d9480f; padding: 8px; display: flex; gap: 8px; border-radius: 0 0 14px 14px;
+  box-shadow: 0 6px 0 rgba(35, 57, 91, .15);
+}
+.room { flex: 1; background: var(--wall); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 86px; }
+.room.mystery { background: repeating-linear-gradient(45deg, #fff4e6 0 10px, #ffe8cc 10px 20px); }
+.tag { font-size: 1.8rem; font-weight: 800; color: var(--accent); line-height: 1; }
+
+/* Khung 10 ô: 2 hàng × 5 */
+.frame { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; justify-items: center; }
+.rooms .room:only-child .frame { width: 100%; }
+.pet {
+  position: relative; font-size: 2.1rem; line-height: 1.15; width: 1.35em; text-align: center;
+  background: none; border-radius: 12px; cursor: pointer; transition: transform .15s;
+}
+.pet[data-n]::after {
+  content: attr(data-n); position: absolute; right: -4px; top: -4px; font: 800 .9rem 'Baloo 2', sans-serif;
+  background: var(--accent); color: #fff; border-radius: 999px; min-width: 1.4em; line-height: 1.4em;
+}
+.pet[data-n] { transform: scale(.92); }
+.pet.empty { width: 1.35em; height: 1.15em; border: 3px dashed #ffc078; cursor: default; }
+.pet.leaving { opacity: .45; filter: grayscale(.4); }
+.pet.leaving::before { content: '👋'; position: absolute; left: -6px; bottom: -4px; font-size: .9rem; }
+.pet.arrive { animation: walkIn .6s backwards; }
+.pet.arrive:nth-child(2) { animation-delay: .1s; }
+.pet.arrive:nth-child(3) { animation-delay: .2s; }
+.pet.arrive:nth-child(4) { animation-delay: .3s; }
+@keyframes walkIn { from { transform: translateX(60px); opacity: 0; } }
+
+.yard {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; padding: 10px 14px; min-height: 64px;
+  width: min(440px, 100%); background: #b2f2bb; border-radius: 18px; box-shadow: inset 0 -6px 0 #8ce99a;
+}
+.yard .pet:hover { transform: translateY(-4px); }
+
+/* Hai nhà cạnh nhau */
+.pair { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+.pair .house { flex: 1; min-width: 0; }
+.house.small .roof { height: 56px; }
+.house.small .pet { font-size: 1.6rem; }
+.house.small .frame { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.sign { font-size: 2.6rem; font-weight: 800; color: var(--accent); min-width: .8em; text-align: center; }
+.visitors { background: #b2f2bb; border-radius: 16px; padding: 8px; flex-shrink: 0; }
+.visitors .frame { grid-template-columns: repeat(3, 1fr); }
+.eq { font-size: 2rem; font-weight: 800; background: var(--card); border-radius: 16px; padding: 2px 20px; }
+.eq b { color: var(--accent); }
+
+/* Nhà 3 tầng */
+.house.tall .roof { height: 60px; }
+.floors { width: 92%; background: #d9480f; padding: 8px; display: flex; flex-direction: column; gap: 8px; border-radius: 0 0 14px 14px; }
+.floor { display: grid; grid-template-columns: 3.6em repeat(3, 1fr); gap: 8px; align-items: center; }
+.floor small { color: #fff; font-weight: 800; font-size: .95rem; text-align: center; }
+.cell { background: var(--wall); border-radius: 10px; font-size: 2.3rem; text-align: center; padding: 4px 0; }
+.cell.target { background: #fff3bf; box-shadow: 0 0 0 4px #fab005; }
+
+.scene.ok .room, .scene.ok .cell { background: #ebfbee; transition: background .3s; }
+.choices.three { grid-template-columns: repeat(3, 1fr); }
+.choices.three .choice { font-size: 1.1rem; padding: 10px 4px; }
+.big-num { font-size: 2rem; line-height: 1; }
+.big-emoji { font-size: 2.2rem; line-height: 1; }
+
+@media (max-width: 520px) {
+  .pet { font-size: 1.7rem; }
+  .house.small .pet { font-size: 1.3rem; }
+  .house.small .rooms { width: 100%; padding: 6px; }
+  .house.small .room { padding: 6px 2px; }
+  .pair { gap: 4px; }
+  .house.small .roof { height: 44px; }
+  .house.small .roof span { font-size: 1.5rem; }
+  .sign { font-size: 2rem; }
+  .cell { font-size: 1.9rem; }
+  .visitors .pet { font-size: 1.4rem; }
+}

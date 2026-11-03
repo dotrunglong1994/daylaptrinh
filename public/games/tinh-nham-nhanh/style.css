@@ -1,0 +1,46 @@
+:root { --accent: #ffc94d; }
+
+#stage { width: 100%; max-width: 420px; margin: 0 auto; gap: 12px; }
+
+.streak { display: flex; gap: 6px; height: 8px; }
+.streak i { width: 26px; height: 8px; border-radius: 4px; background: var(--line); transition: background .2s; }
+.streak i.on { background: var(--accent); }
+
+.board {
+  width: 100%; background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+  padding: 18px 14px 14px; text-align: center;
+}
+.problem {
+  font-size: clamp(1.9rem, 9vw, 2.6rem); font-weight: 800; line-height: 1.2; white-space: nowrap;
+  font-variant-numeric: tabular-nums; letter-spacing: .01em;
+}
+.problem .eq { color: var(--muted); font-weight: 600; }
+.answer {
+  margin-top: 10px; min-height: 3.4rem; font-size: 2.4rem; font-weight: 800; color: var(--accent);
+  font-variant-numeric: tabular-nums; border-top: 1px dashed var(--line); padding-top: 8px;
+  display: flex; justify-content: center; align-items: center; gap: 2px;
+}
+.answer .slot { color: var(--line); }
+.caret { width: 3px; height: 2.2rem; background: var(--accent); border-radius: 2px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.board.flash-good .answer { color: var(--good); }
+.board.flash-bad .answer { color: var(--bad); }
+.board.flash-bad { background: rgba(255, 107, 107, .12); }
+
+.pad { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.pad button {
+  height: clamp(56px, 9.5vh, 84px); border-radius: 14px; background: var(--card); border: 1px solid var(--line);
+  font-size: 1.7rem; font-weight: 700; font-variant-numeric: tabular-nums; transition: transform .06s, background .1s;
+}
+.pad button.fn { color: var(--muted); font-size: 1.5rem; }
+.pad button:active, .pad button.press { transform: scale(.95); background: #2c3a63; }
+.pad button:disabled { opacity: .3; }
+
+.skip {
+  width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--line);
+  color: var(--muted); font-weight: 600;
+}
+.skip:active { transform: scale(.98); }
+
+.hud-info b.lv { color: var(--accent); }
+.hud-info .low { color: var(--bad); }

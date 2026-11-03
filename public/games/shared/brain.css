@@ -1,0 +1,81 @@
+/* ---------- Khung dùng chung cho game Phòng Tập Trí Não (brain.js) ---------- */
+/* Giao diện người lớn: tối, gọn. Mỗi game có thể đặt lại --accent trong style.css của mình. */
+:root {
+  --bg1: #1b2541;
+  --bg2: #111827;
+  --ink: #e8edf7;
+  --muted: #9aa7c0;
+  --accent: #7c9cff;
+  --good: #3ddc97;
+  --bad: #ff6b6b;
+  --card: #222d4d;
+  --line: #34416a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+  color: var(--ink);
+  background: radial-gradient(circle at 50% 0, var(--bg1), var(--bg2) 70%) fixed;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+button { font: inherit; color: inherit; cursor: pointer; border: 0; background: none; }
+button:disabled { cursor: default; }
+.hidden { display: none !important; }
+
+.screen { min-height: 100%; padding: 16px; }
+#intro, #result { display: grid; place-items: center; }
+.panel {
+  background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 28px 24px;
+  width: min(520px, 100%); text-align: center; box-shadow: 0 20px 50px rgba(0, 0, 0, .35);
+}
+.skill { color: var(--accent); font-weight: 700; font-size: .85rem; letter-spacing: .12em; text-transform: uppercase; }
+h1 { font-size: clamp(1.6rem, 5vw, 2.2rem); line-height: 1.2; margin-top: 6px; }
+.intro { color: var(--muted); margin: 14px 0 6px; line-height: 1.6; }
+.intro b { color: var(--ink); }
+.intro p + p { margin-top: 8px; }
+.best { color: var(--muted); font-weight: 600; margin-top: 10px; min-height: 1.5em; }
+.row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+
+.btn { font-size: 1.05rem; font-weight: 700; padding: 12px 28px; border-radius: 12px; margin-top: 16px; transition: transform .1s, filter .1s; }
+.row .btn { margin-top: 0; }
+.btn.go { background: var(--accent); color: #0c1430; }
+.btn.ghost { background: transparent; border: 1px solid var(--line); }
+.btn:hover:not(:disabled) { filter: brightness(1.1); }
+.btn:active:not(:disabled) { transform: scale(.97); }
+
+/* ---------- Đang chơi ---------- */
+#play { display: flex; flex-direction: column; gap: 14px; max-width: 720px; margin: 0 auto; }
+.hud { display: flex; align-items: center; gap: 10px; }
+.hud-info { flex: 1; display: flex; justify-content: center; gap: 18px; font-weight: 700; font-variant-numeric: tabular-nums; flex-wrap: wrap; }
+.hud-info span { color: var(--muted); font-weight: 600; }
+.icon { width: 40px; height: 40px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); font-size: 1.05rem; flex-shrink: 0; }
+.icon.off { opacity: .4; }
+#stage { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+
+.countdown {
+  position: fixed; inset: 0; display: grid; place-items: center; font-size: 6rem; font-weight: 800;
+  background: rgba(17, 24, 39, .55); z-index: 5; animation: cdPop .65s infinite;
+}
+@keyframes cdPop { from { transform: scale(1.15); opacity: .4; } }
+
+@media (max-width: 520px) {
+  .hud-info { gap: 10px; flex-wrap: nowrap; font-size: .92rem; white-space: nowrap; }
+}
+
+/* ---------- Kết quả ---------- */
+.score-label { color: var(--muted); margin-top: 14px; }
+.score-big { font-size: 4.2rem; font-weight: 800; line-height: 1.1; color: var(--accent); font-variant-numeric: tabular-nums; }
+.details { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 18px; }
+.details div { background: rgba(255, 255, 255, .04); border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+.details dt { color: var(--muted); font-size: .85rem; }
+.details dd { font-weight: 700; font-size: 1.15rem; }
+
+/* Phản hồi đúng / sai dùng chung */
+.flash-good { animation: flashGood .35s; }
+.flash-bad { animation: flashBad .35s; }
+@keyframes flashGood { 50% { box-shadow: 0 0 0 4px var(--good); } }
+@keyframes flashBad { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } 50% { box-shadow: 0 0 0 4px var(--bad); } }

@@ -48,7 +48,11 @@ Game mới hoặc game sửa logic: chơi thử thật trên trình duyệt (xem
 
 - Next.js 16 (Cache Components) khác bản cũ: đọc `node_modules/next/dist/docs/` trước khi sửa phần Next.
   Không gọi `Date.now()` khi render (dùng `useNow`); đọc `params` bên trong `<Suspense>`.
-- Game nằm trong `public/games/<id>/` là HTML/CSS/JS thuần, không build. Game mới dùng khung `shared/kit.js`.
+- Game nằm trong `public/games/<id>/` là HTML/CSS/JS thuần, không build. Game của bé dùng khung `shared/kit.js`,
+  game người lớn (Phòng Tập Trí Não, `src/lib/brain.ts`) dùng `shared/brain.js`. Hai loại không lẫn: game trí não
+  không cộng sao/xu, giao diện tối dành cho người lớn.
+- Kiểm tra màn chơi của game mới đặt ở `scripts/checks/<id>.mjs` (không phải sửa chung `check-levels.mjs`), nhờ vậy
+  nhiều agent viết game song song không đụng file của nhau.
 - Mỗi game khai báo `grades` (lớp 1–5 theo chương trình GDPT 2018) trong `src/lib/games.ts`.
 - Dữ liệu màn chơi đặt giữa `// LEVELS-START` và `// LEVELS-END`, không đụng DOM, và luôn có phần kiểm tra trong
   `scripts/check-levels.mjs`.
@@ -57,8 +61,7 @@ Game mới hoặc game sửa logic: chơi thử thật trên trình duyệt (xem
 
 ## Kế hoạch còn lại
 
-1. Thêm game cho lớp 1: "Ngôi Nhà Số" (toán: đếm, tách gộp số trong phạm vi 10, vị trí) và "Chú Ếch Nhảy"
-   (lập trình không chữ: làm theo dãy mũi tên, quy luật).
+1. Game lập trình lớp 1 "Chú Ếch Nhảy" (không chữ: làm theo dãy mũi tên, quy luật).
 2. Game lớp 4–5 còn thiếu: góc và thước đo độ, thể tích hình hộp, vận tốc – quãng đường – thời gian.
 3. Một tài khoản phụ huynh quản lý nhiều bé (mỗi bé có lớp riêng).
 4. Cấu hình SMTP riêng cho Supabase (email miễn phí bị giới hạn vài email/giờ).

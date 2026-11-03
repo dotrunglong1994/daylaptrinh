@@ -1,0 +1,63 @@
+/* 🎨 Màu Và Chữ */
+:root { --accent: #ff8fb1; --switch: #ffd43b; }
+
+#stage { width: 100%; gap: 18px; }
+
+.hud-info { gap: 14px; }
+.hud-info .mult { min-width: 4.2em; text-align: center; transition: color .2s; }
+.hud-info .m2 { color: #7fd8ff; }
+.hud-info .m3 { color: #ffd43b; }
+.hud-info .m4 { color: var(--accent); }
+
+/* Khung chữ */
+.card {
+  width: 100%; min-height: 220px; border-radius: 20px; padding: 18px 14px 26px;
+  background: #0d1424; border: 2px solid var(--line);
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 10px;
+  transition: background .15s, border-color .15s;
+}
+.rule {
+  font-weight: 600; color: var(--muted); font-size: .95rem; letter-spacing: .04em;
+  padding: 4px 14px; border-radius: 999px; border: 1px solid var(--line);
+}
+.rule b { color: var(--ink); }
+.word {
+  font-size: clamp(2.3rem, 11vw, 4.6rem); font-weight: 800; letter-spacing: .03em; line-height: 1.1;
+  text-align: center; overflow-wrap: anywhere; margin: auto 0;
+}
+
+/* Câu đổi luật: chọn theo NGHĨA */
+.card.rule-word {
+  border: 3px dashed var(--switch);
+  background: repeating-linear-gradient(135deg, #1c1a10 0 14px, #13121a 14px 28px);
+}
+.card.rule-word .rule {
+  background: var(--switch); color: #1a1400; border-color: var(--switch);
+  font-weight: 800; font-size: 1.05rem; text-transform: uppercase;
+}
+.card.rule-word .rule b { color: #1a1400; }
+.card.rule-word .word { font-style: italic; }
+
+/* Nút đáp án: thứ tự cố định */
+.answers { width: 100%; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.ans {
+  position: relative; min-height: 84px; border-radius: 14px; padding: 18px 4px 8px;
+  background: var(--c); color: #0b1020; font-weight: 800; font-size: .95rem; line-height: 1.15;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .22); transition: transform .08s, filter .1s;
+}
+.ans:hover { filter: brightness(1.08); }
+.ans:active { transform: scale(.96); }
+.ans .key {
+  position: absolute; top: 5px; left: 7px; font-size: .72rem; font-weight: 700; opacity: .6;
+}
+.keys-hint { color: var(--muted); font-size: .85rem; }
+
+@media (max-width: 480px) {
+  .hud-info { gap: 10px; font-size: .95rem; flex-wrap: nowrap; white-space: nowrap; }
+  .hud-info .mult { min-width: 0; }
+  .answers { gap: 6px; }
+  .ans { min-height: 76px; font-size: .78rem; padding: 16px 2px 6px; border-radius: 12px; }
+  .card { min-height: 190px; }
+  .keys-hint { display: none; }
+}

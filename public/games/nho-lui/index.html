@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Nhớ Lùi N Bước</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/brain.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="stage">
+    <p id="rule" class="rule"></p>
+    <div id="board" class="board">
+      <div id="grid" class="grid" aria-label="Lưới 3×3"></div>
+      <p id="status" class="status" aria-live="polite"></p>
+      <button id="matchBtn" class="match">Trùng!<small>phím Space</small></button>
+    </div>
+    <div id="pause" class="pause hidden">
+      <p class="pause-title" id="pauseTitle"></p>
+      <p class="pause-acc" id="pauseAcc"></p>
+      <dl class="pause-stats" id="pauseStats"></dl>
+      <p class="pause-next" id="pauseNext"></p>
+      <button id="nextBtn" class="btn go">Tiếp</button>
+    </div>
+  </div>
+  <script src="../shared/bridge.js"></script>
+  <script src="../shared/brain.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

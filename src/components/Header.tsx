@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { SITE_NAME } from "@/lib/games";
 import { totalStars, useProgress } from "@/lib/progress";
@@ -9,7 +10,9 @@ import ProfileModal from "./ProfileModal";
 export default function Header() {
   const progress = useProgress();
   const [editing, setEditing] = useState(false);
-  const needsProfile = progress.loaded && !progress.profile;
+  // Phòng Tập Trí Não dành cho người lớn: không bắt tạo hồ sơ bé
+  const adultArea = usePathname().startsWith("/tri-nao");
+  const needsProfile = progress.loaded && !progress.profile && !adultArea;
 
   return (
     <>
@@ -21,6 +24,7 @@ export default function Header() {
           <Link href="/ban-do">🗺️ Bản đồ</Link>
           <Link href="/thu-cung">🐾 Thú cưng</Link>
           <Link href="/phu-huynh">👨‍👩‍👧 Phụ huynh</Link>
+          <Link href="/tri-nao">🧠 Trí não</Link>
         </nav>
         {progress.loaded && (
           <div className="wallet">
