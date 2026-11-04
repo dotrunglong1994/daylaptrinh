@@ -72,10 +72,10 @@ const state = { idx: 0, level: null, target: null, program: [], loopN: 2, runnin
 
 /* ---------- Lưu tiến độ ---------- */
 function loadProgress() {
-  try { return JSON.parse(localStorage.getItem('turtle-progress') || '{}'); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(kidKey('turtle-progress')) || '{}'); } catch { return {}; }
 }
 function saveProgress(p) {
-  try { localStorage.setItem('turtle-progress', JSON.stringify(p)); } catch {}
+  try { localStorage.setItem(kidKey('turtle-progress'), JSON.stringify(p)); } catch {}
 }
 
 /* ---------- Âm thanh ---------- */

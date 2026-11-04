@@ -39,10 +39,10 @@ const billHtml = (k, tag = 'div', attrs = '') =>
   `<${tag} class="bill" style="--c:${BILL_COLORS[k]}" ${attrs}><span>${(k * 1000).toLocaleString('vi-VN')}<small>đ</small></span></${tag}>`;
 
 function loadBest() {
-  try { return JSON.parse(localStorage.getItem('stm-best') || '{}'); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(kidKey('stm-best')) || '{}'); } catch { return {}; }
 }
 function saveBest(best) {
-  try { localStorage.setItem('stm-best', JSON.stringify(best)); } catch {}
+  try { localStorage.setItem(kidKey('stm-best'), JSON.stringify(best)); } catch {}
 }
 
 /* ---------- Âm thanh ---------- */

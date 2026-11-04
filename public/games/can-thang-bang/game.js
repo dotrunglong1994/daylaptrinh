@@ -76,10 +76,10 @@ const state = {
 };
 
 function loadBest() {
-  try { return JSON.parse(localStorage.getItem('balance-best') || '{}'); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(kidKey('balance-best')) || '{}'); } catch { return {}; }
 }
 function saveBest(best) {
-  try { localStorage.setItem('balance-best', JSON.stringify(best)); } catch {}
+  try { localStorage.setItem(kidKey('balance-best'), JSON.stringify(best)); } catch {}
 }
 
 /* ---------- Âm thanh ---------- */

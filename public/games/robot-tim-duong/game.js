@@ -24,10 +24,10 @@ const state = { idx: 0, level: null, program: [], pos: null, running: false, run
 
 /* ---------- Lưu tiến độ từng màn ---------- */
 function loadProgress() {
-  try { return JSON.parse(localStorage.getItem('robot-progress') || '{}'); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(kidKey('robot-progress')) || '{}'); } catch { return {}; }
 }
 function saveProgress(p) {
-  try { localStorage.setItem('robot-progress', JSON.stringify(p)); } catch {}
+  try { localStorage.setItem(kidKey('robot-progress'), JSON.stringify(p)); } catch {}
 }
 
 /* ---------- Âm thanh ---------- */

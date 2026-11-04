@@ -7,12 +7,14 @@ import { getSavedData, totalStars, type SavedData } from "@/lib/progress";
 const timeFmt = new Intl.DateTimeFormat("vi-VN", { timeStyle: "short", dateStyle: "short" });
 
 function summary(d: SavedData) {
-  const plays = Object.values(d.games).reduce((sum, g) => sum + g.plays, 0);
-  const stars = totalStars({ ...d, loaded: true });
+  const kids = d.kids.filter((k) => k.profile);
   return [
-    d.profile ? `${d.profile.avatar} ${d.profile.name}` : "Chưa có hồ sơ",
-    `⭐ ${stars} sao · 🪙 ${d.coins} xu · 🎮 ${plays} lượt chơi`,
-    d.pet ? `🐾 Thú cưng: ${d.pet.name}` : "Chưa nuôi thú cưng",
+    ...(kids.length
+      ? kids.map((k) => {
+          const plays = Object.values(k.games).reduce((sum, g) => sum + g.plays, 0);
+          return `${k.profile!.avatar} ${k.profile!.name}: ⭐ ${totalStars(k)} sao · 🪙 ${k.coins} xu · 🎮 ${plays} lượt${k.pet ? ` · 🐾 ${k.pet.name}` : ""}`;
+        })
+      : ["Chưa có hồ sơ bé"]),
     d.savedAt ? `Cập nhật ${timeFmt.format(new Date(d.savedAt))}` : "",
   ].filter(Boolean);
 }

@@ -8,7 +8,7 @@
 
   window.createGame = function (opts) {
     const unit = opts.unit || 'màn';
-    const storeKey = `${opts.id}-progress`;
+    const storeKey = window.kidKey ? window.kidKey(`${opts.id}-progress`) : `${opts.id}-progress`;
     const state = { idx: 0, sound: true, token: 0 };
 
     /* ---------- Dựng khung trang ---------- */

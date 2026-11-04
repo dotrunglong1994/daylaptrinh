@@ -117,10 +117,10 @@ const state = { idx: 0, round: 0, items: [], mistakes: 0, busy: false, sound: tr
 
 /* ---------- Lưu tiến độ ---------- */
 function loadProgress() {
-  try { return JSON.parse(localStorage.getItem('geo-progress') || '{}'); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(kidKey('geo-progress')) || '{}'); } catch { return {}; }
 }
 function saveProgress(p) {
-  try { localStorage.setItem('geo-progress', JSON.stringify(p)); } catch {}
+  try { localStorage.setItem(kidKey('geo-progress'), JSON.stringify(p)); } catch {}
 }
 
 /* ---------- Âm thanh ---------- */

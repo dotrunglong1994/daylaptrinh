@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Dino from "@/components/Dino";
 import DailyChallenge from "@/components/DailyChallenge";
+import FamilyBoard from "@/components/FamilyBoard";
 import Suggestions from "@/components/Suggestions";
 import { GAMES, SITE_NAME, SUBJECTS } from "@/lib/games";
 
@@ -27,6 +28,7 @@ export default function Home() {
       </section>
 
       <DailyChallenge />
+      <FamilyBoard />
       <Suggestions />
 
       <section className="features">

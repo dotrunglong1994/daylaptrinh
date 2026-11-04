@@ -44,79 +44,154 @@ export type BrainRecord = {
   history: { day: string; score: number }[];
 };
 
-export type Progress = {
+/** Tiến độ của một bé. Mỗi tài khoản / mỗi máy có thể có nhiều bé. */
+export type KidData = {
+  id: string;
   profile: Profile | null;
   coins: number;
   games: Record<string, GameRecord>;
   pet: PetState | null;
   inventory: string[];
   daily: Daily | null;
+  /** Các lượt chơi gần nhất (tối đa LOG_MAX), dùng cho báo cáo tuần và thử thách hằng ngày */
+  log: PlayLog[];
+  /** Ngày gần nhất hoàn thành thử thách hằng ngày, tổng số lần hoàn thành, các ngày hoàn thành gần đây */
+  challenge: { day: string; count: number; days?: string[] } | null;
+  /** Huy hiệu đã đạt: id → ngày đạt */
+  badges: Record<string, string>;
+};
+
+/** Phần được lưu xuống localStorage và lên tài khoản: cả nhà dùng chung một bản */
+export type SavedData = {
+  version: 2;
+  kids: KidData[];
+  /** Điểm Phòng Tập Trí Não của người lớn, dùng chung cho cả nhà */
   brain: Record<string, BrainRecord>;
   /** Chuỗi ngày tập trí não, tính riêng với chuỗi ngày học của bé */
   brainDaily: Daily | null;
-  /** Các lượt chơi gần nhất (tối đa LOG_MAX), dùng cho báo cáo tuần và thử thách hằng ngày */
-  log: PlayLog[];
-  /** Ngày gần nhất hoàn thành thử thách hằng ngày và tổng số lần hoàn thành */
-  challenge: { day: string; count: number } | null;
-  /** Huy hiệu đã đạt: id → ngày đạt */
-  badges: Record<string, string>;
   /** Lần ghi gần nhất, dùng để biết bản trên máy hay trên tài khoản mới hơn */
   savedAt: string | null;
-  /** false khi render phía server, trước khi đọc được localStorage */
-  loaded: boolean;
 };
+
+/** Những gì các trang đọc: tiến độ của bé đang chơi + phần dùng chung của cả nhà */
+export type Progress = Omit<KidData, "id"> &
+  Omit<SavedData, "version" | "kids"> & {
+    /** Bé đang chơi (null khi chưa có bé nào) */
+    kidId: string | null;
+    kids: KidData[];
+    /** false khi render phía server, trước khi đọc được localStorage */
+    loaded: boolean;
+  };
 
 export type GameResult = { stars: number; score: number; progressText?: string };
 
 export type Reward = { coins: number; bonus: number; challengeBonus: number; badges: Badge[] };
 
-const KEY = "dlt-progress-v1";
+const KEY = "dlt-family-v2";
+/** Bản cũ, mỗi máy một bé. Đọc một lần để chuyển sang bản mới, không xóa. */
+const OLD_KEY = "dlt-progress-v1";
+/** Bé đang chơi trên máy này (không đồng bộ). Game trong iframe cũng đọc khóa này, xem shared/bridge.js. */
+const KID_KEY = "bhv-kid";
+/** Bé đầu tiên giữ id này để game dùng lại tiến độ chọn màn đã lưu trước khi có nhiều bé */
+const FIRST_KID = "k1";
 const LOG_MAX = 400;
-const SERVER: Progress = {
-  profile: null, coins: 0, games: {}, pet: null, inventory: [], daily: null, brain: {}, brainDaily: null,
-  log: [], challenge: null, badges: {}, savedAt: null, loaded: false,
-};
-const EMPTY: Progress = { ...SERVER, loaded: true };
 
-/** Phần được lưu xuống localStorage và lên tài khoản */
-export type SavedData = Omit<Progress, "loaded">;
+const blankKid = (id: string): KidData => ({
+  id, profile: null, coins: 0, games: {}, pet: null, inventory: [], daily: null, log: [], challenge: null, badges: {},
+});
+const BLANK: SavedData = { version: 2, kids: [], brain: {}, brainDaily: null, savedAt: null };
 
+/** Đọc dữ liệu đã lưu, kể cả bản cũ một bé (dlt-progress-v1 hoặc bản cũ trên tài khoản). */
+export function normalize(raw: unknown): SavedData {
+  if (!raw || typeof raw !== "object") return BLANK;
+  const d = raw as Partial<SavedData> & Partial<Omit<KidData, "id">>;
+  if (Array.isArray(d.kids)) {
+    return { ...BLANK, ...d, version: 2, kids: d.kids.map((k) => ({ ...blankKid(k.id), ...k })) };
+  }
+  const { brain, brainDaily, savedAt, ...kid } = d as Record<string, unknown>;
+  const old = { ...blankKid(FIRST_KID), ...(kid as Partial<KidData>), id: FIRST_KID };
+  const hasKid = old.profile || old.pet || Object.keys(old.games).length || old.coins;
+  return {
+    ...BLANK,
+    kids: hasKid ? [old] : [],
+    brain: (brain as SavedData["brain"]) ?? {},
+    brainDaily: (brainDaily as Daily | null) ?? null,
+    savedAt: (savedAt as string | null) ?? null,
+  };
+}
+
+function view(data: SavedData, loaded: boolean): Progress {
+  let wanted: string | null = null;
+  try {
+    wanted = localStorage.getItem(KID_KEY);
+  } catch {}
+  const kid = data.kids.find((k) => k.id === wanted) ?? data.kids[0] ?? null;
+  const { id, ...fields } = kid ?? blankKid("");
+  return { ...fields, brain: data.brain, brainDaily: data.brainDaily, savedAt: data.savedAt, kidId: kid ? id : null, kids: data.kids, loaded };
+}
+
+const SERVER: Progress = { ...view(BLANK, false), kidId: null };
+
+const kidFields = (p: Omit<KidData, "id">): Omit<KidData, "id"> => ({
+  profile: p.profile, coins: p.coins, games: p.games, pet: p.pet, inventory: p.inventory, daily: p.daily,
+  log: p.log, challenge: p.challenge, badges: p.badges,
+});
+
+let data: SavedData | null = null;
 let cache: Progress | null = null;
 const listeners = new Set<() => void>();
 const writeListeners = new Set<() => void>();
 
-function read(): Progress {
-  if (cache) return cache;
+function load(): SavedData {
   try {
-    const raw = localStorage.getItem(KEY);
-    cache = raw ? { ...EMPTY, ...JSON.parse(raw), loaded: true } : EMPTY;
+    const raw = localStorage.getItem(KEY) ?? localStorage.getItem(OLD_KEY);
+    return raw ? normalize(JSON.parse(raw)) : BLANK;
   } catch {
-    cache = EMPTY;
+    return BLANK;
   }
-  return cache!;
 }
 
-function store(next: Progress) {
-  cache = next;
+function read(): Progress {
+  if (cache) return cache;
+  data ??= load();
+  cache = view(data, true);
+  return cache;
+}
+
+function store(next: SavedData) {
+  data = next;
+  cache = null;
   try {
-    localStorage.setItem(KEY, JSON.stringify(getSavedData()));
+    localStorage.setItem(KEY, JSON.stringify(next));
   } catch {}
   listeners.forEach((l) => l());
 }
 
+/** Ghi lại tiến độ của bé đang chơi (tạo bé mới nếu chưa có) và phần dùng chung. */
 function write(next: Progress) {
-  store({ ...next, savedAt: new Date().toISOString() });
+  const current = data ?? load();
+  const { kidId, brain, brainDaily } = next;
+  const fields = kidFields(next);
+  let kids = current.kids;
+  if (kidId && kids.some((k) => k.id === kidId)) {
+    kids = kids.map((k) => (k.id === kidId ? { ...fields, id: kidId } : k));
+  } else if (fields.profile || fields.pet || Object.keys(fields.games).length) {
+    // Chưa có bé nào: bé đầu tiên
+    const id = kids.length ? newKidId() : FIRST_KID;
+    kids = [...kids, { ...fields, id }];
+    setActiveKid(id);
+  }
+  store({ ...current, kids, brain, brainDaily, savedAt: new Date().toISOString() });
   writeListeners.forEach((l) => l());
 }
 
 export function getSavedData(): SavedData {
-  const { profile, coins, games, pet, inventory, daily, brain, brainDaily, log, challenge, badges, savedAt } = read();
-  return { profile, coins, games, pet, inventory, daily, brain, brainDaily, log, challenge, badges, savedAt };
+  return data ?? (data = load());
 }
 
 /** Thay toàn bộ tiến độ bằng bản tải từ tài khoản (không tính là một lần ghi mới). */
-export function replaceSavedData(data: SavedData) {
-  store({ ...EMPTY, ...data, loaded: true });
+export function replaceSavedData(remote: unknown) {
+  store(normalize(remote));
 }
 
 /** Gọi lại mỗi khi bé chơi, mua đồ… (không gọi khi tải bản từ tài khoản về). */
@@ -127,15 +202,52 @@ export function onLocalWrite(listener: () => void) {
   };
 }
 
-/** Máy này chưa có gì đáng giữ: chưa hồ sơ, chưa chơi, chưa nuôi thú cưng. */
+/** Máy này chưa có gì đáng giữ: chưa có bé nào chơi, chưa có điểm trí não. */
 export const isBlank = (d: SavedData) =>
-  !d.profile && !d.pet && Object.keys(d.games).length === 0 && d.coins === 0 && Object.keys(d.brain ?? {}).length === 0;
+  d.kids.every((k) => !k.profile && !k.pet && Object.keys(k.games).length === 0 && k.coins === 0) &&
+  Object.keys(d.brain ?? {}).length === 0;
+
+/* ---------- Nhiều bé ---------- */
+
+const newKidId = () => `k${Date.now().toString(36)}`;
+
+function setActiveKid(id: string) {
+  try {
+    localStorage.setItem(KID_KEY, id);
+  } catch {}
+}
+
+/** Đổi bé đang chơi trên máy này */
+export function switchKid(id: string) {
+  setActiveKid(id);
+  cache = null;
+  listeners.forEach((l) => l());
+}
+
+/** Thêm một bé mới và chuyển sang bé đó */
+export function addKid(profile: Profile) {
+  const current = getSavedData();
+  const id = current.kids.length ? newKidId() : FIRST_KID;
+  setActiveKid(id);
+  store({ ...current, kids: [...current.kids, { ...blankKid(id), profile }], savedAt: new Date().toISOString() });
+  writeListeners.forEach((l) => l());
+}
+
+/** Xóa hẳn một bé (cùng sao, xu, thú cưng của bé đó) */
+export function removeKid(id: string) {
+  const current = getSavedData();
+  const kids = current.kids.filter((k) => k.id !== id);
+  if (read().kidId === id && kids[0]) setActiveKid(kids[0].id);
+  store({ ...current, kids, savedAt: new Date().toISOString() });
+  writeListeners.forEach((l) => l());
+}
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
   // Đồng bộ khi bé mở web ở nhiều tab
   const onStorage = (e: StorageEvent) => {
-    if (e.key !== KEY) return;
+    if (e.key !== KEY && e.key !== KID_KEY) return;
+    if (e.key === KEY) data = null;
     cache = null;
     listener();
   };
@@ -163,11 +275,11 @@ function nextDaily(daily: Daily | null, now: number): Daily {
 }
 
 /** Thêm huy hiệu bé vừa đạt (ghi ngày đạt). Trả về state mới và các huy hiệu mới. */
-function withBadges<T extends SavedData>(data: T, now: number): [T, Badge[]] {
-  const earned = newBadges(data);
-  if (!earned.length) return [data, earned];
+function withBadges(kid: Progress, now: number): [Progress, Badge[]] {
+  const earned = newBadges(kid);
+  if (!earned.length) return [kid, earned];
   const day = dayKey(now);
-  return [{ ...data, badges: { ...data.badges, ...Object.fromEntries(earned.map((b) => [b.id, day])) } }, earned];
+  return [{ ...kid, badges: { ...kid.badges, ...Object.fromEntries(earned.map((b) => [b.id, day])) } }, earned];
 }
 
 /**
@@ -326,11 +438,11 @@ export function equipItem(slot: ItemSlot, itemId: string | null) {
   write({ ...current, pet: { ...current.pet, equipped } });
 }
 
-/** Xóa tiến độ của bé; giữ hồ sơ và điểm trí não của người lớn. */
+/** Xóa tiến độ của bé đang chơi; giữ hồ sơ bé, các bé khác và điểm trí não của người lớn. */
 export function resetProgress() {
-  const { profile, brain, brainDaily } = read();
-  write({ ...EMPTY, profile, brain, brainDaily });
+  const current = read();
+  write({ ...current, ...kidFields(blankKid("")), profile: current.profile });
 }
 
-export const totalStars = (p: Progress) =>
+export const totalStars = (p: Pick<KidData, "games">) =>
   Object.values(p.games).reduce((sum, g) => sum + g.bestStars, 0);

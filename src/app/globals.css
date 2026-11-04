@@ -361,3 +361,34 @@ tr:last-child td { border-bottom: 0; }
 .week-lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 16px; }
 .week-lists ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Nhiều bé ---------- */
+.kid-picker { width: min(560px, 100%); }
+.kid-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; width: 100%; }
+.kid-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 14px 8px; border-radius: 20px;
+  background: #eef6ff; border: 3px solid transparent; box-shadow: 0 4px 0 #c5d8ee; transition: transform .12s;
+}
+.kid-btn:hover { transform: translateY(-3px); }
+.kid-btn.on { border-color: var(--primary); background: #fff0f3; }
+.kid-btn.add { background: #fff; border: 3px dashed var(--line); box-shadow: none; }
+.kid-avatar { font-size: 2.6rem; line-height: 1.1; }
+.kid-btn strong { font-size: 1.15rem; }
+.kid-btn small { color: var(--muted); font-weight: 700; }
+.kid-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 10px; }
+.kid-tabs button { background: #fff; border-radius: 999px; padding: 4px 16px; font-weight: 800; box-shadow: 0 3px 0 var(--line); }
+.kid-tabs button.on { background: var(--primary); color: #fff; box-shadow: 0 3px 0 var(--primary-shadow); }
+
+.family-board { margin: 24px 0 0; }
+.family-board h2 { font-size: 1.4rem; margin-bottom: 8px; }
+.family-board ol { list-style: none; padding: 0; margin: 0 0 8px; display: flex; flex-direction: column; gap: 8px; }
+.family-board li { display: grid; grid-template-columns: 32px 36px minmax(70px, auto) 1fr auto auto; align-items: center; gap: 8px; padding: 4px 8px; border-radius: 14px; }
+.family-board li.me { background: #fff0f3; }
+.fb-medal, .fb-avatar { font-size: 1.5rem; text-align: center; }
+.fb-bar { height: 12px; background: #eef6ff; border-radius: 999px; overflow: hidden; }
+.fb-bar i { display: block; height: 100%; background: #fab005; border-radius: 999px; }
+.fb-num { font-weight: 800; }
+@media (max-width: 520px) {
+  .family-board li { grid-template-columns: 28px 30px 1fr auto; }
+  .fb-bar, .family-board li small { display: none; }
+}

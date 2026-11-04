@@ -1,5 +1,7 @@
 import { GAMES, gamesForGrade } from "./games";
-import type { SavedData } from "./progress";
+import type { KidData } from "./progress";
+
+type BadgeData = Omit<KidData, "id">;
 
 // Huy hiệu: tính từ tiến độ của bé. Đạt rồi thì giữ mãi (lưu ngày đạt trong progress.badges),
 // kể cả khi chuỗi ngày học bị đứt.
@@ -10,12 +12,12 @@ export type Badge = {
   name: string;
   text: string;
   /** [đã làm được, cần đạt] */
-  measure: (d: SavedData) => [number, number];
+  measure: (d: BadgeData) => [number, number];
 };
 
-const stars = (d: SavedData) => Object.values(d.games).reduce((sum, g) => sum + g.bestStars, 0);
-const plays = (d: SavedData) => Object.values(d.games).reduce((sum, g) => sum + g.plays, 0);
-const threeStar = (d: SavedData, subject: string) =>
+const stars = (d: BadgeData) => Object.values(d.games).reduce((sum, g) => sum + g.bestStars, 0);
+const plays = (d: BadgeData) => Object.values(d.games).reduce((sum, g) => sum + g.plays, 0);
+const threeStar = (d: BadgeData, subject: string) =>
   GAMES.filter((g) => g.subject === subject && d.games[g.id]?.bestStars === 3).length;
 const playable = GAMES.filter((g) => g.src);
 
@@ -55,7 +57,7 @@ export const BADGES: Badge[] = [
 export const badgeOf = (id: string) => BADGES.find((b) => b.id === id);
 
 /** Huy hiệu bé vừa đủ điều kiện mà chưa được ghi nhận */
-export function newBadges(d: SavedData): Badge[] {
+export function newBadges(d: BadgeData): Badge[] {
   return BADGES.filter((b) => {
     if (d.badges[b.id]) return false;
     const [value, goal] = b.measure(d);

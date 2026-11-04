@@ -70,10 +70,10 @@ const state = { idx: 0, def: null, level: null, program: [], pos: null, running:
 
 /* ---------- Lưu tiến độ ---------- */
 function loadProgress() {
-  try { return JSON.parse(localStorage.getItem('bug-progress') || '{}'); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(kidKey('bug-progress')) || '{}'); } catch { return {}; }
 }
 function saveProgress(p) {
-  try { localStorage.setItem('bug-progress', JSON.stringify(p)); } catch {}
+  try { localStorage.setItem(kidKey('bug-progress'), JSON.stringify(p)); } catch {}
 }
 
 /* ---------- Âm thanh ---------- */

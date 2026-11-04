@@ -72,10 +72,10 @@ const EXIT = 118;
 
 /* ---------- Lưu tiến độ ---------- */
 function loadProgress() {
-  try { return JSON.parse(localStorage.getItem('traffic-progress') || '{}'); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(kidKey('traffic-progress')) || '{}'); } catch { return {}; }
 }
 function saveProgress(p) {
-  try { localStorage.setItem('traffic-progress', JSON.stringify(p)); } catch {}
+  try { localStorage.setItem(kidKey('traffic-progress'), JSON.stringify(p)); } catch {}
 }
 
 /* ---------- Âm thanh ---------- */

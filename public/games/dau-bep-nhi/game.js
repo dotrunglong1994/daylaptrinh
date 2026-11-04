@@ -65,10 +65,10 @@ const state = { idx: 0, level: null, cards: {}, order: [], recipe: [], fails: 0,
 
 /* ---------- Lưu tiến độ ---------- */
 function loadProgress() {
-  try { return JSON.parse(localStorage.getItem('cook-progress') || '{}'); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(kidKey('cook-progress')) || '{}'); } catch { return {}; }
 }
 function saveProgress(p) {
-  try { localStorage.setItem('cook-progress', JSON.stringify(p)); } catch {}
+  try { localStorage.setItem(kidKey('cook-progress'), JSON.stringify(p)); } catch {}
 }
 
 /* ---------- Âm thanh ---------- */

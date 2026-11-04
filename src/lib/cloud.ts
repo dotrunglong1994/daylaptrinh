@@ -2,7 +2,7 @@
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { useSyncExternalStore } from "react";
-import { getSavedData, isBlank, onLocalWrite, replaceSavedData, type SavedData } from "./progress";
+import { getSavedData, isBlank, normalize, onLocalWrite, replaceSavedData, type SavedData } from "./progress";
 
 // Tài khoản phụ huynh (không bắt buộc): đăng nhập bằng mã OTP gửi qua email,
 // rồi đồng bộ tiến độ trong localStorage với bảng `progress` (xem supabase/schema.sql).
@@ -34,6 +34,8 @@ function setState(patch: Partial<CloudState>) {
   listeners.forEach((l) => l());
 }
 
+const SERVER_STATE: CloudState = cloudEnabled ? { ...OFF, status: "loading" } : OFF;
+
 export function useCloud() {
   return useSyncExternalStore(
     (l) => {
@@ -43,7 +45,7 @@ export function useCloud() {
       };
     },
     () => state,
-    () => (cloudEnabled ? { ...OFF, status: "loading" as const } : OFF),
+    () => SERVER_STATE,
   );
 }
 
@@ -96,7 +98,8 @@ export async function syncNow() {
   if (error) return setState({ status: "error", error: explain(error) });
 
   const local = getSavedData();
-  const remote = (row?.data as SavedData | undefined) ?? null;
+  // Bản cũ trên tài khoản (mỗi tài khoản một bé) được đổi sang bản nhiều bé
+  const remote = row?.data ? normalize(row.data) : null;
   if (!remote) return push();
   if (isBlank(local)) return pull(remote);
 

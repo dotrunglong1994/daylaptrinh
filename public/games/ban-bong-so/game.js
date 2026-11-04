@@ -34,10 +34,10 @@ function shuffle(arr) {
 const balloonSize = () => (field.clientWidth < 520 ? 68 : 86);
 
 function loadBest() {
-  try { return JSON.parse(localStorage.getItem('bbs-best') || '{}'); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(kidKey('bbs-best')) || '{}'); } catch { return {}; }
 }
 function saveBest(best) {
-  try { localStorage.setItem('bbs-best', JSON.stringify(best)); } catch {}
+  try { localStorage.setItem(kidKey('bbs-best'), JSON.stringify(best)); } catch {}
 }
 const bestKey = () => `${state.mode}|${state.op}|${state.level}`;
 

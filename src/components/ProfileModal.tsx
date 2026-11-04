@@ -2,12 +2,20 @@
 
 import { useState } from "react";
 import { GRADES } from "@/lib/games";
-import { setProfile, type Profile } from "@/lib/progress";
+import { addKid, setProfile, type Profile } from "@/lib/progress";
 import Dino from "./Dino";
 
 const AVATARS = ["🦖", "🐱", "🐶", "🐰", "🦊", "🐼", "🐯", "🦄"];
 
-export default function ProfileModal({ initial, onDone }: { initial: Profile | null; onDone: () => void }) {
+type Props = {
+  /** Hồ sơ đang sửa; null = tạo bé mới */
+  initial: Profile | null;
+  onDone: () => void;
+  /** Cho phép đóng khi đang thêm bé (đã có bé khác) */
+  canCancel?: boolean;
+};
+
+export default function ProfileModal({ initial, onDone, canCancel }: Props) {
   const [name, setName] = useState(initial?.name ?? "");
   const [avatar, setAvatar] = useState(initial?.avatar ?? AVATARS[0]);
   const [grade, setGrade] = useState<number | undefined>(initial?.grade);
@@ -16,7 +24,9 @@ export default function ProfileModal({ initial, onDone }: { initial: Profile | n
   function save(e: React.FormEvent) {
     e.preventDefault();
     if (!trimmed) return;
-    setProfile({ name: trimmed, avatar, ...(grade && { grade }) });
+    const profile = { name: trimmed, avatar, ...(grade && { grade }) };
+    if (initial) setProfile(profile);
+    else addKid(profile);
     onDone();
   }
 
@@ -62,7 +72,7 @@ export default function ProfileModal({ initial, onDone }: { initial: Profile | n
           ))}
         </div>
         <div className="row">
-          {initial && (
+          {(initial || canCancel) && (
             <button type="button" className="btn ghost" onClick={onDone}>
               Hủy
             </button>

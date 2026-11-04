@@ -32,10 +32,10 @@ const sayFrac = (num, den) => `${num} phần ${den}`;
 const sameValue = (a, b) => a[0] * b[1] === a[1] * b[0];
 
 function loadBest() {
-  try { return JSON.parse(localStorage.getItem('pizza-best') || '{}'); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(kidKey('pizza-best')) || '{}'); } catch { return {}; }
 }
 function saveBest(best) {
-  try { localStorage.setItem('pizza-best', JSON.stringify(best)); } catch {}
+  try { localStorage.setItem(kidKey('pizza-best'), JSON.stringify(best)); } catch {}
 }
 
 /* ---------- Âm thanh ---------- */

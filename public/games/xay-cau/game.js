@@ -34,10 +34,10 @@ const state = { idx: 0, def: null, gap: 0, kinds: [], placed: [], fails: 0, runn
 
 /* ---------- Lưu tiến độ ---------- */
 function loadProgress() {
-  try { return JSON.parse(localStorage.getItem('bridge-progress') || '{}'); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(kidKey('bridge-progress')) || '{}'); } catch { return {}; }
 }
 function saveProgress(p) {
-  try { localStorage.setItem('bridge-progress', JSON.stringify(p)); } catch {}
+  try { localStorage.setItem(kidKey('bridge-progress'), JSON.stringify(p)); } catch {}
 }
 
 /* ---------- Âm thanh ---------- */

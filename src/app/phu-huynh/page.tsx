@@ -6,7 +6,7 @@ import Stars from "@/components/Stars";
 import WeeklyReport from "@/components/WeeklyReport";
 import { GAMES, GRADES, gamesForGrade } from "@/lib/games";
 import { useCloud } from "@/lib/cloud";
-import { resetProgress, totalStars, useProgress } from "@/lib/progress";
+import { removeKid, resetProgress, switchKid, totalStars, useProgress } from "@/lib/progress";
 import { streakOf, useNow } from "@/lib/useNow";
 
 const dateFmt = new Intl.DateTimeFormat("vi-VN", { dateStyle: "short", timeStyle: "short" });
@@ -14,14 +14,33 @@ const dateFmt = new Intl.DateTimeFormat("vi-VN", { dateStyle: "short", timeStyle
 export default function ParentPage() {
   const progress = useProgress();
   const cloud = useCloud();
-  const [confirming, setConfirming] = useState(false);
+  const [confirming, setConfirming] = useState<"reset" | "remove" | null>(null);
   const { streak } = streakOf(progress.daily, useNow());
   const plays = Object.values(progress.games).reduce((sum, g) => sum + g.plays, 0);
   const playable = GAMES.filter((g) => g.src);
+  const kids = progress.kids.filter((k) => k.profile);
+  const name = progress.profile?.name ?? "bé";
 
   return (
     <div className="page">
       <h1 className="page-title">👨‍👩‍👧 Góc phụ huynh</h1>
+      {kids.length > 1 && (
+        <div className="kid-tabs" role="group" aria-label="Xem tiến độ của bé">
+          {kids.map((k) => (
+            <button
+              key={k.id}
+              className={k.id === progress.kidId ? "on" : ""}
+              aria-pressed={k.id === progress.kidId}
+              onClick={() => {
+                switchKid(k.id);
+                setConfirming(null);
+              }}
+            >
+              {k.profile!.avatar} {k.profile!.name}
+            </button>
+          ))}
+        </div>
+      )}
       <p className="muted">
         {progress.profile
           ? `Tiến độ học của ${progress.profile.name}${progress.profile.grade ? ` (lớp ${progress.profile.grade})` : ""}.`
@@ -117,25 +136,36 @@ export default function ParentPage() {
         {confirming ? (
           <>
             <span>
-              Xóa toàn bộ sao, xu, thú cưng và lịch sử chơi{cloud.email ? " (cả trên tài khoản)" : ""}?
+              {confirming === "reset"
+                ? `Xóa toàn bộ sao, xu, thú cưng và lịch sử chơi của ${name}`
+                : `Xóa hẳn hồ sơ ${name} (cả sao, xu, thú cưng)`}
+              {cloud.email ? " (cả trên tài khoản)" : ""}?
             </span>
             <button
               className="btn danger small"
               onClick={() => {
-                resetProgress();
-                setConfirming(false);
+                if (confirming === "reset") resetProgress();
+                else if (progress.kidId) removeKid(progress.kidId);
+                setConfirming(null);
               }}
             >
               Xóa
             </button>
-            <button className="btn ghost small" onClick={() => setConfirming(false)}>
+            <button className="btn ghost small" onClick={() => setConfirming(null)}>
               Hủy
             </button>
           </>
         ) : (
-          <button className="btn ghost small" onClick={() => setConfirming(true)}>
-            🗑️ Xóa tiến độ
-          </button>
+          <>
+            <button className="btn ghost small" onClick={() => setConfirming("reset")}>
+              🗑️ Xóa tiến độ của {name}
+            </button>
+            {kids.length > 1 && (
+              <button className="btn ghost small" onClick={() => setConfirming("remove")}>
+                👋 Xóa hồ sơ {name}
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>
