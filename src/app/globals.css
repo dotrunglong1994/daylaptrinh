@@ -55,10 +55,15 @@ button:disabled { cursor: default; opacity: .5; }
 }
 .logo { font-size: 1.5rem; font-weight: 800; white-space: nowrap; }
 .nav { display: flex; gap: 6px; flex: 1; }
-.nav a { padding: 4px 12px; border-radius: 12px; font-weight: 700; }
+.nav a { padding: 4px 12px; border-radius: 12px; font-weight: 700; white-space: nowrap; }
+@media (max-width: 960px) {
+  .logo span, .avatar-name { display: none; }
+  .nav a { padding: 4px 8px; }
+}
 .nav a:hover { background: #fff; }
 .wallet { display: flex; align-items: center; gap: 8px; font-weight: 800; }
-.wallet > span { background: #fff; padding: 2px 12px; border-radius: 999px; }
+.wallet > span, .wallet-link { background: #fff; padding: 2px 12px; border-radius: 999px; }
+.wallet-link:hover { box-shadow: 0 0 0 2px var(--line); }
 .avatar-btn { display: flex; align-items: center; gap: 6px; background: #fff; padding: 2px 12px 2px 4px; border-radius: 999px; font-weight: 800; }
 .avatar { font-size: 1.5rem; }
 
@@ -164,6 +169,7 @@ a.node:hover { transform: translateX(6px) scale(1.02); }
   background: #fff; border-radius: 999px; padding: 8px 24px; font-size: 1.6rem; font-weight: 800;
   box-shadow: 0 6px 20px rgba(35, 57, 91, .25); animation: reward-in .4s, reward-out .4s 2.2s forwards;
 }
+.reward.long { animation: reward-in .4s, reward-out .4s 4.6s forwards; }
 @keyframes reward-in { from { transform: translate(-50%, -30px) scale(.6); opacity: 0; } }
 @keyframes reward-out { to { transform: translate(-50%, -20px); opacity: 0; } }
 @media (max-width: 640px) {
@@ -313,3 +319,45 @@ tr:last-child td { border-bottom: 0; }
 .brain-bars i { flex: 1; background: #7c9cff; border-radius: 4px 4px 0 0; opacity: .85; }
 .brain-player { background: #111827; }
 .brain-player .player-bar h1 { color: #e8edf7; }
+
+/* ---------- Thử thách hằng ngày ---------- */
+.challenge { margin: 24px 0 0; display: flex; flex-direction: column; gap: 10px; border: 3px dashed #ffa94d; }
+.challenge h2 { font-size: 1.4rem; }
+.challenge.claimed { border-style: solid; border-color: var(--good); }
+.node.done { opacity: .75; }
+.node.done strong { text-decoration: line-through; text-decoration-thickness: 2px; }
+
+/* ---------- Huy hiệu ---------- */
+.badge-grid { list-style: none; padding: 0; margin: 20px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+.badge { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding: 16px 12px; }
+.badge-emoji {
+  font-size: 2.6rem; width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center;
+  background: #f1f3f5; filter: grayscale(1); opacity: .45;
+}
+.badge.earned .badge-emoji { filter: none; opacity: 1; background: radial-gradient(circle, #fff3bf, #ffd43b); box-shadow: 0 0 0 4px #fff, 0 0 0 7px #fab005; }
+.badge strong { font-size: 1.1rem; margin-top: 6px; }
+.badge-date { color: var(--good); font-weight: 700; }
+.badge progress { width: 80%; height: 10px; appearance: none; border: 0; border-radius: 999px; overflow: hidden; background: #eef6ff; }
+.badge progress::-webkit-progress-bar { background: #eef6ff; }
+.badge progress::-webkit-progress-value { background: #fab005; border-radius: 999px; }
+.badge progress::-moz-progress-bar { background: #fab005; border-radius: 999px; }
+
+/* ---------- Báo cáo tuần ---------- */
+.weekly { margin-bottom: 20px; }
+.weekly h3 { font-size: 1.15rem; margin-bottom: 8px; }
+.stat small { font-size: .8rem; }
+.week-chart { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; height: 170px; padding-top: 26px; }
+.week-col { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; outline: none; }
+.week-bar-wrap { flex: 1; width: 100%; display: flex; align-items: flex-end; justify-content: center; border-bottom: 2px solid var(--line); }
+.week-bar { width: min(28px, 70%); background: #4c6ef5; border-radius: 4px 4px 0 0; min-height: 4px; }
+.week-day { font-size: .85rem; font-weight: 700; color: var(--muted); }
+.week-col.today .week-day { color: var(--ink); }
+.week-tip {
+  position: absolute; top: -24px; white-space: nowrap; font-size: .8rem; font-weight: 700; background: var(--ink); color: #fff;
+  padding: 1px 8px; border-radius: 8px; opacity: 0; pointer-events: none; transition: opacity .15s;
+}
+.week-col:hover .week-tip, .week-col:focus-visible .week-tip { opacity: 1; }
+.week-col:hover .week-bar, .week-col:focus-visible .week-bar { filter: brightness(1.15); }
+.week-lists { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 16px; }
+.week-lists ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

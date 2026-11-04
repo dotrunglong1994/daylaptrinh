@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { gradeText, type Game } from "@/lib/games";
-import { recordResult } from "@/lib/progress";
+import { CHALLENGE_SIZE } from "@/lib/challenge";
+import { recordResult, type Reward as Earned } from "@/lib/progress";
 
-type Reward = { id: number; coins: number; bonus: number; stars: number };
+type Reward = Earned & { id: number; stars: number };
 
 // Bật/tắt đọc to lời khủng long; game đọc khóa này mỗi lần nói (public/games/shared/mascot.js)
 const READ_KEY = "bhv-read-aloud";
@@ -42,12 +43,12 @@ export default function GamePlayer({ game }: { game: Game }) {
       const data = e.data;
       if (data?.source !== "daylaptrinh-game" || data.gameId !== game.id) return;
       const stars = Number(data.stars) || 0;
-      const { coins, bonus } = recordResult(game.id, {
+      const earned = recordResult(game.id, {
         stars,
         score: Number(data.score) || 0,
         progressText: typeof data.progressText === "string" ? data.progressText : undefined,
       });
-      setReward({ id: Date.now(), coins, bonus, stars });
+      setReward({ id: Date.now(), ...earned, stars });
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
@@ -55,7 +56,8 @@ export default function GamePlayer({ game }: { game: Game }) {
 
   useEffect(() => {
     if (!reward) return;
-    const t = setTimeout(() => setReward(null), 2600);
+    // Có huy hiệu hay thử thách mới thì để lâu hơn cho bé kịp đọc
+    const t = setTimeout(() => setReward(null), reward.badges.length || reward.challengeBonus ? 5000 : 2600);
     return () => clearTimeout(t);
   }, [reward]);
 
@@ -87,9 +89,19 @@ export default function GamePlayer({ game }: { game: Game }) {
       </div>
       <iframe ref={frame} src={game.src} title={game.title} className="player-frame" allow="autoplay" />
       {reward && (
-        <div key={reward.id} className="reward" role="status">
+        <div key={reward.id} className={`reward${reward.badges.length || reward.challengeBonus ? " long" : ""}`} role="status">
           {"⭐".repeat(reward.stars)} +{reward.coins} 🪙
           {reward.bonus > 0 && <small className="reward-bonus">🔥 Thưởng học hôm nay +{reward.bonus} 🪙</small>}
+          {reward.challengeBonus > 0 && (
+            <small className="reward-bonus">
+              🎯 Xong thử thách {CHALLENGE_SIZE} game hôm nay +{reward.challengeBonus} 🪙
+            </small>
+          )}
+          {reward.badges.map((b) => (
+            <small key={b.id} className="reward-bonus">
+              🏅 Huy hiệu mới: {b.emoji} {b.name}
+            </small>
+          ))}
         </div>
       )}
     </div>

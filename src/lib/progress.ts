@@ -12,6 +12,8 @@ import {
   type PetState,
   type SpeciesId,
 } from "./pet";
+import { newBadges, type Badge } from "./badges";
+import { CHALLENGE_BONUS, challengeDone, challengeGames, type PlayLog } from "./challenge";
 
 // Tiến độ của bé, luôn lưu trong localStorage của trình duyệt.
 // Nếu phụ huynh đăng nhập, src/lib/cloud.ts đồng bộ thêm bản sao lên Supabase.
@@ -52,6 +54,12 @@ export type Progress = {
   brain: Record<string, BrainRecord>;
   /** Chuỗi ngày tập trí não, tính riêng với chuỗi ngày học của bé */
   brainDaily: Daily | null;
+  /** Các lượt chơi gần nhất (tối đa LOG_MAX), dùng cho báo cáo tuần và thử thách hằng ngày */
+  log: PlayLog[];
+  /** Ngày gần nhất hoàn thành thử thách hằng ngày và tổng số lần hoàn thành */
+  challenge: { day: string; count: number } | null;
+  /** Huy hiệu đã đạt: id → ngày đạt */
+  badges: Record<string, string>;
   /** Lần ghi gần nhất, dùng để biết bản trên máy hay trên tài khoản mới hơn */
   savedAt: string | null;
   /** false khi render phía server, trước khi đọc được localStorage */
@@ -60,10 +68,13 @@ export type Progress = {
 
 export type GameResult = { stars: number; score: number; progressText?: string };
 
+export type Reward = { coins: number; bonus: number; challengeBonus: number; badges: Badge[] };
+
 const KEY = "dlt-progress-v1";
+const LOG_MAX = 400;
 const SERVER: Progress = {
-  profile: null, coins: 0, games: {}, pet: null, inventory: [], daily: null, brain: {}, brainDaily: null, savedAt: null,
-  loaded: false,
+  profile: null, coins: 0, games: {}, pet: null, inventory: [], daily: null, brain: {}, brainDaily: null,
+  log: [], challenge: null, badges: {}, savedAt: null, loaded: false,
 };
 const EMPTY: Progress = { ...SERVER, loaded: true };
 
@@ -99,8 +110,8 @@ function write(next: Progress) {
 }
 
 export function getSavedData(): SavedData {
-  const { profile, coins, games, pet, inventory, daily, brain, brainDaily, savedAt } = read();
-  return { profile, coins, games, pet, inventory, daily, brain, brainDaily, savedAt };
+  const { profile, coins, games, pet, inventory, daily, brain, brainDaily, log, challenge, badges, savedAt } = read();
+  return { profile, coins, games, pet, inventory, daily, brain, brainDaily, log, challenge, badges, savedAt };
 }
 
 /** Thay toàn bộ tiến độ bằng bản tải từ tài khoản (không tính là một lần ghi mới). */
@@ -151,19 +162,45 @@ function nextDaily(daily: Daily | null, now: number): Daily {
   return { lastDay: today, streak: daily?.lastDay === yesterday ? daily.streak + 1 : 1 };
 }
 
-/** Ghi kết quả một lượt chơi. Game đầu tiên trong ngày được thêm xu thưởng. */
-export function recordResult(gameId: string, result: GameResult): { coins: number; bonus: number } {
+/** Thêm huy hiệu bé vừa đạt (ghi ngày đạt). Trả về state mới và các huy hiệu mới. */
+function withBadges<T extends SavedData>(data: T, now: number): [T, Badge[]] {
+  const earned = newBadges(data);
+  if (!earned.length) return [data, earned];
+  const day = dayKey(now);
+  return [{ ...data, badges: { ...data.badges, ...Object.fromEntries(earned.map((b) => [b.id, day])) } }, earned];
+}
+
+/**
+ * Ghi kết quả một lượt chơi. Game đầu tiên trong ngày được thêm xu thưởng,
+ * chơi xong cả 3 game thử thách hôm nay được thưởng thêm.
+ */
+export function recordResult(gameId: string, result: GameResult): Reward {
   const current = read();
   const now = Date.now();
+  const today = dayKey(now);
   const prev = current.games[gameId];
   const stars = Math.max(0, Math.min(3, Math.round(result.stars)));
   const coins = stars * 5;
   const daily = nextDaily(current.daily, now);
   const bonus = daily !== current.daily ? DAILY_BONUS : 0;
-  write({
+  const log = [...(current.log ?? []), { d: today, g: gameId, s: stars }].slice(-LOG_MAX);
+
+  let challenge = current.challenge;
+  let challengeBonus = 0;
+  if (challenge?.day !== today) {
+    const games = challengeGames(today, current.profile?.grade);
+    if (games.length && challengeDone(log, today, games).size === games.length) {
+      challenge = { day: today, count: (challenge?.count ?? 0) + 1 };
+      challengeBonus = CHALLENGE_BONUS;
+    }
+  }
+
+  const [next, badges] = withBadges({
     ...current,
-    coins: current.coins + coins + bonus,
+    coins: current.coins + coins + bonus + challengeBonus,
     daily,
+    log,
+    challenge,
     games: {
       ...current.games,
       [gameId]: {
@@ -174,8 +211,17 @@ export function recordResult(gameId: string, result: GameResult): { coins: numbe
         lastPlayed: new Date(now).toISOString(),
       },
     },
-  });
-  return { coins, bonus };
+  }, now);
+  write(next);
+  return { coins, bonus, challengeBonus, badges };
+}
+
+/** Ghi nhận huy hiệu đã đủ điều kiện nhưng chưa có (vd. nhờ chăm thú cưng). Trả về huy hiệu mới. */
+export function syncBadges(): Badge[] {
+  const current = read();
+  const [next, badges] = withBadges(current, Date.now());
+  if (badges.length) write(next);
+  return badges;
 }
 
 /** Ghi điểm một lượt chơi game trí não. Trả về true nếu là kỷ lục mới. */

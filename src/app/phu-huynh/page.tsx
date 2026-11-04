@@ -3,6 +3,7 @@
 import { useState } from "react";
 import CloudPanel from "@/components/CloudPanel";
 import Stars from "@/components/Stars";
+import WeeklyReport from "@/components/WeeklyReport";
 import { GAMES, GRADES, gamesForGrade } from "@/lib/games";
 import { useCloud } from "@/lib/cloud";
 import { resetProgress, totalStars, useProgress } from "@/lib/progress";
@@ -46,6 +47,8 @@ export default function ParentPage() {
           <span>🔥 Ngày học liên tiếp</span>
         </div>
       </div>
+
+      <WeeklyReport />
 
       <h2 className="section-title">📚 Theo lớp</h2>
       <div className="grade-progress">

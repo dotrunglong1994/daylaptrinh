@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Dino from "@/components/Dino";
+import DailyChallenge from "@/components/DailyChallenge";
 import Suggestions from "@/components/Suggestions";
 import { GAMES, SITE_NAME, SUBJECTS } from "@/lib/games";
 
@@ -25,6 +26,7 @@ export default function Home() {
         </div>
       </section>
 
+      <DailyChallenge />
       <Suggestions />
 
       <section className="features">

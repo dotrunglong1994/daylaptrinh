@@ -27,8 +27,9 @@ Game mới hoặc game sửa logic: chơi thử thật trên trình duyệt (xem
 ## Kiểm thử trên trình duyệt
 
 - Tiện ích Claude in Chrome có thể không kết nối. Khi đó dùng Chrome headless + CDP bằng Node 20
-  (`node --experimental-websocket`), mở Chrome với cờ `--disable-background-timer-throttling`, nếu không timer
-  chạy chậm làm test sai.
+  (`node --experimental-websocket`), mở Chrome với cờ `--disable-background-timer-throttling`, và gọi
+  `Page.bringToFront` + `Emulation.setFocusEmulationEnabled({ enabled: true })` trước khi chạy: nếu
+  `document.visibilityState` là `hidden` thì timer bị hãm còn 1 giây/lần, game có hiệu ứng chạy chậm, test sai.
 - Không chạy hai script CDP cùng lúc (chúng dùng chung một tab). Không pipe output qua `grep` (bị đệm, trông như treo).
 - Biến `const` ở top-level của `game.js` gọi được qua `Runtime.evaluate`, nên dễ viết "người giải tự động" để
   chơi hết các màn.
@@ -61,8 +62,8 @@ Game mới hoặc game sửa logic: chơi thử thật trên trình duyệt (xem
 
 ## Kế hoạch còn lại
 
-1. Game lớp 4–5 còn thiếu: góc và thước đo độ, thể tích hình hộp, vận tốc – quãng đường – thời gian.
-2. Một tài khoản phụ huynh quản lý nhiều bé (mỗi bé có lớp riêng).
-3. Thêm game cho Phòng Tập Trí Não (vd. tìm cặp hình, logic sắp xếp).
-4. Cấu hình SMTP riêng cho Supabase (email miễn phí bị giới hạn vài email/giờ).
-5. Lớp học cho giáo viên.
+1. Một tài khoản phụ huynh quản lý nhiều bé (mỗi bé có lớp riêng; log, huy hiệu, thử thách cũng tách theo bé).
+2. Thêm game cho Phòng Tập Trí Não (vd. tìm cặp hình, logic sắp xếp).
+3. Cấu hình SMTP riêng cho Supabase (email miễn phí bị giới hạn vài email/giờ).
+4. Lớp học cho giáo viên.
+5. Lỗi có sẵn: overlay dev của Next báo một issue ở `useCloud` (`src/lib/cloud.ts`), chưa xem kỹ.

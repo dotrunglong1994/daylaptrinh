@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Thước Đo Góc</title>
+  <link rel="icon" href="data:," />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="../shared/kit.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="stage">
+    <p id="question" class="question card"></p>
+    <div class="board-wrap card">
+      <svg id="board" class="board" viewBox="0 0 360 200" aria-label="Góc và thước đo góc">
+        <g id="proto"></g>
+        <g id="shapes"></g>
+        <g id="protoLbl"></g>
+      </svg>
+      <svg id="clock" class="clock hidden" viewBox="0 0 200 200" aria-label="Đồng hồ"></svg>
+    </div>
+    <div id="setControls" class="controls">
+      <button class="btn ghost" data-turn="-1" id="minusBtn"></button>
+      <button class="btn ghost" data-turn="1" id="plusBtn"></button>
+    </div>
+    <div id="checkRow" class="controls">
+      <button id="checkBtn" class="btn go">✅ Kiểm tra</button>
+    </div>
+    <div id="choices" class="choices"></div>
+  </div>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="../shared/kit.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

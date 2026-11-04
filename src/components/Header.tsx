@@ -30,6 +30,9 @@ export default function Header() {
           <div className="wallet">
             <span title="Tổng số sao">⭐ {totalStars(progress)}</span>
             <span title="Xu">🪙 {progress.coins}</span>
+            <Link href="/huy-hieu" className="wallet-link" title="Huy hiệu">
+              🏅 {Object.keys(progress.badges).length}
+            </Link>
             {progress.profile && (
               <button className="avatar-btn" onClick={() => setEditing(true)} title="Đổi tên, hình đại diện">
                 <span className="avatar">{progress.profile.avatar}</span>

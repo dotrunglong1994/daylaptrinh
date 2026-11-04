@@ -1,0 +1,24 @@
+:root { --sky1: #e5dbff; --sky2: #f3f0ff; --accent: #7048e8; }
+
+.question.big { font-size: 2rem; }
+.box-wrap { display: grid; place-items: center; padding: 8px; }
+.box { width: min(420px, 100%); height: auto; }
+
+.face { stroke: #23395b; stroke-width: 1; stroke-linejoin: round; }
+.face.top.c0 { fill: #ffd43b; } .face.left.c0 { fill: #fab005; } .face.right.c0 { fill: #f08c00; }
+.face.top.c1 { fill: #74c0fc; } .face.left.c1 { fill: #339af0; } .face.right.c1 { fill: #1c7ed6; }
+.face.top.c2 { fill: #8ce99a; } .face.left.c2 { fill: #51cf66; } .face.right.c2 { fill: #37b24d; }
+.face.new { animation: pop .35s; }
+.face.top.new { fill: #ffc9c9; } .face.left.new { fill: #ff8787; } .face.right.new { fill: #fa5252; }
+
+.face.solid { stroke: none; }
+.face.top.solid { fill: #d0bfff; } .face.left.solid { fill: #b197fc; } .face.right.solid { fill: #9775fa; }
+.face.top.cube { fill: #ffd8a8; } .face.left.cube { fill: #ffa94d; } .face.right.cube { fill: #fd7e14; }
+.face.water { stroke: none; }
+.face.top.water { fill: rgba(116, 192, 252, .75); } .face.left.water { fill: rgba(51, 154, 240, .7); } .face.right.water { fill: rgba(28, 126, 214, .7); }
+.face.glass { fill: rgba(255, 255, 255, .12); stroke: #495057; stroke-width: 1.5; }
+
+.edge { stroke: #23395b; stroke-width: 1.5; }
+.wire { stroke: #868e96; stroke-width: 1.2; stroke-dasharray: 4 3; }
+.dim { font: 800 14px 'Baloo 2', sans-serif; fill: #23395b; text-anchor: middle; dominant-baseline: central; paint-order: stroke; stroke: #fff; stroke-width: 4px; }
+.water-lbl { fill: #1864ab; font-size: 12px; text-anchor: end; }

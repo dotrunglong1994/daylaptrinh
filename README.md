@@ -33,17 +33,18 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 
 | Đường dẫn | Nội dung |
 |---|---|
-| `/` | Trang chủ, gợi ý game hôm nay theo lớp của bé |
+| `/` | Trang chủ: thử thách hôm nay (3 game), gợi ý game theo lớp của bé |
 | `/ban-do` | Bản đồ phiêu lưu: Đảo Toán Học và Đảo Lập Trình, tự lọc theo lớp của bé |
 | `/choi/[gameId]` | Chơi một game (game chạy trong iframe) |
 | `/thu-cung` | Thú cưng ảo: cho ăn, vuốt ve, cửa hàng, chuỗi ngày học |
-| `/phu-huynh` | Góc phụ huynh: sao, xu, lượt chơi, chuỗi ngày học, tiến độ theo lớp |
+| `/huy-hieu` | Huy hiệu bé đã đạt và tiến độ các huy hiệu còn lại (nút 🏅 trên thanh trên) |
+| `/phu-huynh` | Góc phụ huynh: sao, xu, lượt chơi, báo cáo 7 ngày qua, tiến độ theo lớp |
 | `/tri-nao` | Phòng Tập Trí Não cho người lớn: kỷ lục, điểm hôm nay, chuỗi ngày tập |
 | `/tri-nao/[gameId]` | Chơi một game trí não |
 
 ## Các game
 
-25 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
+28 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
 Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bản đồ mặc định lọc theo lớp đó, trang chủ gợi ý
 3 game hợp lớp mà bé chưa chơi hoặc chưa đủ 3 sao (`suggestGames` trong `src/lib/games.ts`, xen kẽ toán và lập trình).
 
@@ -62,6 +63,9 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 | 🍬 Hũ Kẹo May Mắn | Toán | 2–5 | Chắc chắn / có thể / không thể, so sánh khả năng, tỉ số |
 | 🍕 Chia Bánh Pizza | Toán | 3–5 | Phân số: tô, đọc, chia đều, so sánh |
 | 🌻 Khu Vườn Diện Tích | Toán | 3–5 | Đếm ô, chu vi, diện tích, công thức, tính ngược |
+| 📐 Thước Đo Góc | Toán | 4–5 | Góc nhọn/vuông/tù/bẹt, đọc thước đo độ (hai vòng số), xoay tia, góc kim đồng hồ, góc còn thiếu |
+| 🧊 Kho Hộp Lập Phương | Toán | 5 | Đếm khối lập phương, xếp đầy hộp, thể tích hình hộp và hình lập phương, đổi cm³ – dm³ – m³ – lít, bể nước |
+| 🏎️ Đường Đua Vận Tốc | Toán | 5 | Quãng đường, vận tốc, thời gian; chỉnh tốc độ cho xe về đích đúng giờ; giờ và phút; hai xe ngược chiều, đuổi kịp |
 | 🏷️ Cửa Hàng Giảm Giá | Toán | 5 | Số thập phân, phần trăm, tính giá sau giảm |
 | 🐸 Chú Ếch Nhảy | Lập trình | 1–2 | Đọc lệnh (ếch dừng ở đâu), quy luật mũi tên, chọn chương trình đúng, xếp lệnh, sửa một lệnh sai |
 | 🤖 Robot Tìm Đường | Lập trình | 1–3 | Tuần tự, vòng lặp |
@@ -74,6 +78,18 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 | 💡 Bóng Đèn Nhị Phân | Lập trình | 3–5 | Số nhị phân (hoạt động "Đếm chấm" của CS Unplugged), mật thư |
 | 📏 Xếp Hàng Thông Minh | Lập trình | 3–5 | Sắp xếp nổi bọt, tìm kiếm tuần tự và tìm kiếm nhị phân |
 | 📦 Rô-bốt Nhà Kho | Lập trình | 4–5 | Biến: gán, cộng dồn, biến trong vòng lặp, đổi chỗ hai biến |
+
+## Thử thách, huy hiệu, báo cáo tuần
+
+- Mỗi lượt chơi được ghi vào `progress.log` (`{ d: ngày, g: id game, s: sao }`, giữ 400 lượt gần nhất).
+- **Thử thách hằng ngày** (`src/lib/challenge.ts`, `DailyChallenge.tsx`): mỗi ngày 3 game cố định theo ngày và lớp của bé,
+  có cả toán lẫn lập trình. Chơi xong cả 3 (ít nhất 1 sao) thì `recordResult` cộng thêm 30 xu, mỗi ngày một lần
+  (`progress.challenge = { day, count }`).
+- **Huy hiệu** (`src/lib/badges.ts`): mỗi huy hiệu có `measure(data) → [đã làm, cần đạt]`. Đạt rồi thì lưu ngày đạt vào
+  `progress.badges`, giữ mãi kể cả khi chuỗi ngày học bị đứt. Kiểm tra sau mỗi lượt chơi và khi mở `/huy-hieu`
+  (`syncBadges`, để bắt các huy hiệu như thú cưng lớn lên). Bé thấy thông báo huy hiệu mới ngay sau khi chơi.
+- **Báo cáo 7 ngày** (`WeeklyReport.tsx`, Góc phụ huynh): số ngày có học, lượt chơi so với tuần trước, biểu đồ lượt chơi
+  mỗi ngày, game bé làm tốt / cần luyện thêm, game nên chơi tiếp.
 
 ## Phòng Tập Trí Não (người lớn)
 
@@ -138,5 +154,4 @@ chơi game lưu lựa chọn vào localStorage `bhv-read-aloud`.
 ## Việc tiếp theo
 
 - Một tài khoản phụ huynh quản lý nhiều bé (hiện mỗi tài khoản một hồ sơ bé).
-- Thêm game cho các chủ đề lớp 4–5 còn thiếu: góc và thước đo độ, thể tích hình hộp, vận tốc – quãng đường – thời gian.
 - Thêm lớp học cho giáo viên.
