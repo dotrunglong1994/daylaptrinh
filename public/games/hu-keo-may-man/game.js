@@ -165,7 +165,7 @@ function showRound() {
       if (ok) correct(['Hũ toàn kẹo màu đó!', 'Trong hũ có cả kẹo màu khác.', 'Trong hũ không có viên nào màu đó.'][ans]);
       else wrong(`Đếm xem trong hũ có mấy viên ${NAMES[r.c]}, và có kẹo màu khác không nhé.`);
       return ok;
-    });
+    }, (i) => i === ans);
   } else if (r.type === 'pair') {
     $('#question').textContent = `Bốc ở hũ nào thì dễ được kẹo ${NAMES[r.c]} hơn?`;
     const vals = [1, -1, 0];
@@ -175,7 +175,7 @@ function showRound() {
       if (ok) correct(`Hũ A: ${f(r.a)}, hũ B: ${f(r.b)}`);
       else wrong('So sánh số kẹo màu đó với TỔNG số kẹo trong mỗi hũ nhé.');
       return ok;
-    });
+    }, (i) => vals[i] === pairAnswer(r));
   } else if (r.type === 'ratio') {
     $('#question').textContent = `Khả năng bốc được kẹo ${NAMES[r.c]} là mấy phần?`;
     const opts = window.shuffle(ratioOptions(r));
@@ -185,7 +185,7 @@ function showRound() {
       if (ok) correct(`${countOf(r.jar, r.c)} viên ${NAMES[r.c]} trên tổng ${totalOf(r.jar)} viên`);
       else wrong('Tử số là số viên màu đó, mẫu số là TỔNG số viên trong hũ.');
       return ok;
-    });
+    }, (i) => opts[i] === ans);
   } else {
     const extra = r.also ? `, và ${wantText(r.also)}` : '';
     $('#question').textContent = `Bỏ ít nhất ${r.min} viên kẹo vào hũ sao cho ${wantText(r.want)}${extra}`;

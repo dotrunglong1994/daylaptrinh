@@ -239,7 +239,7 @@ function showRound() {
     const ok = opts[i] === answerOf(r);
     if (ok) correct(); else wrong();
     return ok;
-  });
+  }, (i) => opts[i] === answerOf(r));
 }
 
 $('#question').addEventListener('click', () => window.speak?.($('#question').textContent));

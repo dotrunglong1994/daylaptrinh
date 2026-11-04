@@ -90,6 +90,8 @@ h1 { font-size: clamp(1.8rem, 6vw, 2.5rem); line-height: 1.15; }
 .choice.right { background: #d3f9d8; box-shadow: 0 5px 0 #8ce99a; animation: bounce .4s; }
 .choice.wrong { background: #ffe3e3; box-shadow: 0 5px 0 #ffa8a8; opacity: .7; animation: shake .35s; }
 .choices.locked .choice:not(.right) { opacity: .45; }
+.choice.hinted { opacity: .25; text-decoration: line-through; box-shadow: none; }
+.hint-note { text-align: center; font-weight: 700; color: var(--accent); }
 @keyframes bounce { 40% { transform: scale(1.08); } }
 @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 .shake { animation: shake .35s; }

@@ -164,7 +164,7 @@ function showRound() {
       if (ok) correct(`${r.a.s} ${['=', '>', '<'][[0, 1, -1].indexOf(answerOf(r))]} ${r.b.s}`);
       else wrong('So phần nguyên trước, rồi so hàng phần mười. Thêm số 0 vào cuối không làm số thay đổi.');
       return ok;
-    });
+    }, (i) => vals[i] === answerOf(r));
     return;
   }
   if (r.kind === 'best') {
@@ -176,7 +176,7 @@ function showRound() {
       if (ok) correct(`A: ${fmtMoney(r.payA)}, B: ${fmtMoney(r.payB)}`);
       else wrong(`Tính thử: ${r.p}% của ${fmtMoney(r.price)} là bao nhiêu tiền? So với ${fmtMoney(r.cut)} nhé.`);
       return ok;
-    });
+    }, (i) => ['A', 'B'][i] === answerOf(r));
     return;
   }
 
@@ -213,7 +213,7 @@ function showRound() {
       pct: `Lấy ${r.n} : 100 × ${r.p}.`,
     }[r.kind]);
     return ok;
-  });
+  }, (i) => opts[i] === ans);
 }
 
 /* ---------- Bảng 100 ô ---------- */

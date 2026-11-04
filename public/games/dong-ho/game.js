@@ -202,7 +202,7 @@ function showRound() {
       const ok = opts[i] === answerOf(r);
       if (ok) correct(); else wrong(`Chưa đúng. Nhìn kim ngắn trước để biết giờ, rồi xem kim dài nhé.`);
       return ok;
-    });
+    }, (i) => opts[i] === answerOf(r));
   } else {
     state.t = parseTime(r.from);
     $('#question').textContent = r.story.replace('{from}', timeText(state.t, style)).replace('{add}', Math.abs(r.add));

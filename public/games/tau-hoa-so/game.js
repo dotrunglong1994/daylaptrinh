@@ -191,7 +191,7 @@ function showCompare() {
       correct(`${fmt(a)} ${want} ${fmt(b)}`);
     } else wrong('Chưa đúng. So sánh từ chữ số bên trái sang nhé!');
     return ok;
-  });
+  }, (i) => signs[i] === want);
 }
 
 /* ---------- Sắp xếp ---------- */
@@ -248,7 +248,7 @@ function showRoundLine() {
       wrong(`Chữ số đứng ngay sau hàng ${placeName} là ${digit}. ${digit >= 5 ? 'Từ 5 trở lên thì làm tròn lên.' : 'Bé hơn 5 thì làm tròn xuống.'}`);
     }
     return ok;
-  });
+  }, (i) => opts[i] === want);
 }
 
 /* ---------- Đúng / sai ---------- */

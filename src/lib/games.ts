@@ -203,6 +203,16 @@ export const GAMES: Game[] = [
     src: "/games/cua-hang-giam-gia/index.html",
   },
   {
+    id: "kiem-tra",
+    title: "Bài Kiểm Tra",
+    emoji: "📝",
+    subject: "toan",
+    description: "10 câu trộn toán và lập trình mỗi lớp, đạt 8 câu có bằng khen",
+    skills: ["Ôn tập", "Kiểm tra cuối chủ đề"],
+    grades: [1, 2, 3, 4, 5],
+    src: "/games/kiem-tra/index.html",
+  },
+  {
     id: "chu-ech-nhay",
     title: "Chú Ếch Nhảy",
     emoji: "🐸",

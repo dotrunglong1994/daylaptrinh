@@ -219,5 +219,5 @@ function nextQuestion() {
       game.say(`Chưa đúng. ${hint}`, 'sad', 'soft');
     }
     return ok;
-  });
+  }, (i) => opts[i] === ans);
 }

@@ -273,7 +273,7 @@ function choose(labels, right, reveal) {
     const ok = right(i);
     if (ok) correct(reveal); else wrong();
     return ok;
-  });
+  }, right);
 }
 
 /* ---------- Ếch nhảy ---------- */

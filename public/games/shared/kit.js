@@ -1,7 +1,8 @@
 // Khung dùng chung cho các game: màn hình chọn màn, thanh trên, khủng long, bảng thắng, âm thanh.
 // Nạp sau mascot.js và bridge.js. Trang game chỉ cần <div id="stage"> chứa phần chơi riêng.
 //
-// const game = createGame({ id, title, sub, levels, unit, winTitle, start(idx) });
+// const game = createGame({ id, title, sub, levels, unit, winTitle, start(idx), free, levelLabel(i) });
+// free: mở sẵn mọi màn; levelLabel(i): chữ trên nút chọn màn thay cho số màn
 // game.say(text, mood, kind)   game.sfx.good()   game.win({ stars, eq, text })   game.rounds(i, n)
 (function () {
   const $ = (s, root = document) => root.querySelector(s);
@@ -94,9 +95,10 @@
       const progress = load();
       $('#levelGrid').innerHTML = Array.from({ length: opts.levels }, (_, i) => {
         const stars = progress[i] || 0;
-        const unlocked = i === 0 || progress[i - 1];
+        const unlocked = opts.free || i === 0 || progress[i - 1];
         const starText = stars ? '⭐'.repeat(stars) + '☆'.repeat(3 - stars) : '☆☆☆';
-        return `<button data-i="${i}" class="${stars ? 'done' : ''}" ${unlocked ? '' : 'disabled'}>${unlocked ? i + 1 : '🔒'}<small>${starText}</small></button>`;
+        const label = opts.levelLabel ? opts.levelLabel(i) : i + 1;
+        return `<button data-i="${i}" class="${stars ? 'done' : ''}" ${unlocked ? '' : 'disabled'}>${unlocked ? label : '🔒'}<small>${starText}</small></button>`;
       }).join('');
       $('#winModal').classList.add('hidden');
       show('levels');
@@ -104,6 +106,7 @@
     function start(idx) {
       state.token++;
       state.idx = idx;
+      document.querySelectorAll('.hint-note').forEach((n) => n.remove());
       $('#winModal').classList.add('hidden');
       $('#levelTitle').textContent = `${capital(unit)} ${idx + 1}/${opts.levels}`;
       $('#roundDots').innerHTML = '';
@@ -166,19 +169,41 @@
     return api;
   };
 
-  // Vẽ các nút đáp án; onPick(i, btn) trả về true nếu đúng (khóa các nút lại)
-  window.renderChoices = function (el, labels, onPick) {
+  // Vẽ các nút đáp án; onPick(i, btn) trả về true nếu đúng (khóa các nút lại).
+  // isRight(i) (không bắt buộc, không có tác dụng phụ): bé chọn sai thì khủng long cất bớt một đáp án sai
+  // (chỉ khi còn từ 3 đáp án, để không lộ đáp án đúng).
+  window.renderChoices = function (el, labels, onPick, isRight) {
+    let misses = 0;
     el.innerHTML = labels.map((l, i) => `<button class="choice" data-i="${i}">${l}</button>`).join('');
+    clearNote(el);
     el.onclick = (e) => {
       const btn = e.target.closest('.choice');
       if (!btn || btn.disabled || el.classList.contains('locked')) return;
       const right = onPick(Number(btn.dataset.i), btn);
       btn.classList.add(right ? 'right' : 'wrong');
-      if (right) el.classList.add('locked');
-      else btn.disabled = true;
+      if (right) {
+        clearNote(el);
+        return el.classList.add('locked');
+      }
+      btn.disabled = true;
+      if (++misses === 1 && isRight) hideOneWrong(el, isRight);
     };
     el.classList.remove('locked');
   };
+
+  function clearNote(el) {
+    if (el.nextElementSibling?.classList.contains('hint-note')) el.nextElementSibling.remove();
+  }
+
+  function hideOneWrong(el, isRight) {
+    const open = [...el.querySelectorAll('.choice:not(:disabled)')];
+    const wrong = open.filter((b) => !isRight(Number(b.dataset.i)));
+    if (open.length <= 2 || !wrong.length) return;
+    const b = wrong[Math.floor(Math.random() * wrong.length)];
+    b.disabled = true;
+    b.classList.add('hinted');
+    el.insertAdjacentHTML('afterend', '<p class="hint-note">🦖 Khủng long đã cất bớt một đáp án sai. Bé thử lại nhé!</p>');
+  }
 
   window.shuffle = function (arr) {
     const a = [...arr];

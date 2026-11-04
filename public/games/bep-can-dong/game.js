@@ -129,7 +129,7 @@ function showStep() {
       if (ok) done(`${fmtAmt(ans, liquid)} = ${ans} ${s.unit}`);
       else wrong(liquid ? 'Nhớ: 1 l = 1000 ml.' : 'Nhớ: 1 kg = 1000 g.');
       return ok;
-    });
+    }, (i) => opts[i] === ans);
     return;
   }
 

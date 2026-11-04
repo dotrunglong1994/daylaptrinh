@@ -325,6 +325,7 @@ tr:last-child td { border-bottom: 0; }
 .challenge h2 { font-size: 1.4rem; }
 .challenge.claimed { border-style: solid; border-color: var(--good); }
 .node.done { opacity: .75; }
+.review-tag { font-style: normal; font-size: .8rem; font-weight: 800; color: #e8590c; }
 .node.done strong { text-decoration: line-through; text-decoration-thickness: 2px; }
 
 /* ---------- Huy hiệu ---------- */

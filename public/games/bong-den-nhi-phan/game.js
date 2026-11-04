@@ -95,7 +95,7 @@ function showRound() {
         correct(r.letter ? `${start} = ${ans} = ${LETTERS[ans - 1]}` : `${start} = ${ans}`);
       } else wrong('Chưa đúng. Chỉ cộng số của các bóng đang sáng thôi nhé.');
       return ok;
-    });
+    }, (i) => opts[i] === ans);
   }
   renderBulbs(!make);
 }

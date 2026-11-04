@@ -231,7 +231,7 @@ function showRound() {
     if (ok) correct();
     else wrong(hintFor(r, opts[i]));
     return ok;
-  });
+  }, (i) => opts[i] === answerOf(r));
 }
 
 function hintFor(r, picked) {

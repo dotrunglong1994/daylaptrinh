@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CHALLENGE_BONUS, challengeDone, challengeGames } from "@/lib/challenge";
+import { CHALLENGE_BONUS, challengeDone, challengeGames, reviewGame } from "@/lib/challenge";
 import { SUBJECTS } from "@/lib/games";
 import { dayKey } from "@/lib/pet";
 import { useProgress } from "@/lib/progress";
@@ -13,7 +13,8 @@ export default function DailyChallenge() {
   const now = useNow();
   if (!progress.loaded || !progress.profile || !now) return null;
   const day = dayKey(now);
-  const games = challengeGames(day, progress.profile.grade);
+  const games = challengeGames(day, progress.profile.grade, progress.log);
+  const review = reviewGame(day, games, progress.log);
   if (!games.length) return null;
   const done = challengeDone(progress.log, day, games);
   const claimed = progress.challenge?.day === day;
@@ -42,6 +43,7 @@ export default function DailyChallenge() {
                 <span className="node-info">
                   <strong>{g.title}</strong>
                   <small>{ok ? "Xong rồi!" : g.description}</small>
+                  {g === review && !ok && <em className="review-tag">🔁 Ôn lại: lần trước bé chưa được 3 sao</em>}
                 </span>
               </Link>
             </li>

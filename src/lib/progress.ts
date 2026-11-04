@@ -300,7 +300,7 @@ export function recordResult(gameId: string, result: GameResult): Reward {
   let challenge = current.challenge;
   let challengeBonus = 0;
   if (challenge?.day !== today) {
-    const games = challengeGames(today, current.profile?.grade);
+    const games = challengeGames(today, current.profile?.grade, current.log);
     if (games.length && challengeDone(log, today, games).size === games.length) {
       challenge = { day: today, count: (challenge?.count ?? 0) + 1 };
       challengeBonus = CHALLENGE_BONUS;

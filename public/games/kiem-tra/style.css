@@ -1,0 +1,29 @@
+:root { --sky1: #fff3bf; --sky2: #fff9db; --accent: #f08c00; }
+
+.qnum { text-align: center; font-weight: 800; color: var(--accent); }
+.question { font-size: 1.4rem; min-height: 90px; display: grid; place-items: center; }
+.choices .choice { font-size: 1.25rem; }
+
+/* Bằng khen */
+.cert-wrap { position: fixed; inset: 0; z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px; background: rgba(35, 57, 91, .55); }
+.cert {
+  width: min(640px, 100%); aspect-ratio: 1.414; background: #fffdf4; color: #23395b; text-align: center;
+  border: 10px double #e8590c; outline: 4px solid #ffd43b; outline-offset: -22px; border-radius: 12px;
+  padding: 34px 40px; display: flex; flex-direction: column; justify-content: center; gap: 4px; font-size: 1.1rem;
+}
+.cert h1 { font-size: clamp(2rem, 7vw, 3rem); color: #d9480f; letter-spacing: 4px; }
+.cert-top { font-weight: 800; color: #868e96; }
+.cert-name { font-size: clamp(1.8rem, 6vw, 2.6rem); font-weight: 800; color: #1971c2; border-bottom: 2px dashed #adb5bd; margin: 0 auto 6px; padding: 0 24px; }
+.cert-stars { font-size: 1.6rem; letter-spacing: 6px; }
+.cert-foot { display: flex; justify-content: space-between; font-size: .95rem; margin-top: 10px; flex-wrap: wrap; gap: 8px; }
+
+@media print {
+  body { background: #fff; }
+  body > *:not(#cert) { display: none !important; }
+  .cert-wrap { position: static; background: none; padding: 0; }
+  .cert { width: 100%; }
+  .no-print { display: none !important; }
+}
+@media (max-width: 520px) {
+  .cert { aspect-ratio: auto; padding: 28px 20px; }
+}

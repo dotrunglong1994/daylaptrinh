@@ -154,7 +154,7 @@ function showRound() {
       if (ok) correct(`Vườn A: ${areaOf(r.a)} ô, vườn B: ${areaOf(r.b)} ô`);
       else wrong('Đếm số ô của từng vườn rồi so sánh nhé.');
       return ok;
-    });
+    }, (i) => vals[i] === answerOf(r));
   } else if (r.type === 'calc') {
     showCalc(r);
   } else {
@@ -179,7 +179,7 @@ function askNumber(r, unit) {
         : { area: 'Diện tích = dài × rộng.', perim: 'Chu vi = (dài + rộng) × 2.', h: 'Chiều rộng = diện tích : chiều dài.', w: 'Cạnh hình vuông = chu vi : 4.' }[r.ask]);
     }
     return ok;
-  });
+  }, (i) => opts[i] === answerOf(r));
 }
 
 function showCalc(r) {

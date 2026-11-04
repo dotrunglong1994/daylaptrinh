@@ -203,7 +203,7 @@ function showRound() {
       game.say('Chưa đúng. Bé đọc lại từng dòng, nhớ số trong mỗi hộp sau mỗi dòng nhé.', 'sad', 'soft');
     }
     return ok;
-  });
+  }, (i) => opts[i] === answerOf(r));
 }
 
 // Cho rô-bốt chạy từng dòng để bé thấy số trong hộp thay đổi thế nào

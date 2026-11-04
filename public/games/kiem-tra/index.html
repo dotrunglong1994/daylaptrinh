@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Bài Kiểm Tra</title>
+  <link rel="icon" href="data:," />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="../shared/kit.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="stage">
+    <p id="qnum" class="qnum"></p>
+    <p id="question" class="question card"></p>
+    <div id="choices" class="choices"></div>
+  </div>
+
+  <div id="cert" class="cert-wrap hidden">
+    <div class="cert">
+      <p class="cert-top">🦖 Bé Học Vui 🎈</p>
+      <h1>BẰNG KHEN</h1>
+      <p>Tặng bạn</p>
+      <p id="certName" class="cert-name"></p>
+      <p>đã hoàn thành xuất sắc bài kiểm tra <b id="certGrade"></b></p>
+      <p>với <b id="certScore"></b> câu trả lời đúng.</p>
+      <p id="certStars" class="cert-stars"></p>
+      <div class="cert-foot">
+        <span>Ngày <b id="certDate"></b></span>
+        <span>Khủng long Bé Học Vui 🦖</span>
+      </div>
+    </div>
+    <div class="row no-print">
+      <button id="closeCert" class="btn ghost">↩️ Quay lại</button>
+      <button id="printBtn" class="btn go">🖨️ In bằng khen</button>
+    </div>
+  </div>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="../shared/kit.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
