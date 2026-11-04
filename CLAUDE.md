@@ -57,13 +57,15 @@ Game mới hoặc game sửa logic: chơi thử thật trên trình duyệt (xem
 - Mỗi game khai báo `grades` (lớp 1–5 theo chương trình GDPT 2018) trong `src/lib/games.ts`.
 - Dữ liệu màn chơi đặt giữa `// LEVELS-START` và `// LEVELS-END`, không đụng DOM, và luôn có phần kiểm tra trong
   `scripts/check-levels.mjs`.
+- Game đọc/ghi localStorage phải bọc khóa bằng `kidKey(key)` (shared/bridge.js) để mỗi bé có tiến độ riêng.
+- Dữ liệu tiến độ là của cả nhà (`SavedData` có `kids`); thêm trường cho bé thì thêm vào `KidData`, `blankKid` và `kidFields`
+  trong `src/lib/progress.ts`, nếu không trường đó sẽ bị mất khi ghi.
 - Tiến độ lưu localStorage là chính; Supabase (đăng nhập OTP email) chỉ là tùy chọn đồng bộ. Không làm website phụ
   thuộc vào việc đăng nhập.
 
 ## Kế hoạch còn lại
 
-1. Một tài khoản phụ huynh quản lý nhiều bé (mỗi bé có lớp riêng; log, huy hiệu, thử thách cũng tách theo bé).
-2. Thêm game cho Phòng Tập Trí Não (vd. tìm cặp hình, logic sắp xếp).
-3. Cấu hình SMTP riêng cho Supabase (email miễn phí bị giới hạn vài email/giờ).
-4. Lớp học cho giáo viên.
-5. Lỗi có sẵn: overlay dev của Next báo một issue ở `useCloud` (`src/lib/cloud.ts`), chưa xem kỹ.
+1. Cấu hình SMTP riêng cho Supabase (email miễn phí bị giới hạn vài email/giờ).
+2. Cài lên máy tính bảng như ứng dụng (PWA), chơi khi không có mạng.
+3. Lớp học cho giáo viên.
+4. Khối lệnh kéo thả kiểu Scratch để bé tự làm game nhỏ.

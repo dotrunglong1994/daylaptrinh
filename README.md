@@ -33,18 +33,18 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 
 | Đường dẫn | Nội dung |
 |---|---|
-| `/` | Trang chủ: thử thách hôm nay (3 game), gợi ý game theo lớp của bé |
+| `/` | Trang chủ: thử thách hôm nay (3 game), thi đua anh chị em (từ 2 bé), gợi ý game theo lớp của bé |
 | `/ban-do` | Bản đồ phiêu lưu: Đảo Toán Học và Đảo Lập Trình, tự lọc theo lớp của bé |
 | `/choi/[gameId]` | Chơi một game (game chạy trong iframe) |
-| `/thu-cung` | Thú cưng ảo: cho ăn, vuốt ve, cửa hàng, chuỗi ngày học |
+| `/thu-cung` | Thú cưng ảo: cho ăn, vuốt ve, hành trình tuần (rương đồ hiếm), cửa hàng, chuỗi ngày học |
 | `/huy-hieu` | Huy hiệu bé đã đạt và tiến độ các huy hiệu còn lại (nút 🏅 trên thanh trên) |
-| `/phu-huynh` | Góc phụ huynh: sao, xu, lượt chơi, báo cáo 7 ngày qua, tiến độ theo lớp |
+| `/phu-huynh` | Góc phụ huynh: chọn bé để xem, sao, xu, lượt chơi, báo cáo 7 ngày qua, tiến độ theo lớp, xóa tiến độ / hồ sơ bé |
 | `/tri-nao` | Phòng Tập Trí Não cho người lớn: kỷ lục, điểm hôm nay, chuỗi ngày tập |
 | `/tri-nao/[gameId]` | Chơi một game trí não |
 
 ## Các game
 
-28 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
+31 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
 Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bản đồ mặc định lọc theo lớp đó, trang chủ gợi ý
 3 game hợp lớp mà bé chưa chơi hoặc chưa đủ 3 sao (`suggestGames` trong `src/lib/games.ts`, xen kẽ toán và lập trình).
 
@@ -67,6 +67,7 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 | 🧊 Kho Hộp Lập Phương | Toán | 5 | Đếm khối lập phương, xếp đầy hộp, thể tích hình hộp và hình lập phương, đổi cm³ – dm³ – m³ – lít, bể nước |
 | 🏎️ Đường Đua Vận Tốc | Toán | 5 | Quãng đường, vận tốc, thời gian; chỉnh tốc độ cho xe về đích đúng giờ; giờ và phút; hai xe ngược chiều, đuổi kịp |
 | 🏷️ Cửa Hàng Giảm Giá | Toán | 5 | Số thập phân, phần trăm, tính giá sau giảm |
+| 📝 Bài Kiểm Tra | Toán | 1–5 | Mỗi lớp 10 câu trộn toán và lập trình, mỗi câu trả lời một lần; đúng từ 8 câu có bằng khen để in (mọi lớp mở sẵn) |
 | 🐸 Chú Ếch Nhảy | Lập trình | 1–2 | Đọc lệnh (ếch dừng ở đâu), quy luật mũi tên, chọn chương trình đúng, xếp lệnh, sửa một lệnh sai |
 | 🤖 Robot Tìm Đường | Lập trình | 1–3 | Tuần tự, vòng lặp |
 | 🚦 Đèn Giao Thông | Lập trình | 2–4 | NẾU… THÌ…, NGƯỢC LẠI, thứ tự ưu tiên |
@@ -77,19 +78,43 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 | 🎬 Thị Trấn Sự Kiện | Lập trình | 3–5 | Sự kiện như Scratch: cờ xanh, bấm vào nhân vật, phím, gửi / nhận tin |
 | 💡 Bóng Đèn Nhị Phân | Lập trình | 3–5 | Số nhị phân (hoạt động "Đếm chấm" của CS Unplugged), mật thư |
 | 📏 Xếp Hàng Thông Minh | Lập trình | 3–5 | Sắp xếp nổi bọt, tìm kiếm tuần tự và tìm kiếm nhị phân |
+| 🚃 Tàu Danh Sách | Lập trình | 4–5 | Danh sách: toa thứ mấy, độ dài, thêm / xóa toa, vòng lặp tính tổng, đếm theo điều kiện, tìm lớn nhất |
+| 🚪 Cổng Logic | Lập trình | 4–5 | Điều kiện VÀ / HOẶC / KHÔNG: ai qua cổng, chọn mọi bạn qua cổng, Đúng hay Sai, tìm luật của cổng |
 | 📦 Rô-bốt Nhà Kho | Lập trình | 4–5 | Biến: gán, cộng dồn, biến trong vòng lặp, đổi chỗ hai biến |
+
+## Nhiều bé trong một tài khoản
+
+- `localStorage["dlt-family-v2"]` (và cột `data` trên Supabase) lưu cả nhà: `{ version: 2, kids: KidData[], brain, brainDaily, savedAt }`.
+  Mỗi bé (`KidData`) có hồ sơ, sao, xu, thú cưng, nhật ký, thử thách, huy hiệu, hành trình riêng; điểm trí não dùng chung.
+- Bé đang chơi trên máy này lưu ở `localStorage["bhv-kid"]` (không đồng bộ). `useProgress()` trả về tiến độ của bé đó
+  cộng phần dùng chung, nên các trang đọc `progress.profile`, `progress.games`… như cũ. `switchKid`, `addKid`, `removeKid`
+  trong `src/lib/progress.ts`.
+- Dữ liệu cũ một bé (`dlt-progress-v1`, hoặc bản cũ trên tài khoản) được `normalize()` đổi thành bé `k1`.
+- Tiến độ chọn màn trong game cũng tách theo bé: game gọi `kidKey(key)` (trong `shared/bridge.js`) khi đọc/ghi localStorage.
+  Bé `k1` dùng khóa cũ để giữ tiến độ đã có.
+- Có từ 2 bé thì mở web sẽ hỏi "Ai đang chơi?" (mỗi phiên một lần); bấm vào tên bé ở góc trên để đổi bé, thêm bé, sửa hồ sơ.
 
 ## Thử thách, huy hiệu, báo cáo tuần
 
 - Mỗi lượt chơi được ghi vào `progress.log` (`{ d: ngày, g: id game, s: sao }`, giữ 400 lượt gần nhất).
 - **Thử thách hằng ngày** (`src/lib/challenge.ts`, `DailyChallenge.tsx`): mỗi ngày 3 game cố định theo ngày và lớp của bé,
   có cả toán lẫn lập trình. Chơi xong cả 3 (ít nhất 1 sao) thì `recordResult` cộng thêm 30 xu, mỗi ngày một lần
-  (`progress.challenge = { day, count }`).
+  (`progress.challenge = { day, count, days }`). Một suất là **game cần ôn lại**: game bé đã chơi trước hôm nay, chưa
+  đạt 3 sao và đã ít nhất 2 ngày chưa chơi lại (`reviewGame`), hiện nhãn "🔁 Ôn lại".
+- **Hành trình tuần** (`src/lib/journey.ts`, `Journey.tsx`): mỗi ngày xong thử thách thú cưng đi một chặng (tuần từ thứ Hai).
+  Đủ 5 chặng mở rương: một món đồ hiếm (`RARE_ITEMS` trong `pet.ts`, không bán) hoặc 50 xu nếu đã có đủ.
 - **Huy hiệu** (`src/lib/badges.ts`): mỗi huy hiệu có `measure(data) → [đã làm, cần đạt]`. Đạt rồi thì lưu ngày đạt vào
   `progress.badges`, giữ mãi kể cả khi chuỗi ngày học bị đứt. Kiểm tra sau mỗi lượt chơi và khi mở `/huy-hieu`
   (`syncBadges`, để bắt các huy hiệu như thú cưng lớn lên). Bé thấy thông báo huy hiệu mới ngay sau khi chơi.
 - **Báo cáo 7 ngày** (`WeeklyReport.tsx`, Góc phụ huynh): số ngày có học, lượt chơi so với tuần trước, biểu đồ lượt chơi
   mỗi ngày, game bé làm tốt / cần luyện thêm, game nên chơi tiếp.
+
+## Gợi ý, pháo giấy, nhạc nền (kit.js)
+
+- `renderChoices(el, labels, onPick, isRight)`: truyền `isRight(i)` thì khi bé chọn sai, khủng long cất bớt một đáp án sai
+  (chỉ khi còn từ 3 đáp án, để không lộ đáp án). Lời gợi ý từng bước vẫn do từng game nói qua `game.say`.
+- Được 3 sao thì có pháo giấy. Nút 🎵 bật nhạc nền nhẹ (mặc định tắt, nhớ ở `localStorage["bhv-music"]`).
+- `createGame({ free: true, levelLabel })`: mở sẵn mọi màn và đổi chữ trên nút chọn màn (dùng cho Bài Kiểm Tra).
 
 ## Phòng Tập Trí Não (người lớn)
 
@@ -99,6 +124,8 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 | 🎨 Màu Và Chữ | Tập trung | Chọn màu của chữ (không phải nghĩa), 60 giây, có lúc đổi luật |
 | ⚡ Tính Nhẩm Nhanh | Tốc độ | Phép tính liên tục trong 60 giây, khó dần theo chuỗi đúng |
 | 🔁 Nhớ Lùi N Bước | Trí nhớ làm việc | Bấm khi ô hiện tại trùng ô cách đó N bước; N tự tăng giảm |
+| 🃏 Lật Thẻ Nhớ | Trí nhớ hình ảnh | Lật hai thẻ tìm cặp giống nhau, bàn lớn dần, tìm liền nhiều cặp được thưởng; 90 giây |
+| 🧩 Suy Luận Thứ Tự | Logic | Đọc manh mối "An cao hơn Bình"… rồi chạm tên đúng thứ tự; đúng liền thì thêm người; 120 giây |
 
 Danh sách trong `src/lib/brain.ts`. Game dùng khung `public/games/shared/brain.js/.css` (màn giới thiệu, đếm ngược,
 màn kết quả, kỷ lục `<game-id>-best`), gửi điểm qua `bridge.js`; website lưu vào `progress.brain` (kỷ lục, lượt chơi,
@@ -153,5 +180,4 @@ chơi game lưu lựa chọn vào localStorage `bhv-read-aloud`.
 
 ## Việc tiếp theo
 
-- Một tài khoản phụ huynh quản lý nhiều bé (hiện mỗi tài khoản một hồ sơ bé).
 - Thêm lớp học cho giáo viên.

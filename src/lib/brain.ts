@@ -50,6 +50,24 @@ export const BRAIN_GAMES: BrainGame[] = [
     minutes: "2–3 phút",
     src: "/games/nho-lui/index.html",
   },
+  {
+    id: "lat-the",
+    title: "Lật Thẻ Nhớ",
+    emoji: "🃏",
+    skill: "Trí nhớ hình ảnh",
+    description: "Lật hai thẻ tìm cặp giống nhau. Xong bàn này sang bàn lớn hơn, tìm liền nhiều cặp được thưởng.",
+    minutes: "1,5 phút",
+    src: "/games/lat-the/index.html",
+  },
+  {
+    id: "suy-luan",
+    title: "Suy Luận Thứ Tự",
+    emoji: "🧩",
+    skill: "Logic",
+    description: "Đọc manh mối \"An cao hơn Bình\"… rồi xếp mọi người đúng thứ tự. Đúng liền thì thêm người.",
+    minutes: "2 phút",
+    src: "/games/suy-luan/index.html",
+  },
 ];
 
 export const getBrainGame = (id: string) => BRAIN_GAMES.find((g) => g.id === id);

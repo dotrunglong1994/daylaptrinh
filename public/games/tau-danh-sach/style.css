@@ -1,0 +1,25 @@
+:root { --sky1: #dbe4ff; --sky2: #edf2ff; --accent: #4c6ef5; }
+
+.track { overflow-x: auto; padding: 14px 10px 18px; background: linear-gradient(transparent 78%, #868e96 78% 82%, transparent 82%), var(--card); }
+.train { display: flex; align-items: flex-end; gap: 6px; min-width: max-content; margin: 0 auto; width: max-content; }
+.engine { font-size: 2.8rem; line-height: 1; }
+.wagon {
+  display: flex; flex-direction: column; align-items: center; width: 62px; padding: 6px 0 2px; border-radius: 12px 12px 6px 6px;
+  background: #ffd43b; box-shadow: 0 5px 0 #f59f00; font: inherit;
+}
+.wagon b { font-size: 1.8rem; line-height: 1.1; }
+.wagon small { font-weight: 800; font-size: .8rem; background: #fff; border-radius: 999px; padding: 0 8px; margin-top: 2px; }
+button.wagon { cursor: pointer; }
+button.wagon:hover { transform: translateY(-3px); }
+.wagon.ok, .wagon.visit { background: #8ce99a; box-shadow: 0 5px 0 #40c057; }
+.wagon.wrong-wagon { animation: shake .35s; background: #ffa8a8; }
+
+.program { list-style: none; font-family: ui-monospace, Menlo, monospace; font-size: 1.05rem; font-weight: 700; display: flex; flex-direction: column; gap: 4px; }
+.program li { padding: 2px 10px; border-radius: 8px; }
+.program li.now { background: #ffec99; }
+.choices.stack { grid-template-columns: 1fr; }
+.mini-train { font-size: 1.5rem; letter-spacing: 2px; }
+@media (max-width: 520px) {
+  .wagon { width: 50px; }
+  .wagon b { font-size: 1.5rem; }
+}
