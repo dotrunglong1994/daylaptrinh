@@ -9,11 +9,13 @@ import {
   dayKey,
   petNow,
   type ItemSlot,
+  type ShopItem,
   type PetState,
   type SpeciesId,
 } from "./pet";
 import { newBadges, type Badge } from "./badges";
 import { CHALLENGE_BONUS, challengeDone, challengeGames, type PlayLog } from "./challenge";
+import { JOURNEY_COINS, JOURNEY_GOAL, nextRare, stepsThisWeek, weekOf } from "./journey";
 
 // Tiến độ của bé, luôn lưu trong localStorage của trình duyệt.
 // Nếu phụ huynh đăng nhập, src/lib/cloud.ts đồng bộ thêm bản sao lên Supabase.
@@ -59,6 +61,8 @@ export type KidData = {
   challenge: { day: string; count: number; days?: string[] } | null;
   /** Huy hiệu đã đạt: id → ngày đạt */
   badges: Record<string, string>;
+  /** Các tuần (thứ Hai, YYYY-MM-DD) đã mở rương hành trình */
+  journey: string[];
 };
 
 /** Phần được lưu xuống localStorage và lên tài khoản: cả nhà dùng chung một bản */
@@ -98,6 +102,7 @@ const LOG_MAX = 400;
 
 const blankKid = (id: string): KidData => ({
   id, profile: null, coins: 0, games: {}, pet: null, inventory: [], daily: null, log: [], challenge: null, badges: {},
+  journey: [],
 });
 const BLANK: SavedData = { version: 2, kids: [], brain: {}, brainDaily: null, savedAt: null };
 
@@ -134,7 +139,7 @@ const SERVER: Progress = { ...view(BLANK, false), kidId: null };
 
 const kidFields = (p: Omit<KidData, "id">): Omit<KidData, "id"> => ({
   profile: p.profile, coins: p.coins, games: p.games, pet: p.pet, inventory: p.inventory, daily: p.daily,
-  log: p.log, challenge: p.challenge, badges: p.badges,
+  log: p.log, challenge: p.challenge, badges: p.badges, journey: p.journey,
 });
 
 let data: SavedData | null = null;
@@ -302,7 +307,7 @@ export function recordResult(gameId: string, result: GameResult): Reward {
   if (challenge?.day !== today) {
     const games = challengeGames(today, current.profile?.grade, current.log);
     if (games.length && challengeDone(log, today, games).size === games.length) {
-      challenge = { day: today, count: (challenge?.count ?? 0) + 1 };
+      challenge = { day: today, count: (challenge?.count ?? 0) + 1, days: [...(challenge?.days ?? []), today].slice(-30) };
       challengeBonus = CHALLENGE_BONUS;
     }
   }
@@ -358,6 +363,25 @@ export function recordBrain(gameId: string, score: number): boolean {
     },
   });
   return score > (prev?.best ?? 0);
+}
+
+/* ---------- Hành trình tuần ---------- */
+
+/** Mở rương cuối hành trình tuần: một món đồ hiếm (hoặc xu nếu đã có đủ). */
+export function claimJourney(): { ok: true; item: ShopItem | null; coins: number } | { ok: false; reason: string } {
+  const current = read();
+  const now = Date.now();
+  const week = weekOf(now);
+  if (current.journey.includes(week)) return { ok: false, reason: "Tuần này bé đã mở rương rồi. Tuần sau có rương mới nhé!" };
+  if (stepsThisWeek(current.challenge?.days, now) < JOURNEY_GOAL) return { ok: false, reason: "Chưa tới rương báu. Làm thêm thử thách hằng ngày nhé!" };
+  const item = nextRare(current.inventory);
+  write({
+    ...current,
+    journey: [...current.journey, week].slice(-20),
+    inventory: item ? [...current.inventory, item.id] : current.inventory,
+    coins: current.coins + (item ? 0 : JOURNEY_COINS),
+  });
+  return { ok: true, item, coins: item ? 0 : JOURNEY_COINS };
 }
 
 /* ---------- Thú cưng ---------- */

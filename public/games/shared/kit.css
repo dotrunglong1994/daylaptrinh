@@ -113,3 +113,11 @@ h1 { font-size: clamp(1.8rem, 6vw, 2.5rem); line-height: 1.15; }
   .question { font-size: 1.1rem; }
   .choice { font-size: 1.15rem; }
 }
+
+/* Pháo giấy khi được 3 sao */
+.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 30; overflow: hidden; }
+.confetti i { position: absolute; top: -12px; width: 9px; height: 14px; border-radius: 2px; animation: confetti-fall linear forwards; }
+@keyframes confetti-fall {
+  to { transform: translate(var(--drift), 105vh) rotate(var(--spin)); opacity: .8; }
+}
+@media (prefers-reduced-motion: reduce) { .confetti { display: none; } }

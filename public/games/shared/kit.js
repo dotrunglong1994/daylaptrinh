@@ -27,6 +27,7 @@
         <header class="hud">
           <button id="backBtn" class="icon" title="Chọn màn">🗺️</button>
           <h2 id="levelTitle"></h2>
+          <button id="musicBtn" class="icon off" title="Nhạc nền">🎵</button>
           <button id="soundBtn" class="icon" title="Âm thanh">🔊</button>
         </header>
         <div id="roundDots" class="round-dots"></div>
@@ -124,6 +125,34 @@
       if (state.idx < opts.levels - 1) start(state.idx + 1);
       else renderLevelGrid();
     });
+    /* ---------- Nhạc nền: giai điệu ngũ cung nhẹ, mặc định tắt, nhớ lựa chọn trong localStorage ---------- */
+    const MUSIC_KEY = 'bhv-music';
+    const NOTES = [523, 587, 659, 784, 880, 1047];
+    let musicTimer = null;
+    let beat = 0;
+    function musicOn() {
+      try { return localStorage.getItem(MUSIC_KEY) === 'on'; } catch { return false; }
+    }
+    function setMusic(on) {
+      try { localStorage.setItem(MUSIC_KEY, on ? 'on' : 'off'); } catch {}
+      $('#musicBtn').classList.toggle('off', !on);
+      clearInterval(musicTimer);
+      musicTimer = null;
+      if (!on) return;
+      musicTimer = setInterval(() => {
+        if (document.hidden || !state.sound) return;
+        beat++;
+        // Mỗi nhịp một nốt nhẹ, cứ 4 nhịp thêm một nốt trầm
+        const note = NOTES[(beat * 3 + (beat >> 2)) % NOTES.length];
+        tone(note, 0.35, { type: 'sine', vol: 0.025 });
+        if (beat % 4 === 0) tone(note / 2, 0.8, { type: 'triangle', vol: 0.02 });
+      }, 420);
+    }
+    $('#musicBtn').addEventListener('click', () => setMusic(!musicOn()));
+    // Trình duyệt chỉ cho phát âm thanh sau khi bé chạm vào trang
+    if (musicOn()) document.addEventListener('pointerdown', () => setMusic(musicOn()), { once: true });
+    $('#musicBtn').classList.toggle('off', !musicOn());
+
     $('#soundBtn').addEventListener('click', (e) => {
       state.sound = !state.sound;
       e.currentTarget.classList.toggle('off', !state.sound);
@@ -132,6 +161,7 @@
     /* ---------- Thắng màn ---------- */
     function win({ stars, eq = '', text }) {
       sfx.win();
+      if (stars === 3) confetti();
       const progress = load();
       progress[state.idx] = Math.max(progress[state.idx] || 0, stars);
       save(progress);
@@ -203,6 +233,21 @@
     b.disabled = true;
     b.classList.add('hinted');
     el.insertAdjacentHTML('afterend', '<p class="hint-note">🦖 Khủng long đã cất bớt một đáp án sai. Bé thử lại nhé!</p>');
+  }
+
+  // Pháo giấy khi bé được 3 sao
+  function confetti() {
+    const colors = ['#ff5e7e', '#ffd43b', '#4c6ef5', '#2bb673', '#ff922b', '#cc5de8'];
+    const box = document.createElement('div');
+    box.className = 'confetti';
+    box.innerHTML = Array.from({ length: 70 }, () => {
+      const style = `left:${Math.random() * 100}%;background:${colors[Math.floor(Math.random() * colors.length)]};`
+        + `animation-delay:${Math.random() * 0.6}s;animation-duration:${1.8 + Math.random() * 1.4}s;`
+        + `--drift:${Math.round(Math.random() * 160 - 80)}px;--spin:${Math.round(Math.random() * 720)}deg`;
+      return `<i style="${style}"></i>`;
+    }).join('');
+    document.body.appendChild(box);
+    setTimeout(() => box.remove(), 3800);
   }
 
   window.shuffle = function (arr) {

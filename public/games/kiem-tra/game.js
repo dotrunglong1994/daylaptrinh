@@ -209,11 +209,11 @@ function showQuestion() {
     const btn = e.target.closest('.choice');
     if (!btn || state.busy) return;
     state.busy = true;
-    const ok = opts[Number(btn.dataset.i)] === r.ans;
+    const ok = opts[Number(btn.dataset.i)] === answerOf(r);
     // Chấm như bài kiểm tra thật: đánh dấu đáp án đúng, không cho chọn lại
     for (const b of $('#choices').children) {
       b.disabled = true;
-      if (opts[Number(b.dataset.i)] === r.ans) b.classList.add('right');
+      if (opts[Number(b.dataset.i)] === answerOf(r)) b.classList.add('right');
     }
     if (ok) {
       state.score++;
@@ -222,7 +222,7 @@ function showQuestion() {
     } else {
       btn.classList.add('wrong');
       game.sfx.bad();
-      game.say(`Đáp án đúng là ${label(r.ans)}. Câu sau cố lên nhé!`, 'sad', 'soft');
+      game.say(`Đáp án đúng là ${label(answerOf(r))}. Câu sau cố lên nhé!`, 'sad', 'soft');
     }
     if (!(await game.wait(ok ? 900 : 1800))) return;
     state.i++;

@@ -7,6 +7,7 @@ import {
   DEFAULT_BG,
   FOODS,
   ITEMS,
+  RARE_ITEMS,
   SPECIES,
   itemOf,
   moodOf,
@@ -27,6 +28,7 @@ import {
   type ActionResult,
   type Progress,
 } from "@/lib/progress";
+import Journey from "@/components/Journey";
 import { useNow, streakOf } from "@/lib/useNow";
 
 const SLOT_NAMES: Record<ItemSlot, string> = { hat: "🎩 Mũ", face: "🕶️ Phụ kiện", bg: "🏞️ Phòng" };
@@ -190,13 +192,15 @@ function PetRoom({ progress, now }: { progress: Progress; now: number }) {
         )}
       </section>
 
+      <Journey petEmoji={species.emoji} />
+
       <section className="card shop">
         <h2>🛍️ Cửa hàng</h2>
         {(Object.keys(SLOT_NAMES) as ItemSlot[]).map((slot) => (
           <div key={slot}>
             <h3>{SLOT_NAMES[slot]}</h3>
             <div className="shop-grid">
-              {ITEMS.filter((i) => i.slot === slot).map((item) => {
+              {[...ITEMS, ...RARE_ITEMS.filter((r) => progress.inventory.includes(r.id))].filter((i) => i.slot === slot).map((item) => {
                 const owned = progress.inventory.includes(item.id);
                 const using = pet.equipped[slot] === item.id;
                 return (

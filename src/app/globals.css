@@ -393,3 +393,24 @@ tr:last-child td { border-bottom: 0; }
   .family-board li { grid-template-columns: 28px 30px 1fr auto; }
   .fb-bar, .family-board li small { display: none; }
 }
+
+/* ---------- Hành trình tuần ---------- */
+.journey { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+.journey h2 { font-size: 1.4rem; }
+.journey-path { list-style: none; padding: 0; margin: 6px 0 0; display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; position: relative; }
+.journey-path::before { content: ""; position: absolute; left: 7%; right: 7%; top: 26px; border-top: 4px dashed var(--line); }
+.journey-path li { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding-top: 0; }
+.journey-path .stop {
+  position: relative; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-size: 1.6rem;
+  background: #f1f3f5; filter: grayscale(.8); opacity: .7;
+}
+.journey-path li.passed .stop { background: #d3f9d8; filter: none; opacity: 1; box-shadow: 0 0 0 3px var(--good); }
+.journey-path li.chest .stop { filter: none; opacity: 1; background: #fff3bf; box-shadow: 0 0 0 3px #fab005; }
+.journey-path small { font-weight: 700; color: var(--muted); font-size: .8rem; text-align: center; }
+.walker { position: absolute; top: -26px; font-size: 1.7rem; animation: dino-bob 1.4s ease-in-out infinite; }
+.journey-msg { font-weight: 800; color: #e8590c; }
+@media (max-width: 520px) {
+  .journey-path .stop { width: 38px; height: 38px; font-size: 1.2rem; }
+  .journey-path::before { top: 19px; }
+  .journey-path small { display: none; }
+}

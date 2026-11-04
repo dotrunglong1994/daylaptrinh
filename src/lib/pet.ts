@@ -41,6 +41,16 @@ export const ITEMS: ShopItem[] = [
   { id: "vu-tru", slot: "bg", emoji: "🌌", name: "Vũ trụ", price: 100, bg: "radial-gradient(circle at 30% 20%, #5a4fcf, #1b1748)" },
 ];
 
+/** Đồ hiếm: không bán, chỉ nhận được khi đi hết hành trình tuần (xem src/lib/journey.ts) */
+export const RARE_ITEMS: ShopItem[] = [
+  { id: "sung-ky-lan", slot: "hat", emoji: "🦄", name: "Sừng kỳ lân", price: 0 },
+  { id: "lau-dai", slot: "bg", emoji: "🏰", name: "Lâu đài", price: 0, bg: "linear-gradient(#cdb4db, #ffc8dd)" },
+  { id: "hao-quang", slot: "hat", emoji: "😇", name: "Hào quang", price: 0 },
+  { id: "kinh-tim", slot: "face", emoji: "😍", name: "Mắt trái tim", price: 0 },
+  { id: "cau-vong", slot: "bg", emoji: "🌈", name: "Cầu vồng", price: 0, bg: "linear-gradient(#ffadad, #ffd6a5, #fdffb6, #caffbf, #9bf6ff, #bdb2ff)" },
+  { id: "phi-thuyen", slot: "bg", emoji: "🚀", name: "Phi thuyền", price: 0, bg: "radial-gradient(circle at 70% 30%, #48cae4, #03045e)" },
+];
+
 export const DEFAULT_BG = "linear-gradient(#ffe3ec, #fff0f5)";
 export const PET_COOLDOWN_MIN = 30;
 export const DAILY_BONUS = 10;
@@ -76,7 +86,7 @@ export function moodOf(pet: PetState) {
 }
 
 export const speciesOf = (id: SpeciesId) => SPECIES.find((s) => s.id === id) ?? SPECIES[0];
-export const itemOf = (id?: string) => ITEMS.find((i) => i.id === id);
+export const itemOf = (id?: string) => ITEMS.find((i) => i.id === id) ?? RARE_ITEMS.find((i) => i.id === id);
 
 /** Ngày theo giờ máy của bé, dạng YYYY-MM-DD. */
 export const dayKey = (time: number) => new Date(time).toLocaleDateString("en-CA");
