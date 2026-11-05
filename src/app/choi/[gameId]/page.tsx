@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { GAMES, SITE_NAME, SITE_URL, SUBJECTS, getGame, gradeText } from "@/lib/games";
 import { JsonLd, pageMeta } from "@/lib/seo";
+import GameAbout from "@/components/GameAbout";
 import GamePlayer from "./GamePlayer";
 
 type Params = PageProps<"/choi/[gameId]">["params"];
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: PageProps<"/choi/[gameId]">) 
   const subject = game.subject === "toan" ? "toán" : "lập trình";
   return pageMeta(
     `${game.title} – Game học ${subject} ${gradeText(game.grades).toLowerCase()}`,
-    `${game.description}. Bé học: ${game.skills.join(", ")}. Trò chơi miễn phí trên ${
+    `${game.description}. Bé học: ${game.teaches}. Trò chơi miễn phí trên ${
       SUBJECTS.find((s) => s.id === game.subject)?.name
     }.`,
     `/choi/${game.id}`,
@@ -58,6 +59,7 @@ async function Player({ params }: { params: Params }) {
         }}
       />
       <GamePlayer game={game} />
+      <GameAbout game={game} />
     </>
   );
 }

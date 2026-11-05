@@ -175,7 +175,8 @@ không phải lỗi: nhiều game cần kéo thả hoặc suy nghĩ nhiều bư�
    Dùng `game.say()`, `game.sfx.good()`, `game.rounds(i, n)`, `await game.wait(ms)` (trả `false` nếu bé đã rời màn),
    `renderChoices(el, labels, onPick)`, và gọi `game.win({ stars, eq, text })` khi xong màn. Kit tự lưu sao
    (`<game-id>-progress`) và gọi `reportResult`; website cộng 5 xu cho mỗi sao, thêm 10 xu cho game đầu tiên trong ngày.
-4. Khai báo game trong `src/lib/games.ts` (kèm `src` và `grades`).
+4. Khai báo game trong `src/lib/games.ts` (kèm `src`, `grades` và `teaches`: câu mô tả bé học gì, hiện dưới khung chơi
+   và giúp Google hiểu trang).
 5. Đặt dữ liệu màn chơi giữa `// LEVELS-START` và `// LEVELS-END` (không dùng DOM)
    rồi thêm phần kiểm tra vào `scripts/check-levels.mjs`. Game sinh đề ngẫu nhiên thì để hàm sinh đề nhận `rand`
    để script kiểm tra hàng nghìn đề với hạt giống cố định.
