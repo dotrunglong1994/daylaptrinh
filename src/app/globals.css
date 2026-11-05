@@ -215,6 +215,9 @@ tr:last-child td { border-bottom: 0; }
 
 .cloud-card { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
 .cloud-card h2 { font-size: 1.4rem; }
+.install-card { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.install-card h2 { font-size: 1.4rem; }
+.install-ok { color: var(--good); font-weight: 700; }
 .cloud-form { display: flex; flex-direction: column; gap: 8px; }
 .cloud-form label { font-weight: 700; }
 .cloud-inputs { display: flex; gap: 10px; flex-wrap: wrap; }

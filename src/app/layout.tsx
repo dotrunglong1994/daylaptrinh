@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Baloo_2 } from "next/font/google";
 import CloudSync from "@/components/CloudSync";
 import Header from "@/components/Header";
+import ServiceWorker from "@/components/ServiceWorker";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/games";
 import { SHARE_IMAGE } from "@/lib/seo";
 import "./globals.css";
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
   title: { default: TITLE, template: `%s · ${SITE_NAME}` },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
+  appleWebApp: { capable: true, title: SITE_NAME, statusBarStyle: "default" },
   keywords: [
     "học toán cho bé",
     "lập trình cho trẻ em",
@@ -53,6 +55,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="vi" className={baloo.variable}>
       <body>
         <CloudSync />
+        <ServiceWorker />
         <Header />
         <main>{children}</main>
       </body>

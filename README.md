@@ -113,6 +113,17 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 - **Báo cáo 7 ngày** (`WeeklyReport.tsx`, Góc phụ huynh): số ngày có học, lượt chơi so với tuần trước, biểu đồ lượt chơi
   mỗi ngày, game bé làm tốt / cần luyện thêm, game nên chơi tiếp.
 
+## Cài như ứng dụng, chơi khi không có mạng (PWA)
+
+- `src/app/manifest.ts` + `public/icons/`, `src/app/apple-icon.png`: cài lên màn hình chính, mở toàn màn hình.
+- `public/sw.js` (service worker, chỉ bật ở bản production): trang và game lấy từ mạng trước, mất mạng thì dùng bản đã lưu;
+  `/_next/static` và font Google dùng bản đã lưu. Mỗi lần mở web, website nhắn "warm": service worker đọc
+  `/offline.json` (sinh từ `games.ts` và `brain.ts`, có `version` theo lần deploy) rồi tải sẵn mọi trang, game và file
+  chúng cần. Game mới tự có trong danh sách, không phải sửa gì.
+- Góc phụ huynh có thẻ "Cài lên máy tính bảng" (`InstallCard`): nút cài trên Chrome/Android, hướng dẫn cho iPad,
+  và báo khi đã tải sẵn xong (`localStorage["bhv-offline-ready"]`).
+- Kiểm tra trên Chrome: mở web một lúc khi có mạng, rồi DevTools → Network → Offline và tải lại trang.
+
 ## Gợi ý, pháo giấy, nhạc nền (kit.js)
 
 - `renderChoices(el, labels, onPick, isRight)`: truyền `isRight(i)` thì khi bé chọn sai, khủng long cất bớt một đáp án sai

@@ -68,6 +68,5 @@ trình duyệt bằng "người giải tự động" (xem phần Kiểm thử), 
 ## Kế hoạch còn lại
 
 1. Cấu hình SMTP riêng cho Supabase (email miễn phí bị giới hạn vài email/giờ).
-2. Cài lên máy tính bảng như ứng dụng (PWA), chơi khi không có mạng.
-3. Lớp học cho giáo viên.
-4. Khối lệnh kéo thả kiểu Scratch để bé tự làm game nhỏ.
+2. Lớp học cho giáo viên.
+3. Khối lệnh kéo thả kiểu Scratch để bé tự làm game nhỏ.

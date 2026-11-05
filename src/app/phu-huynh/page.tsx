@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import CloudPanel from "@/components/CloudPanel";
+import InstallCard from "@/components/InstallCard";
 import Stars from "@/components/Stars";
 import WeeklyReport from "@/components/WeeklyReport";
 import { GAMES, GRADES, gamesForGrade } from "@/lib/games";
@@ -131,6 +132,7 @@ export default function ParentPage() {
       </div>
 
       <CloudPanel />
+      <InstallCard />
 
       <div className="row left">
         {confirming ? (
