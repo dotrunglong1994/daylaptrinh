@@ -123,6 +123,16 @@ export const GAMES: Game[] = [
     src: "/games/nong-trai-bieu-do/index.html",
   },
   {
+    id: "nha-may-cuu-chuong",
+    title: "Nhà Máy Cửu Chương",
+    emoji: "🏭",
+    subject: "toan",
+    description: "Đóng kẹo vào hộp để học bảng nhân, bảng chia, chia có dư",
+    skills: ["Bảng nhân 2–9", "Bảng chia", "Tìm số còn thiếu", "Chia có dư"],
+    grades: [2, 3],
+    src: "/games/nha-may-cuu-chuong/index.html",
+  },
+  {
     id: "can-thang-bang",
     title: "Cân Thăng Bằng",
     emoji: "⚖️",

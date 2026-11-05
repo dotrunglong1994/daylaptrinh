@@ -44,7 +44,7 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 
 ## Các game
 
-31 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
+32 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
 Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bản đồ mặc định lọc theo lớp đó, trang chủ gợi ý
 3 game hợp lớp mà bé chưa chơi hoặc chưa đủ 3 sao (`suggestGames` trong `src/lib/games.ts`, xen kẽ toán và lập trình).
 
@@ -59,6 +59,7 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 | 🌉 Xây Cầu | Toán | 2–3 | Đo bằng thước, cộng độ dài, đổi m – dm – cm |
 | 🧁 Bếp Cân Đong | Toán | 2–3 | Đọc cân đồng hồ, ca đong, đổi kg – g, l – ml |
 | 🐄 Nông Trại Biểu Đồ | Toán | 2–4 | Đếm, vẽ biểu đồ tranh / cột, đọc biểu đồ, trung bình cộng |
+| 🏭 Nhà Máy Cửu Chương | Toán | 2–3 | Nhân là cộng lặp lại, bảng nhân và bảng chia 2–9 (máy chia kẹo vào hộp), tìm số còn thiếu, chia có dư, toán có lời văn; câu sai được hỏi lại cuối màn |
 | ⚖️ Cân Thăng Bằng | Toán | 2–4 | Làm quen phương trình (🎁 + 3 = 7) |
 | 🍬 Hũ Kẹo May Mắn | Toán | 2–5 | Chắc chắn / có thể / không thể, so sánh khả năng, tỉ số |
 | 🍕 Chia Bánh Pizza | Toán | 3–5 | Phân số: tô, đọc, chia đều, so sánh |
