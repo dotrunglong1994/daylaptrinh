@@ -11,7 +11,7 @@ const LEVELS = [
   { name: 'Tờ lịch hôm nay', kinds: ['sheet'], tip: 'Tờ lịch bóc cho biết hôm nay là thứ mấy, ngày bao nhiêu, tháng mấy.' },
   { name: 'Xem lịch tháng', kinds: ['weekday', 'tap', 'count'], tip: 'Mỗi cột trên lịch là một thứ trong tuần. Tìm ngày rồi nhìn lên đầu cột để biết thứ.' },
   { name: 'Tuần trước, tuần sau', kinds: ['week', 'after'], tip: 'Cùng một thứ ở tuần sau thì cộng thêm 7 ngày, tuần trước thì bớt đi 7 ngày.' },
-  { name: 'Tháng có bao nhiêu ngày', kinds: ['daysIn'], tip: 'Nắm tay lại: khớp xương nhô lên là tháng 31 ngày, chỗ lõm là tháng 30 ngày. Tháng 2 có 28 hoặc 29 ngày.' },
+  { name: 'Tháng có bao nhiêu ngày', kinds: ['daysIn'], tip: 'Nắm tay lại: khớp xương nhô lên là tháng 31 ngày, chỗ lõm là tháng 30 ngày.' },
   { name: 'Đếm ngày', kinds: ['untilEnd', 'birthday'], tip: 'Đếm số ngày còn lại trong tháng, nếu sang tháng sau thì cộng thêm.' },
   { name: 'Thử thách', kinds: ['weekday', 'tap', 'week', 'after', 'daysIn', 'untilEnd', 'birthday'], tip: 'Màn cuối trộn mọi loại câu. Cố lên!' },
 ];
@@ -94,8 +94,9 @@ function makeRound(levelIdx, k, rand = Math.random) {
     return { ...base, d, n, ans: d + n, options: nums(d + n, [d + n - 1, d + n + 1, d - n, n], last) };
   }
   if (kind === 'daysIn') {
-    // Hỏi tháng 2 thì nói rõ năm
-    return { ...base, ans: last, options: [28, 29, 30, 31] };
+    // Không hỏi tháng 2 (năm nhuận khó với lớp 3): chỉ chọn 30 hay 31 ngày
+    const m3 = pick(rand, [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+    return { ...base, m: m3, last: daysIn(y, m3), ans: daysIn(y, m3), options: [30, 31] };
   }
   if (kind === 'untilEnd') {
     const d = ri(rand, last - 12, last - 2);
@@ -127,7 +128,7 @@ function questionOf(r) {
     case 'count': return `Tháng ${r.m} năm ${r.y} có mấy ngày ${W(r.w)}?`;
     case 'week': return `Hôm nay là ${W(r.w)} ngày ${r.d}. ${W(r.w)} ${r.dir > 0 ? 'tuần sau' : 'tuần trước'} là ngày bao nhiêu?`;
     case 'after': return `Hôm nay là ngày ${r.d}. ${r.n} ngày nữa là ngày bao nhiêu?`;
-    case 'daysIn': return r.m === 2 ? `Tháng 2 năm ${r.y} có bao nhiêu ngày?` : `Tháng ${r.m} có bao nhiêu ngày?`;
+    case 'daysIn': return `Tháng ${r.m} có bao nhiêu ngày?`;
     case 'untilEnd': return `Hôm nay là ngày ${r.d} tháng ${r.m}. Còn mấy ngày nữa là đến ngày cuối cùng của tháng ${r.m}?`;
     default: return `Hôm nay là ngày ${r.d} tháng ${r.m}. Sinh nhật bé là ngày ${r.e} tháng ${r.m2}. Còn mấy ngày nữa là đến sinh nhật bé?`;
   }
@@ -259,7 +260,7 @@ function hintFor(r) {
     case 'count': return `Đếm các ngày trong cột ${SHORT[r.w]} nhé.`;
     case 'week': return `Một tuần có 7 ngày: ${r.d} ${r.dir > 0 ? '+' : '−'} 7.`;
     case 'after': return `Đếm tiếp từ ngày ${r.d}: thêm ${r.n} ngày nữa.`;
-    case 'daysIn': return r.m === 2 ? 'Tháng 2 năm nhuận có 29 ngày, năm thường có 28 ngày. Năm nhuận chia hết cho 4.' : 'Nắm tay lại, đếm tháng trên các khớp xương: khớp nhô lên là 31 ngày, chỗ lõm là 30 ngày.';
+    case 'daysIn': return 'Nắm tay lại, đếm tháng trên các khớp xương: khớp nhô lên là 31 ngày, chỗ lõm là 30 ngày.';
     case 'untilEnd': return `Tháng ${r.m} có ${r.last} ngày. Lấy ${r.last} trừ ${r.d}.`;
     default: return `Còn ${r.last - r.d} ngày nữa là hết tháng ${r.m}, rồi cộng thêm ${r.e} ngày của tháng ${r.m2}.`;
   }

@@ -42,12 +42,12 @@ export default function check({ loadSection, report, seeded, optionsOk }) {
           case "count": want = Array.from({ length: last }, (_, x) => x + 1).filter((d) => wd(r.y, r.m, d) === r.w).length; break;
           case "week": want = r.d + r.dir; ok &&= inMonth(r.d) && inMonth(want) && wd(r.y, r.m, want) === r.w; break;
           case "after": want = r.d + r.n; ok &&= inMonth(r.d) && inMonth(want); break;
-          case "daysIn": want = last; break;
+          case "daysIn": want = last; ok &&= r.m !== 2 && r.options.length === 2 && r.options.includes(30) && r.options.includes(31); break;
           case "untilEnd": want = last - r.d; ok &&= inMonth(r.d) && want > 0; break;
           default: want = last - r.d + r.e; ok &&= inMonth(r.d) && r.e >= 1 && r.e <= monthDays(r.m === 12 ? r.y + 1 : r.y, r.m2) && r.m2 === (r.m % 12) + 1;
         }
         ok &&= ans === want;
-        if (r.kind !== "tap") ok &&= optionsOk(r.options, ans);
+        if (r.kind !== "tap" && r.kind !== "daysIn") ok &&= optionsOk(r.options, ans);
         if (["sheet", "week", "after"].includes(r.kind) && r.ask !== "weekday" && r.ask !== "month") ok &&= r.options.every(inMonth);
         if (!ok) problems.push(JSON.stringify(r));
       }
