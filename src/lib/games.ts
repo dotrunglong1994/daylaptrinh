@@ -63,6 +63,16 @@ export const GAMES: Game[] = [
     src: "/games/dong-ho/index.html",
   },
   {
+    id: "to-lich-nha-be",
+    title: "Tờ Lịch Nhà Bé",
+    emoji: "📅",
+    subject: "toan",
+    description: "Xem thứ, ngày, tháng trên lịch, đếm ngày đến sinh nhật",
+    skills: ["Ngày trong tuần", "Xem lịch", "Số ngày trong tháng", "Đếm ngày"],
+    grades: [1, 2, 3],
+    src: "/games/to-lich-nha-be/index.html",
+  },
+  {
     id: "tau-hoa-so",
     title: "Tàu Hỏa Số",
     emoji: "🚂",

@@ -44,7 +44,7 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 
 ## Các game
 
-33 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
+34 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
 Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bản đồ mặc định lọc theo lớp đó, trang chủ gợi ý
 3 game hợp lớp mà bé chưa chơi hoặc chưa đủ 3 sao (`suggestGames` trong `src/lib/games.ts`, xen kẽ toán và lập trình).
 
@@ -53,6 +53,7 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 | 🏠 Ngôi Nhà Số | Toán | 1 | Đếm đến 10 (chạm để đếm), so sánh, tách gộp số, cộng trừ trong 10, vị trí trên/dưới/trái/phải |
 | 🎈 Bắn Bóng Số | Toán | 1–4 | Tính nhẩm 4 phép tính, chế độ thử thách 60 giây |
 | 🕰️ Đồng Hồ Thần Kỳ | Toán | 1–3 | Quay kim, đọc giờ (rưỡi, kém), số La Mã, tính thời gian trôi |
+| 📅 Tờ Lịch Nhà Bé | Toán | 1–3 | Các ngày trong tuần, đọc tờ lịch bóc, xem lịch tháng (thứ của một ngày, chạm vào ngày, đếm ngày Chủ nhật), tuần trước / tuần sau, mẹo nắm tay đếm số ngày trong tháng, năm nhuận, đếm ngày đến sinh nhật |
 | 🚂 Tàu Hỏa Số | Toán | 1–4 | Giá trị theo hàng, đọc số bằng chữ, so sánh, sắp xếp, làm tròn |
 | 🔍 Thám Tử Hình Học | Toán | 1–3 | Nhận biết hình theo tên, màu, số cạnh, góc vuông, cạnh bằng nhau |
 | 🛒 Siêu Thị Mini | Toán | 1–3 | Cộng trừ, tính tiền và thối tiền Việt Nam |
