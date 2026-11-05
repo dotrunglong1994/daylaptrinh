@@ -9,6 +9,7 @@ npm install
 npm run dev            # mở http://localhost:3000
 npm run lint           # kiểm tra code
 npm run check:levels   # kiểm tra dữ liệu màn chơi của các game
+npm run test:games     # mở từng game trên Chrome không giao diện, tự bấm chơi màn 1, báo lỗi JavaScript
 npm run build          # build production
 ```
 
@@ -150,6 +151,18 @@ src/lib/brain.ts            danh sách game Phòng Tập Trí Não
 scripts/check-levels.mjs    kiểm tra màn chơi: đọc đoạn giữa `// LEVELS-START` và `// LEVELS-END` trong game.js
 scripts/checks/<id>.mjs     kiểm tra riêng của từng game mới, check-levels tự nạp (export default ({ loadSection, report, seeded, optionsOk }))
 ```
+
+## Kiểm thử game trên trình duyệt (`npm run test:games`)
+
+`scripts/smoke-games.mjs` tự phục vụ thư mục `public/`, mở Chrome hoặc Edge không giao diện qua CDP (không cần
+cài thêm gói, cần Node 22 hoặc `node --experimental-websocket` với Node 20) rồi với mỗi game trong `src/lib/games.ts`
+và `src/lib/brain.ts`: vào màn 1 (hoặc bấm Bắt đầu), để "bé ảo" bấm ngẫu nhiên các nút trong phần chơi tới khi thắng
+hoặc hết giờ. Game nào có lỗi JavaScript hay `console.error` thì báo ✗ và lệnh trả mã lỗi 1. "Chưa thắng sau … giây"
+không phải lỗi: nhiều game cần kéo thả hoặc suy nghĩ nhiều bước nên bấm ngẫu nhiên không thắng được.
+
+- Không tìm thấy trình duyệt: đặt biến `CHROME_PATH` tới file `chrome.exe` / `msedge.exe`.
+- Chỉ thử vài game: `npm run test:games -- --only=dong-ho,ban-bong-so`. Đổi thời gian mỗi game: `--seconds=30`.
+- Chạy hết khoảng 8–9 phút.
 
 ## Thêm một game mới
 

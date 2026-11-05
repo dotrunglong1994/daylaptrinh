@@ -22,7 +22,9 @@ npm run check:levels
 npm run build
 ```
 
-Game mới hoặc game sửa logic: chơi thử thật trên trình duyệt (xem phần Kiểm thử), không chỉ dựa vào lint/build.
+Game mới hoặc game sửa logic: chạy `npm run test:games -- --only=<id>` (bắt lỗi JavaScript), rồi chơi thử thật trên
+trình duyệt bằng "người giải tự động" (xem phần Kiểm thử), không chỉ dựa vào lint/build. Sửa phần dùng chung
+(`shared/*.js`, `kit.css`): chạy `npm run test:games` cho tất cả game.
 
 ## Kiểm thử trên trình duyệt
 

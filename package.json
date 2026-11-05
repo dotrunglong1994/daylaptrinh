@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check:levels": "node scripts/check-levels.mjs"
+    "check:levels": "node scripts/check-levels.mjs",
+    "test:games": "node scripts/smoke-games.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.109.0",
