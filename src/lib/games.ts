@@ -213,6 +213,16 @@ export const GAMES: Game[] = [
     src: "/games/cua-hang-giam-gia/index.html",
   },
   {
+    id: "tham-tu-de-bai",
+    title: "Thám Tử Đề Bài",
+    emoji: "🕵️",
+    subject: "toan",
+    description: "Đọc đề, tìm manh mối, chọn phép tính rồi tìm đáp số",
+    skills: ["Toán có lời văn", "Chọn phép tính", "Manh mối thừa", "Bài toán hai bước"],
+    grades: [1, 2, 3, 4, 5],
+    src: "/games/tham-tu-de-bai/index.html",
+  },
+  {
     id: "kiem-tra",
     title: "Bài Kiểm Tra",
     emoji: "📝",

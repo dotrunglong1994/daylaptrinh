@@ -44,7 +44,7 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 
 ## Các game
 
-32 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
+33 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
 Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bản đồ mặc định lọc theo lớp đó, trang chủ gợi ý
 3 game hợp lớp mà bé chưa chơi hoặc chưa đủ 3 sao (`suggestGames` trong `src/lib/games.ts`, xen kẽ toán và lập trình).
 
@@ -68,6 +68,7 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 | 🧊 Kho Hộp Lập Phương | Toán | 5 | Đếm khối lập phương, xếp đầy hộp, thể tích hình hộp và hình lập phương, đổi cm³ – dm³ – m³ – lít, bể nước |
 | 🏎️ Đường Đua Vận Tốc | Toán | 5 | Quãng đường, vận tốc, thời gian; chỉnh tốc độ cho xe về đích đúng giờ; giờ và phút; hai xe ngược chiều, đuổi kịp |
 | 🏷️ Cửa Hàng Giảm Giá | Toán | 5 | Số thập phân, phần trăm, tính giá sau giảm |
+| 🕵️ Thám Tử Đề Bài | Toán | 1–5 | Toán có lời văn theo 3 bước: chạm vào số cần dùng (có manh mối thừa), chọn phép tính, tìm đáp số; thêm bớt, nhiều hơn / ít hơn, nhân chia, gấp / giảm, hai bước tính, trung bình cộng, tổng – hiệu, rút về đơn vị |
 | 📝 Bài Kiểm Tra | Toán | 1–5 | Mỗi lớp 10 câu trộn toán và lập trình, mỗi câu trả lời một lần; đúng từ 8 câu có bằng khen để in (mọi lớp mở sẵn) |
 | 🐸 Chú Ếch Nhảy | Lập trình | 1–2 | Đọc lệnh (ếch dừng ở đâu), quy luật mũi tên, chọn chương trình đúng, xếp lệnh, sửa một lệnh sai |
 | 🤖 Robot Tìm Đường | Lập trình | 1–3 | Tuần tự, vòng lặp |
