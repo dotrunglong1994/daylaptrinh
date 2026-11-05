@@ -3,7 +3,8 @@ import Dino from "@/components/Dino";
 import DailyChallenge from "@/components/DailyChallenge";
 import FamilyBoard from "@/components/FamilyBoard";
 import Suggestions from "@/components/Suggestions";
-import { GAMES, SITE_NAME, SUBJECTS } from "@/lib/games";
+import { GAMES, SITE_DESCRIPTION, SITE_NAME, SITE_URL, SUBJECTS } from "@/lib/games";
+import { JsonLd } from "@/lib/seo";
 
 const FEATURES = [
   { emoji: "🎮", title: "Học mà chơi", text: "Mỗi bài học là một trò chơi, bé học lúc nào không hay." },
@@ -14,6 +15,16 @@ const FEATURES = [
 export default function Home() {
   return (
     <div className="page">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: SITE_NAME,
+          url: SITE_URL,
+          description: SITE_DESCRIPTION,
+          inLanguage: "vi",
+        }}
+      />
       <section className="hero">
         <Dino mood="cheer" size={150} />
         <div>

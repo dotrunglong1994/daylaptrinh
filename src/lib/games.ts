@@ -1,4 +1,8 @@
 export const SITE_NAME = "Bé Học Vui";
+/** Địa chỉ chính thức, dùng cho sitemap, robots và thẻ chia sẻ (Open Graph) */
+export const SITE_URL = "https://daylaptrinh.vercel.app";
+export const SITE_DESCRIPTION =
+  "Bé 6–10 tuổi học toán và lập trình qua hơn 30 trò chơi vui nhộn theo chương trình lớp 1–5: tính nhẩm, đồng hồ, phân số, vòng lặp, sự kiện như Scratch. Miễn phí, không cần đăng nhập.";
 
 export type SubjectId = "toan" | "lap-trinh";
 

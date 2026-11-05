@@ -148,6 +148,8 @@ src/lib/cloud.ts            đăng nhập OTP và đồng bộ tiến độ vớ
 src/lib/pet.ts              thú cưng: loài, thức ăn, đồ trong cửa hàng, cách chỉ số giảm theo giờ
 src/lib/useNow.ts           đồng hồ dùng chung (chỉ đọc giờ trên trình duyệt)
 src/lib/brain.ts            danh sách game Phòng Tập Trí Não
+src/lib/seo.tsx             SEO: pageMeta() (tiêu đề, mô tả, canonical, Open Graph), JsonLd, ảnh chia sẻ public/og.png
+src/app/sitemap.ts, robots.ts  sitemap.xml tự liệt kê mọi game; robots chặn /games/ (khung iframe) để Google hiện /choi/<id>
 scripts/check-levels.mjs    kiểm tra màn chơi: đọc đoạn giữa `// LEVELS-START` và `// LEVELS-END` trong game.js
 scripts/checks/<id>.mjs     kiểm tra riêng của từng game mới, check-levels tự nạp (export default ({ loadSection, report, seeded, optionsOk }))
 ```
