@@ -38,6 +38,7 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 | `/ban-do` | Bản đồ phiêu lưu: Đảo Toán Học và Đảo Lập Trình, tự lọc theo lớp của bé |
 | `/choi/[gameId]` | Chơi một game (game chạy trong iframe) |
 | `/thu-cung` | Thú cưng ảo: cho ăn, vuốt ve, hành trình tuần (rương đồ hiếm), cửa hàng, chuỗi ngày học |
+| `/phieu-bai-tap` | Phiếu bài tập in ra giấy theo Sổ tay lỗi sai: câu bé đã sai, 5 câu tương tự mỗi màn, đáp án ở trang cuối |
 | `/huy-hieu` | Huy hiệu bé đã đạt và tiến độ các huy hiệu còn lại (nút 🏅 trên thanh trên) |
 | `/phu-huynh` | Góc phụ huynh: chọn bé để xem, sao, xu, lượt chơi, báo cáo 7 ngày qua, tiến độ theo lớp, xóa tiến độ / hồ sơ bé |
 | `/tri-nao` | Phòng Tập Trí Não cho người lớn: kỷ lục, điểm hôm nay, chuỗi ngày tập |
@@ -119,6 +120,11 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
   Tên màn lấy từ `LEVELS[i].name`. Game cũ không dùng kit gọi `reportLevelMistake(GAME_ID, state.idx)` (game theo màn,
   câu hỏi là lời khủng long vừa giải thích chỗ sai) hoặc `reportMistakeAt` (game chọn mức Dễ / Vừa / Khó, mỗi mức một
   màn) trong `bridge.js`, và mở `?man=N` bằng `openLevelFromUrl()` hoặc tự chọn sẵn mức.
+- **Phiếu bài tập** (`/phieu-bai-tap`, nút 🖨️ trong Sổ tay lỗi sai ở Góc phụ huynh): với mỗi màn bé hay sai (tối đa 6),
+  in lại câu bé đã sai và 5 câu tương tự, đáp án ở trang riêng cho bố mẹ. Câu tương tự lấy từ `printRound(levelIdx, rand)`
+  trong đoạn LEVELS của game (trả `{ q, a }`, hoặc `null` nếu câu cần hình); trang tải `game.js` rồi chỉ chạy đoạn đó
+  (`src/lib/worksheet.ts`). Game có `printRound`: Nhà Máy Cửu Chương, Thám Tử Đề Bài, Bài Kiểm Tra, Xưởng Hình, Đường Đua
+  Vận Tốc (danh sách `PRINTABLE`); màn của game khác được nhắc "chơi lại trên máy". Kiểm tra trong `scripts/checks/phieu-bai-tap.mjs`.
 - **Báo cáo 7 ngày** (`WeeklyReport.tsx`, Góc phụ huynh): số ngày có học, lượt chơi so với tuần trước, biểu đồ lượt chơi
   mỗi ngày, game bé làm tốt / cần luyện thêm, game nên chơi tiếp.
 

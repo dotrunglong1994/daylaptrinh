@@ -16,7 +16,14 @@ export default function SkillReport() {
 
   return (
     <section className="weekly skill-report">
-      <h2 className="section-title">📒 Sổ tay lỗi sai</h2>
+      <h2 className="section-title skill-title">
+        📒 Sổ tay lỗi sai
+        {weak.length > 0 && (
+          <Link href="/phieu-bai-tap" className="btn ghost small">
+            🖨️ In phiếu bài tập
+          </Link>
+        )}
+      </h2>
       {weak.length === 0 && strong.length === 0 ? (
         <p className="card muted">
           Khi bé trả lời sai trong game, câu đó được ghi lại ở đây theo từng màn. Hôm sau thử thách hằng ngày sẽ cho bé ôn

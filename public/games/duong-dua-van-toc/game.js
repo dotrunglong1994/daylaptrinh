@@ -71,6 +71,22 @@ function makeRound(levelIdx, k, rand = Math.random) {
 }
 
 const answerOf = (r) => r.ans;
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const r = makeRound(levelIdx, Math.floor(rand() * 6), rand);
+  const dec = (x) => String(x).replace('.', ',');
+  const hours = (t) => (t % 1 ? `${Math.floor(t)} giờ 30 phút` : `${t} giờ`);
+  switch (r.kind) {
+    case 'dist': return { q: `Ô tô đi mỗi giờ ${r.v} km, đi trong ${r.t} giờ. Ô tô đi được bao nhiêu ki-lô-mét?`, a: `${r.v} × ${r.t} = ${r.s} km` };
+    case 'speed': case 'tune': return { q: `Ô tô đi ${r.s} km hết ${r.t} giờ. Vận tốc của ô tô là bao nhiêu?`, a: `${r.s} : ${r.t} = ${r.v} km/giờ` };
+    case 'time': return { q: `Quãng đường dài ${r.s} km, ô tô đi ${r.v} km/giờ. Ô tô đi hết bao lâu?`, a: `${r.s} : ${r.v} = ${r.t} giờ` };
+    case 'mixed': return { q: `Ô tô đi ${r.v} km/giờ trong ${hours(r.t)}. Ô tô đi được bao nhiêu ki-lô-mét?`, a: `${r.v} × ${dec(r.t)} = ${r.s} km` };
+    case 'walk': return { q: `Bé đi bộ mỗi phút ${r.v} m, đi trong ${r.t} phút. Bé đi được bao nhiêu mét?`, a: `${r.v} × ${r.t} = ${r.s} m` };
+    case 'meet': return { q: `Hai xe ở hai đầu quãng đường dài ${r.s} km, đi ngược chiều nhau. Xe thứ nhất đi ${r.v1} km/giờ, xe thứ hai đi ${r.v2} km/giờ. Sau mấy giờ hai xe gặp nhau?`, a: `${r.s} : (${r.v1} + ${r.v2}) = ${r.t} giờ` };
+    default: return { q: `Xe máy đi trước ô tô ${r.d} km với vận tốc ${r.v2} km/giờ. Ô tô đi ${r.v1} km/giờ đuổi theo. Sau mấy giờ ô tô đuổi kịp?`, a: `${r.d} : (${r.v1} − ${r.v2}) = ${r.t} giờ` };
+  }
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

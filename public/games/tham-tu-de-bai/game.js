@@ -122,6 +122,13 @@ function makeRound(levelIdx, k, rand = Math.random) {
 }
 
 const answerOf = (r) => r.ans;
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const r = makeRound(levelIdx, Math.floor(rand() * ROUNDS), rand);
+  const unit = r.p.u ? ` ${r.p.u}` : '';
+  return { q: r.p.t.replace(/\{([a-z])\}/g, (_, k) => fmt(r.v[k])), a: `${r.answer} = ${fmt(r.ans)}${unit}` };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

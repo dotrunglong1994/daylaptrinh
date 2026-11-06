@@ -58,6 +58,8 @@ trình duyệt bằng "người giải tự động" (xem phần Kiểm thử), 
   nhiều agent viết game song song không đụng file của nhau.
 - Game dùng kit nên đặt `name` cho mỗi màn trong `LEVELS` (hiện trong Sổ tay lỗi sai) và để câu hỏi trong `#question`
   (hoặc `data-question`); thao tác sai tự làm (không qua `renderChoices`) thì gọi `game.sfx.bad()` hoặc `game.mistake()`.
+- Game có câu hỏi bằng chữ nên thêm `printRound(levelIdx, rand)` vào đoạn LEVELS và id vào `PRINTABLE` (`src/lib/worksheet.ts`)
+  để in được phiếu bài tập.
 - Mỗi game khai báo `grades` (lớp 1–5 theo chương trình GDPT 2018) trong `src/lib/games.ts`.
 - Dữ liệu màn chơi đặt giữa `// LEVELS-START` và `// LEVELS-END`, không đụng DOM, và luôn có phần kiểm tra trong
   `scripts/check-levels.mjs`.

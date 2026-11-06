@@ -193,6 +193,29 @@ function makeRound(levelIdx, k, rand = Math.random) {
 }
 
 const answerOf = (r) => (r.kind === 'tap' ? r.ans : r.value);
+// Câu hỏi viết đủ số đo (không cần nhìn hình): dùng cho phiếu bài tập in ra giấy và Sổ tay lỗi sai
+function describe(r) {
+  if (r.kind === 'tap') return r.ask;
+  const f = r.fig;
+  const m = (v) => `${fmt(v)} ${f.u}`;
+  if (r.name === 'triArea') return `Hình tam giác có đáy ${m(f.a)}, chiều cao ${m(f.h)}. Tính diện tích.`;
+  if (r.name === 'rightArea') return `Tam giác vuông có hai cạnh góc vuông dài ${m(f.a)} và ${m(f.b)}. Tính diện tích.`;
+  if (r.name === 'trapArea') return `Hình thang có đáy lớn ${m(f.a)}, đáy bé ${m(f.b)}, chiều cao ${m(f.h)}. Tính diện tích.`;
+  if (r.name === 'triBack') return r.q.replace('. Chiều cao', `, đáy ${m(f.a)}. Chiều cao`);
+  if (r.name === 'circC' || r.name === 'circS') {
+    const given = f.r ? `bán kính ${m(f.r)}` : `đường kính ${m(f.d)}`;
+    return `Hình tròn có ${given}. Tính ${r.name === 'circC' ? 'chu vi' : 'diện tích'}.`;
+  }
+  return r.q;
+}
+
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const r = makeRound(levelIdx, Math.floor(rand() * ROUNDS), rand);
+  if (r.kind === 'tap') return null;
+  return { q: describe(r), a: `${r.answer} = ${fmtH(r.value)} ${r.u}` };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);
@@ -307,12 +330,14 @@ function showRound() {
   if (r.kind === 'tap') {
     $('#steps').classList.add('hidden');
     $('#question').textContent = r.ask;
+    $('#printQ').textContent = describe(r);
     $('#choices').classList.add('hidden');
     game.say(spoken(lead + r.ask));
     return;
   }
   $('#steps').classList.remove('hidden');
   $('#question').textContent = r.q;
+  $('#printQ').textContent = describe(r);
   setStep(1);
   game.say(spoken(`${lead}${r.q} Bé chọn công thức đúng trước nhé.`));
   const opts = window.shuffle(r.exprs);

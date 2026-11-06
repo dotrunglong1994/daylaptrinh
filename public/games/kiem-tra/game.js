@@ -186,6 +186,12 @@ const makeRound = (levelIdx, k, rand = Math.random) => GRADES[levelIdx][k](rand)
 const answerOf = (r) => r.ans;
 // Số câu đúng → số sao: 10 câu = 3 sao, 8–9 = 2 sao, 5–7 = 1 sao
 const starsOf = (score) => (score === QUESTIONS ? 3 : score >= 8 ? 2 : score >= 5 ? 1 : 0);
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const r = makeRound(levelIdx, Math.floor(rand() * QUESTIONS), rand);
+  return { q: r.q, a: typeof r.ans === 'number' ? dec(r.ans) : r.ans };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);
