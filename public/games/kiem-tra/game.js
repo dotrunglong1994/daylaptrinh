@@ -141,7 +141,26 @@ const GRADES = [
     (rand) => { const a = r2(ri(rand, 11, 59) / 10), b = r2(ri(rand, 101, 399) / 100); const s = r2(a + b); return { q: `${dec(a)} + ${dec(b)} = ?`, ans: s, options: nums(s, [r2(s + 0.1), r2(s - 1), r2(s + 1)]) }; },
     (rand) => { const a = r2(ri(rand, 101, 999) / 100), k = pick(rand, [10, 100]); const s = r2(a * k); return { q: `${dec(a)} × ${k} = ?`, ans: s, options: nums(s, [r2(a * (k === 10 ? 100 : 10)), r2(a / 10), r2(s + 1)]) }; },
     (rand) => { const p = pick(rand, [10, 20, 25, 50, 75]), n = pick(rand, [40, 80, 120, 200]); const s = (p * n) / 100; return { q: `${p}% của ${n} là bao nhiêu?`, ans: s, options: nums(s, [n - s, p, s * 2]) }; },
-    (rand) => { const a = ri(rand, 3, 12), h = ri(rand, 2, 8) * 2; return { q: `Tam giác có đáy ${a} cm, chiều cao ${h} cm. Diện tích là bao nhiêu xăng-ti-mét vuông?`, ans: (a * h) / 2, options: nums((a * h) / 2, [a * h, a + h, (a * h) / 2 + a]) }; },
+    // Hình học: diện tích tam giác, hình thang, chu vi hoặc diện tích hình tròn (như game Xưởng Hình)
+    (rand) => {
+      const kind = pick(rand, ['tri', 'trap', 'circC', 'circS']);
+      if (kind === 'tri') {
+        const a = ri(rand, 3, 12), h = ri(rand, 2, 8) * 2;
+        return { q: `Tam giác có đáy ${a} cm, chiều cao ${h} cm. Diện tích là bao nhiêu xăng-ti-mét vuông?`, ans: (a * h) / 2, options: nums((a * h) / 2, [a * h, a + h, (a * h) / 2 + a]) };
+      }
+      if (kind === 'trap') {
+        const b = ri(rand, 3, 9), a = b + ri(rand, 2, 8), h = ri(rand, 1, 5) * 2;
+        const s = ((a + b) * h) / 2;
+        return { q: `Hình thang có hai đáy ${a} cm và ${b} cm, chiều cao ${h} cm. Diện tích là bao nhiêu xăng-ti-mét vuông?`, ans: s, options: nums(s, [(a + b) * h, a * b * h / 2, (a + b) * 2]) };
+      }
+      const r = ri(rand, 3, 10);
+      if (kind === 'circC') {
+        const c = r2(r * 2 * 3.14);
+        return { q: `Hình tròn có bán kính ${r} cm. Chu vi là bao nhiêu xăng-ti-mét?`, ans: c, options: nums(c, [r * 3.14, r * r * 3.14, r * 2]) };
+      }
+      const area = r2(r * r * 3.14);
+      return { q: `Hình tròn có bán kính ${r} cm. Diện tích là bao nhiêu xăng-ti-mét vuông?`, ans: area, options: nums(area, [r * 2 * 3.14, r * 3.14, r * r]) };
+    },
     (rand) => { const a = ri(rand, 2, 9), b = ri(rand, 2, 6), c = ri(rand, 2, 5); return { q: `Hình hộp chữ nhật dài ${a} cm, rộng ${b} cm, cao ${c} cm. Thể tích là bao nhiêu xăng-ti-mét khối?`, ans: a * b * c, options: nums(a * b * c, [a * b, a + b + c, (a + b) * 2 * c]) }; },
     (rand) => { const v = pick(rand, [30, 40, 45, 50, 60]), t = ri(rand, 2, 4); return { q: `Ô tô đi mỗi giờ ${v} km, đi trong ${t} giờ. Ô tô đi được bao nhiêu ki-lô-mét?`, ans: v * t, options: nums(v * t, [v + t, v * t + v, v * (t - 1)]) }; },
     (rand) => { const km = r2(ri(rand, 11, 49) / 10); const m = r2(km * 1000); return { q: `${dec(km)} km = ? m`, ans: m, options: nums(m, [r2(km * 100), r2(km * 10), r2(m + 100)]) }; },
