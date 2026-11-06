@@ -10,14 +10,14 @@ const STEP_MS = 380;
 // repeat = cho phép bấm vào lệnh để lặp nhiều bước (giới thiệu vòng lặp).
 const GAME_ID = 'robot-tim-duong';
 const LEVELS = [
-  { map: ['.....', 'S..G.', '.....'], par: 3, slots: 6, tip: 'Bấm ➡️ ba lần rồi bấm ▶️ Chạy nhé!' },
-  { map: ['S....', '.....', '..G..'], par: 4, slots: 6, tip: 'Robot cần đi xuống rồi sang phải đó.' },
-  { map: ['S.#..', '..#.G', '.....'], par: 7, slots: 10, tip: 'Cẩn thận tảng đá 🪨! Tìm đường vòng nhé.' },
-  { map: ['........', 'S......G', '........'], par: 1, slots: 2, repeat: true, tip: 'Mẹo mới: bấm vào lệnh trong chương trình để đi nhiều bước (×2, ×3…)' },
-  { map: ['S....', '....#', '.....', '....G'], par: 2, slots: 3, repeat: true, tip: 'Chỉ có 3 chỗ trống thôi, dùng mẹo lặp nhé!' },
-  { map: ['S#...', '.#.#.', '...#G'], par: 5, slots: 6, repeat: true, tip: 'Đường ngoằn ngoèo, bé tính kỹ từng bước nhé!' },
-  { map: ['S......', '######.', 'G......'], par: 3, slots: 4, repeat: true, tip: 'Đi một vòng thật xa nào!' },
-  { map: ['S..#....', '##.#.##.', '...#..#.', '.###.##.', '......#G'], par: 8, slots: 10, repeat: true, tip: 'Mê cung cuối cùng! Bé làm được mà 💪' },
+  { name: 'Đi thẳng', map: ['.....', 'S..G.', '.....'], par: 3, slots: 6, tip: 'Bấm ➡️ ba lần rồi bấm ▶️ Chạy nhé!' },
+  { name: 'Rẽ một lần', map: ['S....', '.....', '..G..'], par: 4, slots: 6, tip: 'Robot cần đi xuống rồi sang phải đó.' },
+  { name: 'Đi vòng tảng đá', map: ['S.#..', '..#.G', '.....'], par: 7, slots: 10, tip: 'Cẩn thận tảng đá 🪨! Tìm đường vòng nhé.' },
+  { name: 'Lệnh đi nhiều bước', map: ['........', 'S......G', '........'], par: 1, slots: 2, repeat: true, tip: 'Mẹo mới: bấm vào lệnh trong chương trình để đi nhiều bước (×2, ×3…)' },
+  { name: 'Ít chỗ, dùng lệnh lặp', map: ['S....', '....#', '.....', '....G'], par: 2, slots: 3, repeat: true, tip: 'Chỉ có 3 chỗ trống thôi, dùng mẹo lặp nhé!' },
+  { name: 'Đường ngoằn ngoèo', map: ['S#...', '.#.#.', '...#G'], par: 5, slots: 6, repeat: true, tip: 'Đường ngoằn ngoèo, bé tính kỹ từng bước nhé!' },
+  { name: 'Đi vòng thật xa', map: ['S......', '######.', 'G......'], par: 3, slots: 4, repeat: true, tip: 'Đi một vòng thật xa nào!' },
+  { name: 'Mê cung', map: ['S..#....', '##.#.##.', '...#..#.', '.###.##.', '......#G'], par: 8, slots: 10, repeat: true, tip: 'Mê cung cuối cùng! Bé làm được mà 💪' },
 ];
 
 const $ = (s) => document.querySelector(s);
@@ -290,7 +290,7 @@ function startLevel(idx) {
   state.level = parseLevel(LEVELS[idx]);
   state.program = [];
   $('#winModal').classList.add('hidden');
-  $('#levelTitle').textContent = `Màn ${idx + 1}/${LEVELS.length}`;
+  $('#levelTitle').textContent = `Màn ${idx + 1}/${LEVELS.length}: ${LEVELS[idx].name}`;
   show('play');
   setRunning(false);
   state.pos = { ...state.level.start };

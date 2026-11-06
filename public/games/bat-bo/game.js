@@ -13,23 +13,23 @@ const MAX_REPEAT = 8;
 // fixed = một cách sửa đúng, bugs = số lệnh ít nhất cần sửa (đã kiểm tra bằng script).
 const GAME_ID = 'bat-bo';
 const LEVELS = [
-  { map: ['S...G'], buggy: [['right', 3]], fixed: [['right', 4]], bugs: 1,
+  { name: 'Đi thiếu bước', map: ['S...G'], buggy: [['right', 3]], fixed: [['right', 4]], bugs: 1,
     tip: 'Robot dừng sớm quá! Chạy thử rồi chạm vào số ×3 để sửa nhé.' },
-  { map: ['S....', '.....', '....G'], buggy: [['right', 4], ['up', 2]], fixed: [['right', 4], ['down', 2]], bugs: 1,
+  { name: 'Sai hướng', map: ['S....', '.....', '....G'], buggy: [['right', 4], ['up', 2]], fixed: [['right', 4], ['down', 2]], bugs: 1,
     tip: 'Có một lệnh bị sai hướng. Chạy thử xem robot đi lạc ở đâu!' },
-  { map: ['S.#..', '..#..', '....G'], buggy: [['down', 1], ['right', 4]], fixed: [['down', 2], ['right', 4]], bugs: 1,
+  { name: 'Va vào đá', map: ['S.#..', '..#..', '....G'], buggy: [['down', 1], ['right', 4]], fixed: [['down', 2], ['right', 4]], bugs: 1,
     tip: 'Robot cứ va vào đá. Lệnh nào làm robot đi sai đường nhỉ?' },
-  { map: ['S...#', '###.#', 'G....'], buggy: [['right', 3], ['down', 2], ['right', 3]], fixed: [['right', 3], ['down', 2], ['left', 3]], bugs: 1,
+  { name: 'Rẽ nhầm phía', map: ['S...#', '###.#', 'G....'], buggy: [['right', 3], ['down', 2], ['right', 3]], fixed: [['right', 3], ['down', 2], ['left', 3]], bugs: 1,
     tip: 'Kho báu ở bên trái mà! Tìm con bọ nào 🔍' },
-  { map: ['S......', '######.', 'G......'], buggy: [['right', 5], ['down', 2], ['right', 6]], fixed: [['right', 6], ['down', 2], ['left', 6]], bugs: 2,
+  { name: 'Hai con bọ', map: ['S......', '######.', 'G......'], buggy: [['right', 5], ['down', 2], ['right', 6]], fixed: [['right', 6], ['down', 2], ['left', 6]], bugs: 2,
     tip: 'Lần này có 2 con bọ! Sửa xong con thứ nhất thì chạy thử lại nhé.' },
-  { map: ['S.#', '..#', '#.G'], buggy: [['right', 1], ['down', 1], ['right', 1], ['down', 1]], fixed: [['right', 1], ['down', 1], ['down', 1], ['right', 1]], bugs: 1,
+  { name: 'Lệnh sai thứ tự', map: ['S.#', '..#', '#.G'], buggy: [['right', 1], ['down', 1], ['right', 1], ['down', 1]], fixed: [['right', 1], ['down', 1], ['down', 1], ['right', 1]], bugs: 1,
     tip: 'Các bước nhỏ xíu, bé quan sát robot thật kỹ nhé!' },
-  { map: ['S..#....', '##.#.##.', '...#..#.', '.###.##.', '......#G'],
+  { name: 'Bọ trong mê cung', map: ['S..#....', '##.#.##.', '...#..#.', '.###.##.', '......#G'],
     buggy: [['right', 2], ['down', 2], ['left', 2], ['down', 2], ['right', 4], ['up', 3], ['right', 3], ['down', 4]],
     fixed: [['right', 2], ['down', 2], ['left', 2], ['down', 2], ['right', 4], ['up', 4], ['right', 3], ['down', 4]], bugs: 1,
     tip: 'Mê cung dài quá! Chạy thử để biết robot hỏng ở lệnh số mấy.' },
-  { map: ['S..#....', '##.#.##.', '...#..#.', '.###.##.', '......#G'],
+  { name: 'Hai bọ trong mê cung', map: ['S..#....', '##.#.##.', '...#..#.', '.###.##.', '......#G'],
     buggy: [['right', 2], ['down', 2], ['right', 2], ['down', 2], ['right', 4], ['up', 4], ['right', 2], ['down', 4]],
     fixed: [['right', 2], ['down', 2], ['left', 2], ['down', 2], ['right', 4], ['up', 4], ['right', 3], ['down', 4]], bugs: 2,
     tip: 'Màn cuối: 2 con bọ trốn trong mê cung. Bé là thám tử giỏi nhất! 🕵️' },
@@ -284,7 +284,7 @@ function startLevel(idx) {
   state.level = parseMap(state.def.map);
   state.program = cloneProgram(state.def.buggy);
   $('#winModal').classList.add('hidden');
-  $('#levelTitle').textContent = `Màn ${idx + 1}/${LEVELS.length}`;
+  $('#levelTitle').textContent = `Màn ${idx + 1}/${LEVELS.length}: ${LEVELS[idx].name}`;
   $('#bugCount').textContent = `🐞 × ${state.def.bugs}`;
   show('play');
   setRunning(false);

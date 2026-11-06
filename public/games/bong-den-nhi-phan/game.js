@@ -6,21 +6,21 @@
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 const LEVELS = [
-  { bits: 3, dots: true, sum: true, rounds: [{ make: 5 }, { make: 3 }, { make: 6 }, { make: 7 }],
+  { name: 'Ba bóng đèn', bits: 3, dots: true, sum: true, rounds: [{ make: 5 }, { make: 3 }, { make: 6 }, { make: 7 }],
     tip: 'Mỗi bóng có số chấm gấp đôi bóng bên phải. Bật bóng để cộng số chấm cho đúng số cần tìm!' },
-  { bits: 4, dots: true, sum: true, rounds: [{ make: 9 }, { make: 12 }, { make: 10 }, { make: 15 }],
+  { name: 'Bốn bóng đèn', bits: 4, dots: true, sum: true, rounds: [{ make: 9 }, { make: 12 }, { make: 10 }, { make: 15 }],
     tip: 'Thêm bóng 8 chấm! Bắt đầu từ bóng lớn nhất: cần bóng đó không?' },
-  { bits: 4, dots: true, rounds: [{ read: '0110' }, { read: '1001' }, { read: '1011' }, { read: '0111' }],
+  { name: 'Đọc số nhị phân', bits: 4, dots: true, rounds: [{ read: '0110' }, { read: '1001' }, { read: '1011' }, { read: '0111' }],
     tip: 'Máy tính chỉ hiểu 0 và 1. Cộng số chấm của các bóng sáng (số 1) để đọc số.' },
-  { bits: 4, dots: true, rounds: [{ make: 13 }, { make: 6 }, { make: 11 }, { make: 14 }],
+  { name: 'Tự cộng số chấm', bits: 4, dots: true, rounds: [{ make: 13 }, { make: 6 }, { make: 11 }, { make: 14 }],
     tip: 'Không hiện tổng nữa! Bé tự cộng nhé.' },
-  { bits: 5, dots: true, rounds: [{ make: 19 }, { make: 25 }, { make: 30 }, { make: 17 }],
+  { name: 'Năm bóng đèn', bits: 5, dots: true, rounds: [{ make: 19 }, { make: 25 }, { make: 30 }, { make: 17 }],
     tip: 'Năm bóng đèn đếm được tới 31!' },
-  { bits: 5, rounds: [{ read: '10101' }, { read: '11000' }, { read: '01111' }, { read: '11111' }],
+  { name: 'Đọc số không có chấm', bits: 5, rounds: [{ read: '10101' }, { read: '11000' }, { read: '01111' }, { read: '11111' }],
     tip: 'Không còn chấm, chỉ còn số trên bóng: 16, 8, 4, 2, 1.' },
-  { bits: 5, rounds: [{ letter: '01101' }, { letter: '00101' }, { letter: '01111' }], word: 'MEO',
+  { name: 'Giải mật thư', bits: 5, rounds: [{ letter: '01101' }, { letter: '00101' }, { letter: '01111' }], word: 'MEO',
     tip: 'Mật thư! Đọc mỗi dãy bóng ra số, rồi tra bảng: 1 = A, 2 = B, 3 = C…' },
-  { bits: 5, rounds: [{ make: 8, from: '00111' }, { make: 16, from: '01111' }, { make: 12, from: '01011' }, { make: 24, from: '10111' }],
+  { name: 'Đếm tiếp bằng bóng đèn', bits: 5, rounds: [{ make: 8, from: '00111' }, { make: 16, from: '01111' }, { make: 12, from: '01011' }, { make: 24, from: '10111' }],
     tip: 'Đếm tiếp bằng bóng đèn: đang là một số, hãy biến nó thành số tiếp theo!' },
 ];
 

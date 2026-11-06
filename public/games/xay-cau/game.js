@@ -7,14 +7,14 @@ const MAX_PLANKS = 16;
 // ruler = true: không ghi số, bé phải đếm vạch thước để đo khe.
 const GAME_ID = 'xay-cau';
 const LEVELS = [
-  { gap: '10cm', planks: ['5cm', '3cm', '2cm'], tip: 'Khe núi rộng 10 cm. Ghép ván cho vừa khít 10 cm nhé!' },
-  { gap: '12cm', planks: ['5cm', '4cm', '3cm'], tip: 'Mỗi loại ván dùng được nhiều lần đó!' },
-  { gap: '9cm', ruler: true, planks: ['4cm', '3cm', '2cm'], tip: 'Không có số! Bé đếm vạch trên thước để đo khe núi.' },
-  { gap: '16cm', ruler: true, planks: ['6cm', '5cm', '4cm'], tip: 'Đo bằng thước trước, rồi mới chọn ván nhé.' },
-  { gap: '25cm', planks: ['10cm', '5cm', '3cm'], tip: 'Khe rộng quá! Dùng ván dài cho nhanh.' },
-  { gap: '1m', planks: ['50cm', '30cm', '20cm'], tip: 'Nhớ nhé: 1 m = 100 cm.' },
-  { gap: '1m20cm', planks: ['50cm', '40cm', '30cm'], tip: '1 m 20 cm là bao nhiêu xăng-ti-mét nhỉ?' },
-  { gap: '2m', planks: ['1m', '5dm', '20cm'], tip: '1 m = 10 dm = 100 cm. Ván 5 dm dài 50 cm đó!' },
+  { name: 'Ghép đủ 10 cm', gap: '10cm', planks: ['5cm', '3cm', '2cm'], tip: 'Khe núi rộng 10 cm. Ghép ván cho vừa khít 10 cm nhé!' },
+  { name: 'Ghép đủ 12 cm', gap: '12cm', planks: ['5cm', '4cm', '3cm'], tip: 'Mỗi loại ván dùng được nhiều lần đó!' },
+  { name: 'Đo bằng thước', gap: '9cm', ruler: true, planks: ['4cm', '3cm', '2cm'], tip: 'Không có số! Bé đếm vạch trên thước để đo khe núi.' },
+  { name: 'Đo rồi ghép', gap: '16cm', ruler: true, planks: ['6cm', '5cm', '4cm'], tip: 'Đo bằng thước trước, rồi mới chọn ván nhé.' },
+  { name: 'Dùng ván dài', gap: '25cm', planks: ['10cm', '5cm', '3cm'], tip: 'Khe rộng quá! Dùng ván dài cho nhanh.' },
+  { name: 'Đổi 1 m = 100 cm', gap: '1m', planks: ['50cm', '30cm', '20cm'], tip: 'Nhớ nhé: 1 m = 100 cm.' },
+  { name: 'Mét và xăng-ti-mét', gap: '1m20cm', planks: ['50cm', '40cm', '30cm'], tip: '1 m 20 cm là bao nhiêu xăng-ti-mét nhỉ?' },
+  { name: 'Mét, đề-xi-mét, xăng-ti-mét', gap: '2m', planks: ['1m', '5dm', '20cm'], tip: '1 m = 10 dm = 100 cm. Ván 5 dm dài 50 cm đó!' },
 ];
 
 const UNIT_CM = { m: 100, dm: 10, cm: 1 };
@@ -270,7 +270,7 @@ function startLevel(idx) {
   state.placed = [];
   state.fails = 0;
   $('#winModal').classList.add('hidden');
-  $('#levelTitle').textContent = `Màn ${idx + 1}/${LEVELS.length}`;
+  $('#levelTitle').textContent = `Màn ${idx + 1}/${LEVELS.length}: ${LEVELS[idx].name}`;
   $('#gapLen').textContent = state.def.ruler ? '? cm (dùng thước đo)' : prettyLen(state.def.gap);
   show('play');
   setRunning(false);

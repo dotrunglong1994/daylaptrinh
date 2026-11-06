@@ -19,31 +19,37 @@ const OBSTACLES = { person: '🚶', cow: '🐄' };
 const GAME_ID = 'den-giao-thong';
 const LEVELS = [
   {
+    name: 'Đèn đỏ, đèn xanh',
     rules: ['red', 'green'], actions: ['stop', 'go', 'slow'],
     scenes: [{ light: 'red' }, { light: 'green' }, { light: 'red' }, { light: 'green' }],
     tip: 'Chọn việc xe phải làm cho mỗi luật, rồi bấm ▶️ nhé!',
   },
   {
+    name: 'Đèn vàng',
     rules: ['red', 'yellow', 'green'], actions: ['stop', 'go', 'slow'],
     scenes: [{ light: 'red' }, { light: 'yellow' }, { light: 'green' }, { light: 'yellow' }, { light: 'red' }],
     tip: 'Đèn vàng là đèn sắp đỏ đó. Xe nên làm gì nhỉ?',
   },
   {
+    name: 'NGƯỢC LẠI',
     rules: ['red', 'else'], actions: ['stop', 'go', 'slow'],
     scenes: [{ light: 'green' }, { light: 'red' }, { light: 'green' }, { light: 'red' }],
     tip: 'Mới: NGƯỢC LẠI nghĩa là "mọi trường hợp còn lại"!',
   },
   {
+    name: 'Thứ tự luật',
     rules: ['green', 'red', 'person'], actions: ['stop', 'go', 'slow'], order: true,
     scenes: [{ light: 'green' }, { light: 'green', obstacle: 'person' }, { light: 'red' }, { light: 'red', obstacle: 'person' }, { light: 'green' }],
     tip: 'Xe đọc luật từ trên xuống và làm theo luật ĐẦU TIÊN đúng. Dùng ⬆️⬇️ để đổi thứ tự!',
   },
   {
+    name: 'Bò trên đường',
     rules: ['green', 'cow', 'red'], actions: ['stop', 'go', 'horn'], order: true,
     scenes: [{ light: 'green' }, { light: 'green', obstacle: 'cow' }, { light: 'red' }, { light: 'green', obstacle: 'cow' }, { light: 'green' }],
     tip: 'Có bò trên đường thì bấm còi cho bò đi chỗ khác nhé!',
   },
   {
+    name: 'Sắp xếp bốn luật',
     rules: ['green', 'yellow', 'red', 'person'], actions: ['stop', 'go', 'slow'], order: true,
     scenes: [{ light: 'green' }, { light: 'yellow', obstacle: 'person' }, { light: 'yellow' }, { light: 'green', obstacle: 'person' }, { light: 'red' }, { light: 'green' }],
     tip: 'Màn cuối! Sắp xếp luật thật khéo để xe an toàn nhé 💪',
@@ -342,7 +348,7 @@ function startLevel(idx) {
   state.rules = state.level.rules.map((cond) => ({ cond, action: null }));
   state.fails = 0;
   $('#winModal').classList.add('hidden');
-  $('#levelTitle').textContent = `Màn ${idx + 1}/${LEVELS.length}`;
+  $('#levelTitle').textContent = `Màn ${idx + 1}/${LEVELS.length}: ${LEVELS[idx].name}`;
   $('#orderNote').textContent = state.level.order ? '· xe đọc từ trên xuống, làm theo luật đầu tiên đúng' : '';
   show('play');
   endRun();

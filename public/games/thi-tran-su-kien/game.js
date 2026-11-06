@@ -13,6 +13,7 @@ const ACTIONS = {
 
 const LEVELS = [
   {
+    name: 'Bấm cờ xanh',
     actors: ['cat'], events: ['flag', 'click'], actions: ['jump', 'spin'], actionSlots: 1, slots: 1,
     scripts: [{ actor: 'cat', actions: ['jump'], lock: ['actor', 'actions'] }],
     goals: [{ when: 'flag', do: { cat: ['jump'] }, text: 'Bấm cờ 🏁 thì mèo nhảy lên.' }],
@@ -20,6 +21,7 @@ const LEVELS = [
     tip: 'Chương trình chỉ chạy khi có sự kiện! Chọn khối "Khi bấm 🏁" cho mèo nhé.',
   },
   {
+    name: 'Bấm vào nhân vật',
     actors: ['cat', 'dog'], events: ['flag', 'click'], actions: ['jump', 'say:Gâu gâu!', 'say:Meo meo!'], actionSlots: 1, slots: 1,
     scripts: [{ actor: 'dog', lock: ['actor'] }],
     goals: [{ when: 'click:dog', do: { dog: ['say:Gâu gâu!'] }, text: 'Bấm vào chó thì chó sủa "Gâu gâu!".' }],
@@ -27,6 +29,7 @@ const LEVELS = [
     tip: 'Khối "Khi bấm vào mình" chỉ chạy khi bé chạm đúng nhân vật đó.',
   },
   {
+    name: 'Mỗi bạn một kịch bản',
     actors: ['cat', 'dog'], events: ['flag', 'click'], actions: ['jump', 'spin', 'say:Meo meo!'], actionSlots: 1, slots: 2,
     goals: [
       { when: 'flag', do: { cat: ['say:Meo meo!'] }, text: 'Bấm cờ 🏁 thì mèo kêu "Meo meo!".' },
@@ -39,6 +42,7 @@ const LEVELS = [
     tip: 'Mỗi nhân vật có kịch bản riêng. Chọn nhân vật trước, rồi chọn sự kiện và hành động.',
   },
   {
+    name: 'Cùng chờ cờ xanh',
     actors: ['cat', 'bird', 'frog'], events: ['flag', 'click'], actions: ['jump', 'up', 'spin'], actionSlots: 1, slots: 3,
     goals: [
       { when: 'flag', do: { cat: ['spin'], bird: ['up'] }, text: 'Bấm cờ 🏁 thì mèo xoay vòng và chim bay lên cùng lúc.' },
@@ -52,6 +56,7 @@ const LEVELS = [
     tip: 'Nhiều nhân vật có thể cùng chờ một sự kiện. Bấm cờ một lần là tất cả cùng chạy!',
   },
   {
+    name: 'Nhấn phím',
     actors: ['car'], events: ['flag', 'key:left', 'key:right', 'key:space'], actions: ['left', 'right', 'jump'], actionSlots: 1, slots: 3,
     goals: [
       { when: 'key:left', do: { car: ['left'] }, text: 'Nhấn phím ⬅️ thì xe đi sang trái.' },
@@ -66,6 +71,7 @@ const LEVELS = [
     tip: 'Game điều khiển bằng bàn phím dùng sự kiện "Khi nhấn phím".',
   },
   {
+    name: 'Nhiều việc theo thứ tự',
     actors: ['bird', 'frog'], events: ['flag', 'click'], actions: ['up', 'jump', 'say:Líu lo!', 'say:Ộp ộp!'], actionSlots: 2, slots: 2,
     goals: [
       { when: 'click:bird', do: { bird: ['up', 'say:Líu lo!'] }, text: 'Bấm vào chim thì chim bay lên, rồi hót "Líu lo!".' },
@@ -78,6 +84,7 @@ const LEVELS = [
     tip: 'Một sự kiện có thể làm nhiều việc theo thứ tự. Việc nào trước đặt trước nhé!',
   },
   {
+    name: 'Gửi và nhận tin',
     actors: ['cat', 'mouse'], events: ['flag', 'click', 'msg:chạy'], actions: ['say:Chạy đi!', 'send:chạy', 'right', 'jump'], actionSlots: 2, slots: 2,
     goals: [
       { when: 'click:cat', do: { cat: ['say:Chạy đi!'], mouse: ['right'] }, text: 'Bấm vào mèo thì mèo nói "Chạy đi!" và chuột chạy sang phải.' },
@@ -89,6 +96,7 @@ const LEVELS = [
     tip: 'Bấm vào mèo thì chuột không tự biết! Mèo phải "gửi tin" 📣, chuột "khi nhận tin" thì chạy.',
   },
   {
+    name: 'Cả nhóm cùng múa',
     actors: ['cat', 'dog', 'bird'], events: ['flag', 'click', 'msg:múa'], actions: ['jump', 'spin', 'grow', 'say:Cùng múa nào!', 'send:múa'], actionSlots: 2, slots: 5,
     goals: [
       { when: 'flag', do: { dog: ['grow'] }, text: 'Bấm cờ 🏁 thì chó to ra.' },
