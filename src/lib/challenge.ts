@@ -1,13 +1,13 @@
 import { GAMES, SUBJECTS, gamesForGrade, type Game } from "./games";
+import { reviewSkill, type PlayLog, type SkillRecord } from "./skills";
+
+export type { PlayLog };
 
 // Thử thách hằng ngày: mỗi ngày 3 game cố định (hợp lớp của bé, có cả toán lẫn lập trình).
 // Chơi xong cả 3 game trong ngày (ít nhất 1 sao mỗi game) thì được thưởng thêm xu, mỗi ngày một lần.
 
 export const CHALLENGE_SIZE = 3;
 export const CHALLENGE_BONUS = 30;
-
-/** Mỗi lượt chơi: ngày (YYYY-MM-DD), id game, số sao */
-export type PlayLog = { d: string; g: string; s: number };
 
 function hash(text: string) {
   let h = 2166136261;
@@ -37,7 +37,18 @@ export function reviewGame(day: string, pool: Game[], log: PlayLog[]): Game | nu
   return pick?.game ?? null;
 }
 
-export function challengeGames(day: string, grade?: number, log: PlayLog[] = []): Game[] {
+/** Suất ôn lại: ưu tiên màn bé hay sai (sổ tay lỗi sai), không có thì game chưa được 3 sao */
+export function challengeReview(
+  day: string, pool: Game[], log: PlayLog[], skills?: Record<string, SkillRecord>,
+): { game: Game; skill: SkillRecord | null } | null {
+  const skill = reviewSkill(day, pool, log, skills);
+  const game = skill ? pool.find((g) => g.id === skill.g) : reviewGame(day, pool, log);
+  return game ? { game, skill } : null;
+}
+
+export function challengeGames(
+  day: string, grade?: number, log: PlayLog[] = [], skills?: Record<string, SkillRecord>,
+): Game[] {
   const pool = grade ? gamesForGrade(grade) : GAMES.filter((g) => g.src);
   let seed = hash(`${day}|${grade ?? 0}`);
   const rand = () => {
@@ -45,7 +56,7 @@ export function challengeGames(day: string, grade?: number, log: PlayLog[] = [])
     return seed / 4294967296;
   };
   // Một suất dành cho game cần ôn lại (nếu có)
-  const review = reviewGame(day, pool, log);
+  const review = challengeReview(day, pool, log, skills)?.game ?? null;
   const lists = SUBJECTS.map((s) => {
     const a = pool.filter((g) => g.subject === s.id && g !== review);
     for (let i = a.length - 1; i > 0; i--) {

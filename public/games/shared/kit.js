@@ -4,8 +4,27 @@
 // const game = createGame({ id, title, sub, levels, unit, winTitle, start(idx), free, levelLabel(i) });
 // free: mở sẵn mọi màn; levelLabel(i): chữ trên nút chọn màn thay cho số màn
 // game.say(text, mood, kind)   game.sfx.good()   game.win({ stars, eq, text })   game.rounds(i, n)
+// game.mistake(question?)  ghi một lần bé làm sai vào Sổ tay lỗi sai (game.sfx.bad() và renderChoices tự gọi)
+// Mở thẳng một màn: thêm ?man=N vào địa chỉ game (N đếm từ 1), dùng cho phần ôn lại của thử thách hằng ngày.
 (function () {
   const $ = (s, root = document) => root.querySelector(s);
+  // Game đang chạy trên trang (mỗi trang một game), để renderChoices biết báo lỗi sai cho game nào
+  let current = null;
+
+  // Tên màn: lấy từ LEVELS[i].name của game.js nếu có (biến top-level dùng chung giữa các thẻ script)
+  function levelName(i) {
+    try {
+      const L = typeof LEVELS !== 'undefined' && LEVELS[i];
+      const name = L && (L.name || (Array.isArray(L.dish) && L.dish[1]));
+      if (name) return String(name);
+    } catch {}
+    return `Màn ${i + 1}`;
+  }
+  // Câu hỏi đang hiện, để phụ huynh xem bé sai câu nào
+  function questionText() {
+    const el = document.querySelector('[data-question], #question, #story');
+    return (el?.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 90);
+  }
 
   window.createGame = function (opts) {
     const unit = opts.unit || 'màn';
@@ -82,7 +101,11 @@
       tap: () => tone(440, 0.07, { type: 'triangle', vol: 0.08 }),
       pop: () => tone(330, 0.1, { type: 'square', vol: 0.05, to: 520 }),
       good: () => [660, 880].forEach((f, i) => tone(f, 0.16, { type: 'triangle', delay: i * 0.09, vol: 0.12 })),
-      bad: () => tone(180, 0.3, { type: 'sawtooth', to: 90, vol: 0.08 }),
+      // Tiếng "sai" cũng ghi vào Sổ tay lỗi sai (mistake bỏ qua lần ghi trùng ngay sau đó)
+      bad: () => {
+        tone(180, 0.3, { type: 'sawtooth', to: 90, vol: 0.08 });
+        mistake();
+      },
       win: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.28, { type: 'triangle', delay: i * 0.12, vol: 0.12 })),
     };
 
@@ -167,7 +190,10 @@
       save(progress);
       const done = Object.keys(progress).length;
       const totalStars = Object.values(progress).reduce((a, b) => a + b, 0);
-      window.reportResult?.({ gameId: opts.id, stars, score: totalStars, progressText: `${done}/${opts.levels} ${unit}` });
+      window.reportResult?.({
+        gameId: opts.id, stars, score: totalStars, progressText: `${done}/${opts.levels} ${unit}`,
+        level: state.idx, levelName: levelName(state.idx),
+      });
 
       $('#winStars').innerHTML = [1, 2, 3].map((i) => `<span class="${i <= stars ? 'on' : ''}">⭐</span>`).join('');
       $('#winEq').textContent = eq;
@@ -184,7 +210,20 @@
         : '';
     }
 
+    // Ghi một lần bé làm sai ở màn đang chơi
+    let lastMistake = 0;
+    function mistake(question) {
+      if (!$('#play') || $('#play').classList.contains('hidden')) return;
+      if (Date.now() - lastMistake < 400) return;
+      lastMistake = Date.now();
+      window.reportMistake?.({
+        gameId: opts.id, level: state.idx, levelName: levelName(state.idx),
+        question: (question ?? questionText()).slice(0, 90),
+      });
+    }
+
     const api = {
+      mistake,
       state, sfx, tone, show, win, rounds,
       say: (text, mood = 'happy', kind = '') => window.mascotSay(text, mood, kind, 0),
       // Chờ ms mili giây; trả về false nếu bé đã rời màn trong lúc chờ
@@ -196,6 +235,14 @@
       menu: renderLevelGrid,
     };
     renderLevelGrid();
+    current = api;
+    // ?man=N: mở thẳng màn N nếu bé đã mở khóa màn đó
+    try {
+      const n = Number(new URLSearchParams(location.search).get('man'));
+      const progress = load();
+      // Đợi game.js gán xong biến game (createGame chưa trả về lúc này)
+      if (n >= 1 && n <= opts.levels && (opts.free || n === 1 || progress[n - 2])) setTimeout(() => start(n - 1), 0);
+    } catch {}
     return api;
   };
 
@@ -216,6 +263,7 @@
         return el.classList.add('locked');
       }
       btn.disabled = true;
+      current?.mistake();
       if (++misses === 1 && isRight) hideOneWrong(el, isRight);
     };
     el.classList.remove('locked');

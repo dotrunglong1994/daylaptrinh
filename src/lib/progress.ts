@@ -15,6 +15,7 @@ import {
 } from "./pet";
 import { newBadges, type Badge } from "./badges";
 import { CHALLENGE_BONUS, challengeDone, challengeGames, type PlayLog } from "./challenge";
+import { withMistake, withWin, type SkillRecord } from "./skills";
 import { JOURNEY_COINS, JOURNEY_GOAL, nextRare, stepsThisWeek, weekOf } from "./journey";
 
 // Tiến độ của bé, luôn lưu trong localStorage của trình duyệt.
@@ -63,6 +64,8 @@ export type KidData = {
   badges: Record<string, string>;
   /** Các tuần (thứ Hai, YYYY-MM-DD) đã mở rương hành trình */
   journey: string[];
+  /** Sổ tay lỗi sai: "<id game>#<màn>" → câu sai, lần thắng (xem skills.ts) */
+  skills: Record<string, SkillRecord>;
 };
 
 /** Phần được lưu xuống localStorage và lên tài khoản: cả nhà dùng chung một bản */
@@ -87,7 +90,7 @@ export type Progress = Omit<KidData, "id"> &
     loaded: boolean;
   };
 
-export type GameResult = { stars: number; score: number; progressText?: string };
+export type GameResult = { stars: number; score: number; progressText?: string; level?: number; levelName?: string };
 
 export type Reward = { coins: number; bonus: number; challengeBonus: number; badges: Badge[] };
 
@@ -102,7 +105,7 @@ const LOG_MAX = 400;
 
 const blankKid = (id: string): KidData => ({
   id, profile: null, coins: 0, games: {}, pet: null, inventory: [], daily: null, log: [], challenge: null, badges: {},
-  journey: [],
+  journey: [], skills: {},
 });
 const BLANK: SavedData = { version: 2, kids: [], brain: {}, brainDaily: null, savedAt: null };
 
@@ -139,7 +142,7 @@ const SERVER: Progress = { ...view(BLANK, false), kidId: null };
 
 const kidFields = (p: Omit<KidData, "id">): Omit<KidData, "id"> => ({
   profile: p.profile, coins: p.coins, games: p.games, pet: p.pet, inventory: p.inventory, daily: p.daily,
-  log: p.log, challenge: p.challenge, badges: p.badges, journey: p.journey,
+  log: p.log, challenge: p.challenge, badges: p.badges, journey: p.journey, skills: p.skills,
 });
 
 let data: SavedData | null = null;
@@ -300,12 +303,18 @@ export function recordResult(gameId: string, result: GameResult): Reward {
   const coins = stars * 5;
   const daily = nextDaily(current.daily, now);
   const bonus = daily !== current.daily ? DAILY_BONUS : 0;
-  const log = [...(current.log ?? []), { d: today, g: gameId, s: stars }].slice(-LOG_MAX);
+  const level = Number.isInteger(result.level) && result.level! >= 0 ? result.level! : undefined;
+  const entry: PlayLog = level === undefined ? { d: today, g: gameId, s: stars } : { d: today, g: gameId, s: stars, l: level };
+  const log = [...(current.log ?? []), entry].slice(-LOG_MAX);
+  const skills =
+    level === undefined
+      ? current.skills
+      : withWin(current.skills ?? {}, gameId, level, result.levelName ?? "", stars, new Date(now));
 
   let challenge = current.challenge;
   let challengeBonus = 0;
   if (challenge?.day !== today) {
-    const games = challengeGames(today, current.profile?.grade, current.log);
+    const games = challengeGames(today, current.profile?.grade, current.log, current.skills);
     if (games.length && challengeDone(log, today, games).size === games.length) {
       challenge = { day: today, count: (challenge?.count ?? 0) + 1, days: [...(challenge?.days ?? []), today].slice(-30) };
       challengeBonus = CHALLENGE_BONUS;
@@ -317,6 +326,7 @@ export function recordResult(gameId: string, result: GameResult): Reward {
     coins: current.coins + coins + bonus + challengeBonus,
     daily,
     log,
+    skills,
     challenge,
     games: {
       ...current.games,
@@ -331,6 +341,14 @@ export function recordResult(gameId: string, result: GameResult): Reward {
   }, now);
   write(next);
   return { coins, bonus, challengeBonus, badges };
+}
+
+/** Ghi một câu bé làm sai vào sổ tay lỗi sai (không trừ xu, không tính lượt chơi). */
+export function recordMistake(gameId: string, level: number, levelName: string, question: string) {
+  const current = read();
+  if (!current.kidId || !Number.isInteger(level) || level < 0 || level > 99) return;
+  const now = Date.now();
+  write({ ...current, skills: withMistake(current.skills ?? {}, gameId, level, levelName, question, new Date(now), dayKey(now)) });
 }
 
 /** Ghi nhận huy hiệu đã đủ điều kiện nhưng chưa có (vd. nhờ chăm thú cưng). Trả về huy hiệu mới. */

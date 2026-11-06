@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { gradeText, type Game } from "@/lib/games";
 import { CHALLENGE_SIZE } from "@/lib/challenge";
-import { recordResult, type Reward as Earned } from "@/lib/progress";
+import { recordMistake, recordResult, type Reward as Earned } from "@/lib/progress";
 
 type Reward = Earned & { id: number; stars: number };
 
@@ -23,9 +23,18 @@ function readAloudOn() {
   }
 }
 
+const subscribeNone = () => () => {};
+function levelParam() {
+  const man = new URLSearchParams(window.location.search).get("man") ?? "";
+  return /^\d{1,2}$/.test(man) ? man : "";
+}
+
 export default function GamePlayer({ game }: { game: Game }) {
   const frame = useRef<HTMLIFrameElement>(null);
   const [reward, setReward] = useState<Reward | null>(null);
+  // ?man=N (từ thử thách ôn lại, Góc phụ huynh): mở thẳng màn N của game. Chỉ đọc trên trình duyệt.
+  const man = useSyncExternalStore(subscribeNone, levelParam, () => "");
+  const src = game.src && man ? `${game.src}?man=${man}` : game.src;
   const readAloud = useSyncExternalStore(subscribeRead, readAloudOn, () => true);
 
   function toggleRead() {
@@ -42,11 +51,19 @@ export default function GamePlayer({ game }: { game: Game }) {
       if (e.origin !== window.location.origin || e.source !== frame.current?.contentWindow) return;
       const data = e.data;
       if (data?.source !== "daylaptrinh-game" || data.gameId !== game.id) return;
+      const level = typeof data.level === "number" ? data.level : undefined;
+      const levelName = typeof data.levelName === "string" ? data.levelName.slice(0, 60) : "";
+      if (data.type === "mistake") {
+        if (level !== undefined) recordMistake(game.id, level, levelName, typeof data.question === "string" ? data.question : "");
+        return;
+      }
       const stars = Number(data.stars) || 0;
       const earned = recordResult(game.id, {
         stars,
         score: Number(data.score) || 0,
         progressText: typeof data.progressText === "string" ? data.progressText : undefined,
+        level,
+        levelName,
       });
       setReward({ id: Date.now(), ...earned, stars });
     }
@@ -87,7 +104,7 @@ export default function GamePlayer({ game }: { game: Game }) {
           ))}
         </span>
       </div>
-      <iframe ref={frame} src={game.src} title={game.title} className="player-frame" allow="autoplay" />
+      <iframe ref={frame} src={src} title={game.title} className="player-frame" allow="autoplay" />
       {reward && (
         <div key={reward.id} className={`reward${reward.badges.length || reward.challengeBonus ? " long" : ""}`} role="status">
           {"⭐".repeat(reward.stars)} +{reward.coins} 🪙

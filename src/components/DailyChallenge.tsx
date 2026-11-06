@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CHALLENGE_BONUS, challengeDone, challengeGames, reviewGame } from "@/lib/challenge";
+import { CHALLENGE_BONUS, challengeDone, challengeGames, challengeReview } from "@/lib/challenge";
 import { SUBJECTS } from "@/lib/games";
 import { dayKey } from "@/lib/pet";
 import { useProgress } from "@/lib/progress";
@@ -13,8 +13,9 @@ export default function DailyChallenge() {
   const now = useNow();
   if (!progress.loaded || !progress.profile || !now) return null;
   const day = dayKey(now);
-  const games = challengeGames(day, progress.profile.grade, progress.log);
-  const review = reviewGame(day, games, progress.log);
+  const games = challengeGames(day, progress.profile.grade, progress.log, progress.skills);
+  const review = challengeReview(day, games, progress.log, progress.skills);
+  const skill = review?.skill;
   if (!games.length) return null;
   const done = challengeDone(progress.log, day, games);
   const claimed = progress.challenge?.day === day;
@@ -36,14 +37,22 @@ export default function DailyChallenge() {
         {games.map((g) => {
           const color = SUBJECTS.find((s) => s.id === g.subject)?.color;
           const ok = done.has(g.id);
+          const isReview = g === review?.game;
+          const href = isReview && skill ? `/choi/${g.id}?man=${skill.l + 1}` : `/choi/${g.id}`;
           return (
             <li key={g.id}>
-              <Link href={`/choi/${g.id}`} className={`node${ok ? " done" : ""}`} style={{ "--c": color } as React.CSSProperties}>
+              <Link href={href} className={`node${ok ? " done" : ""}`} style={{ "--c": color } as React.CSSProperties}>
                 <span className="node-emoji">{ok ? "✅" : g.emoji}</span>
                 <span className="node-info">
                   <strong>{g.title}</strong>
                   <small>{ok ? "Xong rồi!" : g.description}</small>
-                  {g === review && !ok && <em className="review-tag">🔁 Ôn lại: lần trước bé chưa được 3 sao</em>}
+                  {isReview && !ok && (
+                    <em className="review-tag">
+                      {skill
+                        ? `🔁 Ôn lại: ${skill.name} (bé sai ${skill.wrong} câu)`
+                        : "🔁 Ôn lại: lần trước bé chưa được 3 sao"}
+                    </em>
+                  )}
                 </span>
               </Link>
             </li>

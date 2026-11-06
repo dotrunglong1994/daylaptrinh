@@ -110,6 +110,12 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 - **Huy hiệu** (`src/lib/badges.ts`): mỗi huy hiệu có `measure(data) → [đã làm, cần đạt]`. Đạt rồi thì lưu ngày đạt vào
   `progress.badges`, giữ mãi kể cả khi chuỗi ngày học bị đứt. Kiểm tra sau mỗi lượt chơi và khi mở `/huy-hieu`
   (`syncBadges`, để bắt các huy hiệu như thú cưng lớn lên). Bé thấy thông báo huy hiệu mới ngay sau khi chơi.
+- **Sổ tay lỗi sai** (`src/lib/skills.ts`, `SkillReport.tsx`): mỗi màn của một game là một kỹ năng. Game dùng kit tự gửi
+  câu bé làm sai (`game.sfx.bad()`, nút sai của `renderChoices`, hoặc gọi `game.mistake(câu hỏi)`) qua `reportMistake`;
+  website ghi vào `progress.skills["<id game>#<màn>"]` (số câu sai, các ngày sai, 3 câu sai gần nhất, lần thắng).
+  Hôm sau, suất ôn lại của thử thách hằng ngày ưu tiên màn bé sai mà chưa thắng 3 sao lại (`reviewSkill`) và mở thẳng
+  màn đó (`/choi/<id>?man=<số màn>`, kit tự vào màn nếu đã mở khóa). Góc phụ huynh có bảng "Cần ôn lại" / "Đã vững".
+  Tên màn lấy từ `LEVELS[i].name`. Các game cũ không dùng kit chưa gửi lỗi sai.
 - **Báo cáo 7 ngày** (`WeeklyReport.tsx`, Góc phụ huynh): số ngày có học, lượt chơi so với tuần trước, biểu đồ lượt chơi
   mỗi ngày, game bé làm tốt / cần luyện thêm, game nên chơi tiếp.
 
