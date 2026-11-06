@@ -11,6 +11,7 @@ const DIR_ORDER = ['up', 'right', 'down', 'left'];
 const MAX_REPEAT = 8;
 // Bản đồ: S = robot, G = kho báu, # = đá. buggy = chương trình có lỗi bé nhận được,
 // fixed = một cách sửa đúng, bugs = số lệnh ít nhất cần sửa (đã kiểm tra bằng script).
+const GAME_ID = 'bat-bo';
 const LEVELS = [
   { map: ['S...G'], buggy: [['right', 3]], fixed: [['right', 4]], bugs: 1,
     tip: 'Robot dừng sớm quá! Chạy thử rồi chạm vào số ×3 để sửa nhé.' },
@@ -231,6 +232,7 @@ async function run() {
 
   $('#robot').classList.add('bump');
   sfx.bump();
+  reportLevelMistake(GAME_ID, state.idx);
   renderProgram(-1, block);
   const n = block + 1;
   say({
@@ -260,6 +262,8 @@ function win() {
   const done = Object.keys(progress).length;
   const totalStars = Object.values(progress).reduce((a, b) => a + b, 0);
   window.reportResult?.({
+    level: state.idx,
+    levelName: levelNameOf(state.idx),
     gameId: 'bat-bo', stars, score: totalStars, progressText: `${done}/${LEVELS.length} màn`,
   });
 
@@ -307,3 +311,6 @@ window.addEventListener('resize', () => {
 });
 
 renderLevelGrid();
+
+// ?man=N (từ thử thách ôn lại): mở thẳng màn N
+openLevelFromUrl();

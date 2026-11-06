@@ -19,6 +19,10 @@ const LEVELS = {
 const PRAISE = ['Giỏi quá!', 'Chính xác!', 'Tuyệt vời!', 'Bé tính nhanh ghê!'];
 
 const $ = (s) => document.querySelector(s);
+// Sổ tay lỗi sai: mỗi mức độ là một màn
+const skillOf = () => [state.level - 1, buttonLabel(`[data-level="${state.level}"]`)];
+
+const GAME_ID = 'sieu-thi-mini';
 const state = {
   level: 1, sound: true, voice: true,
   round: 0, score: 0, firstTry: 0, wrongs: 0, phase: 'total', order: null, tray: [], locked: false, timer: 0,
@@ -281,6 +285,7 @@ function award() {
 function miss(text = pick(['Chưa đúng, thử lại nhé!', 'Gần đúng rồi!', 'Bé tính lại xem nào!'])) {
   state.wrongs++;
   sfx.wrong();
+  reportMistakeAt(GAME_ID, ...skillOf());
   window.mascotSay(text, 'sad', 'soft', 0);
 }
 
@@ -300,7 +305,7 @@ function endGame() {
   show('result');
   sfx.fanfare();
   confetti(stars * 30);
-  window.reportResult?.({ gameId: 'sieu-thi-mini', stars, score: state.score });
+  window.reportResult?.({ gameId: 'sieu-thi-mini', stars, score: state.score, level: skillOf()[0], levelName: skillOf()[1] });
   speak(stars === 3 ? 'Tuyệt vời! Bé là thu ngân giỏi nhất!' : `Bé được ${stars} sao. Cố lên nhé!`);
 }
 
@@ -344,3 +349,13 @@ $('#voiceBtn').addEventListener('click', (e) => {
 });
 
 renderMenuBest();
+
+// ?man=N (từ thử thách ôn lại): chọn sẵn mức độ rồi bắt đầu
+{
+  const m = levelFromUrl();
+  const btn = document.querySelector(`[data-level="${m + 1}"]`);
+  if (m >= 0 && btn) {
+    btn.click();
+    startGame();
+  }
+}

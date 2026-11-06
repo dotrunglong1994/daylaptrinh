@@ -8,6 +8,7 @@ const MAX_REPEAT = 8;
 const STEP_MS = 380;
 // Bản đồ: S = robot, G = kho báu, # = đá. par = số lệnh ít nhất (đã kiểm tra bằng BFS).
 // repeat = cho phép bấm vào lệnh để lặp nhiều bước (giới thiệu vòng lặp).
+const GAME_ID = 'robot-tim-duong';
 const LEVELS = [
   { map: ['.....', 'S..G.', '.....'], par: 3, slots: 6, tip: 'Bấm ➡️ ba lần rồi bấm ▶️ Chạy nhé!' },
   { map: ['S....', '.....', '..G..'], par: 4, slots: 6, tip: 'Robot cần đi xuống rồi sang phải đó.' },
@@ -210,6 +211,7 @@ async function run() {
       if (reason) {
         $('#robot').classList.add('bump');
         sfx.bump();
+        reportLevelMistake(GAME_ID, state.idx);
         renderProgram(-1, i);
         say(`${reason} Sửa lệnh màu đỏ nhé.`, 'sad', 'soft');
         return endRun(token, 1100);
@@ -227,6 +229,7 @@ async function run() {
   await wait(400);
   if (token !== state.runToken) return;
   say('Chưa tới kho báu, thêm lệnh nữa nhé!', 'sad', 'soft');
+  reportLevelMistake(GAME_ID, state.idx);
   endRun(token, 800);
 }
 
@@ -265,6 +268,8 @@ function win() {
   const done = Object.keys(progress).length;
   const totalStars = Object.values(progress).reduce((a, b) => a + b, 0);
   window.reportResult?.({
+    level: state.idx,
+    levelName: levelNameOf(state.idx),
     gameId: 'robot-tim-duong', stars, score: totalStars, progressText: `${done}/${LEVELS.length} màn`,
   });
 
@@ -312,3 +317,6 @@ window.addEventListener('resize', () => {
 });
 
 renderLevelGrid();
+
+// ?man=N (từ thử thách ôn lại): mở thẳng màn N
+openLevelFromUrl();

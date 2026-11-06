@@ -115,7 +115,9 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
   website ghi vào `progress.skills["<id game>#<màn>"]` (số câu sai, các ngày sai, 3 câu sai gần nhất, lần thắng).
   Hôm sau, suất ôn lại của thử thách hằng ngày ưu tiên màn bé sai mà chưa thắng 3 sao lại (`reviewSkill`) và mở thẳng
   màn đó (`/choi/<id>?man=<số màn>`, kit tự vào màn nếu đã mở khóa). Góc phụ huynh có bảng "Cần ôn lại" / "Đã vững".
-  Tên màn lấy từ `LEVELS[i].name`. Các game cũ không dùng kit chưa gửi lỗi sai.
+  Tên màn lấy từ `LEVELS[i].name`. Game cũ không dùng kit gọi `reportLevelMistake(GAME_ID, state.idx)` (game theo màn,
+  câu hỏi là lời khủng long vừa giải thích chỗ sai) hoặc `reportMistakeAt` (game chọn mức Dễ / Vừa / Khó, mỗi mức một
+  màn) trong `bridge.js`, và mở `?man=N` bằng `openLevelFromUrl()` hoặc tự chọn sẵn mức.
 - **Báo cáo 7 ngày** (`WeeklyReport.tsx`, Góc phụ huynh): số ngày có học, lượt chơi so với tuần trước, biểu đồ lượt chơi
   mỗi ngày, game bé làm tốt / cần luyện thêm, game nên chơi tiếp.
 

@@ -7,6 +7,7 @@ const MAX_LOOP = 8;
 // Lệnh: ['fd', n] = đi tới n bước (vẽ nét), ['rt', góc] = quay phải, ['lt', góc] = quay trái.
 // solution = lời giải mẫu, hình mẫu được vẽ từ chính lời giải này nên màn nào cũng giải được.
 // loop = số lần lặp của lời giải (màn có vòng lặp), slots = số lệnh tối đa bé được dùng.
+const GAME_ID = 'hoa-si-rua';
 const LEVELS = [
   { name: 'Đường thẳng', turns: [90], slots: 4, solution: [['fd', 3]],
     tip: 'Rùa đang nhìn lên trên. Bấm ⬆️ Đi, rồi chạm vào lệnh để đổi số bước!' },
@@ -312,6 +313,7 @@ function check(moves) {
   if (!bad && !missing) return win();
 
   sfx.fail();
+  reportLevelMistake(GAME_ID, state.idx);
   const loopHint = state.level.loop ? ' Thử đổi số lần lặp xem!' : '';
   if (!drawn.size) say('Rùa chưa vẽ nét nào! Thêm lệnh ⬆️ Đi nhé.', 'sad', 'soft');
   else if (bad) say('Nét màu đỏ bị lệch khỏi hình mẫu rồi! Sửa lệnh nhé.', 'sad', 'soft');
@@ -330,6 +332,8 @@ function win() {
   const done = Object.keys(progress).length;
   const totalStars = Object.values(progress).reduce((a, b) => a + b, 0);
   window.reportResult?.({
+    level: state.idx,
+    levelName: levelNameOf(state.idx),
     gameId: 'hoa-si-rua', stars, score: totalStars, progressText: `${done}/${LEVELS.length} màn`,
   });
 
@@ -374,3 +378,6 @@ $('#soundBtn').addEventListener('click', (e) => {
 });
 
 renderLevelGrid();
+
+// ?man=N (từ thử thách ôn lại): mở thẳng màn N
+openLevelFromUrl();

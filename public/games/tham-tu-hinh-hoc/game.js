@@ -68,6 +68,7 @@ function matches(want, item) {
     && (want.equal === undefined || want.equal === p.equal);
 }
 
+const GAME_ID = 'tham-tu-hinh-hoc';
 const LEVELS = [
   { name: 'Làm quen', tip: 'Đọc manh mối rồi chạm vào TẤT CẢ các hình đúng nhé!', rounds: [
     { clue: 'Tìm tất cả hình tròn', want: { shape: 'circle' }, items: 'circle:r square:b circle:y triangle:g rect:p circle:b square:y' },
@@ -241,6 +242,7 @@ $('#scene').addEventListener('click', async (e) => {
 
   if (!item.match) {
     state.mistakes++;
+    reportLevelMistake(GAME_ID, state.idx);
     sfx.bad();
     btn.classList.remove('wrong');
     void btn.offsetWidth;
@@ -281,6 +283,8 @@ function win() {
   const done = Object.keys(progress).length;
   const totalStars = Object.values(progress).reduce((a, b) => a + b, 0);
   window.reportResult?.({
+    level: state.idx,
+    levelName: levelNameOf(state.idx),
     gameId: 'tham-tu-hinh-hoc', stars, score: totalStars, progressText: `${done}/${LEVELS.length} vụ án`,
   });
 
@@ -319,3 +323,6 @@ $('#soundBtn').addEventListener('click', (e) => {
 });
 
 renderLevelGrid();
+
+// ?man=N (từ thử thách ôn lại): mở thẳng màn N
+openLevelFromUrl();

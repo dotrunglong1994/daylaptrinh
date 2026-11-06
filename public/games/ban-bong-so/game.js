@@ -14,6 +14,14 @@ const LEVELS = {
 const $ = (s) => document.querySelector(s);
 const field = $('#field');
 
+// Sổ tay lỗi sai: mỗi phép tính × mức độ là một màn (0–14)
+const SKILL_OPS = ['+', '−', '×', '÷', 'mix'];
+const skillOf = () => [
+  SKILL_OPS.indexOf(state.op) * 3 + state.level - 1,
+  `${buttonLabel(`[data-op="${state.op}"]`)} · ${buttonLabel(`[data-level="${state.level}"]`)}`,
+];
+
+const GAME_ID = 'ban-bong-so';
 const state = {
   op: '+', level: 1, mode: 'practice', sound: true, voice: true,
   q: null, qIndex: 0, score: 0, combo: 0, firstTry: 0, correctCount: 0, wrongs: 0,
@@ -297,6 +305,7 @@ function wrong(b) {
   b.el.classList.add('wrong');
   sfx.wrong();
   state.combo = 0;
+  reportMistakeAt(GAME_ID, ...skillOf());
   state.wrongs++;
   // Sai 2 lần thì cho quả bóng đúng phát sáng để bé không bị nản
   if (state.wrongs >= 2) {
@@ -335,7 +344,7 @@ function endGame() {
   show('result');
   sfx.fanfare();
   confetti(stars * 30);
-  window.reportResult?.({ gameId: 'ban-bong-so', stars, score: state.score });
+  window.reportResult?.({ gameId: 'ban-bong-so', stars, score: state.score, level: skillOf()[0], levelName: skillOf()[1] });
   speak(stars === 3 ? 'Tuyệt vời! Bé được ba sao!' : `Bé được ${stars} sao. Cố lên nhé!`);
 }
 
@@ -416,3 +425,13 @@ $('#voiceBtn').addEventListener('click', (e) => {
 window.addEventListener('resize', () => field.style.setProperty('--bs', `${balloonSize()}px`));
 
 renderMenuBest();
+
+// ?man=N (từ thử thách ôn lại): chọn sẵn phép tính và mức độ rồi bắt đầu
+{
+  const m = levelFromUrl();
+  if (m >= 0 && m < SKILL_OPS.length * 3) {
+    document.querySelector(`[data-op="${SKILL_OPS[Math.floor(m / 3)]}"]`).click();
+    document.querySelector(`[data-level="${(m % 3) + 1}"]`).click();
+    startGame();
+  }
+}

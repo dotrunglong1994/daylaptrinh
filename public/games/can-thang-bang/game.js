@@ -69,6 +69,10 @@ const COLORS = ['#ff6b6b', '#ffa94d', '#ffd43b', '#69db7c', '#4dabf7', '#748ffc'
 const weightColor = (v) => COLORS[(v - 1) % COLORS.length];
 
 const $ = (s) => document.querySelector(s);
+// Sổ tay lỗi sai: mỗi mức độ là một màn
+const skillOf = () => [state.level - 1, buttonLabel(`[data-level="${state.level}"]`)];
+
+const GAME_ID = 'can-thang-bang';
 const state = {
   level: 1, sound: true, voice: true,
   round: 0, score: 0, firstTry: 0, wrongs: 0, task: null, locked: false, busy: false, timer: 0,
@@ -368,6 +372,7 @@ function correct() {
 function miss(text) {
   state.wrongs++;
   sfx.wrong();
+  reportMistakeAt(GAME_ID, ...skillOf());
   window.mascotSay(text, 'sad', 'soft', 0);
 }
 
@@ -386,7 +391,7 @@ function endGame() {
   show('result');
   sfx.fanfare();
   confetti(stars * 30);
-  window.reportResult?.({ gameId: 'can-thang-bang', stars, score: state.score });
+  window.reportResult?.({ gameId: 'can-thang-bang', stars, score: state.score, level: skillOf()[0], levelName: skillOf()[1] });
   speak(stars === 3 ? 'Tuyệt vời! Bé là bậc thầy cân!' : `Bé được ${stars} sao. Cố lên nhé!`);
 }
 
@@ -429,3 +434,13 @@ $('#voiceBtn').addEventListener('click', (e) => {
 });
 
 renderMenuBest();
+
+// ?man=N (từ thử thách ôn lại): chọn sẵn mức độ rồi bắt đầu
+{
+  const m = levelFromUrl();
+  const btn = document.querySelector(`[data-level="${m + 1}"]`);
+  if (m >= 0 && btn) {
+    btn.click();
+    startGame();
+  }
+}

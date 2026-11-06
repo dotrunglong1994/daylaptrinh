@@ -16,6 +16,7 @@ const OBSTACLES = { person: '🚶', cow: '🐄' };
 
 // rules: các luật theo thứ tự ban đầu ('else' = NGƯỢC LẠI, luôn ở cuối)
 // order: cho phép đổi thứ tự luật. scenes: các tình huống xe gặp, xáo trộn mỗi lần chạy.
+const GAME_ID = 'den-giao-thong';
 const LEVELS = [
   {
     rules: ['red', 'green'], actions: ['stop', 'go', 'slow'],
@@ -290,6 +291,7 @@ async function run() {
       renderRules(-1, idx);
       if (act !== 'go' || !scene.obstacle) sfx.fail();
       state.fails++;
+      reportLevelMistake(GAME_ID, state.idx);
       say(failMessage(scene, act, ok, idx), 'sad', 'soft');
       return endRun();
     }
@@ -318,6 +320,8 @@ function win() {
   const done = Object.keys(progress).length;
   const totalStars = Object.values(progress).reduce((a, b) => a + b, 0);
   window.reportResult?.({
+    level: state.idx,
+    levelName: levelNameOf(state.idx),
     gameId: 'den-giao-thong', stars, score: totalStars, progressText: `${done}/${LEVELS.length} màn`,
   });
 
@@ -362,3 +366,6 @@ $('#soundBtn').addEventListener('click', (e) => {
 });
 
 renderLevelGrid();
+
+// ?man=N (từ thử thách ôn lại): mở thẳng màn N
+openLevelFromUrl();

@@ -5,6 +5,7 @@ const MAX_PLANKS = 16;
 // LEVELS-START (scripts/check-levels.mjs đọc đoạn này để kiểm tra từng màn)
 // Độ dài viết như "1m20cm", "5dm", "30cm". Mỗi loại ván trong kho dùng được nhiều lần.
 // ruler = true: không ghi số, bé phải đếm vạch thước để đo khe.
+const GAME_ID = 'xay-cau';
 const LEVELS = [
   { gap: '10cm', planks: ['5cm', '3cm', '2cm'], tip: 'Khe núi rộng 10 cm. Ghép ván cho vừa khít 10 cm nhé!' },
   { gap: '12cm', planks: ['5cm', '4cm', '3cm'], tip: 'Mỗi loại ván dùng được nhiều lần đó!' },
@@ -195,6 +196,7 @@ async function run() {
     sfx.bad();
     $('#bridge').classList.add('wobble');
     state.fails++;
+    reportLevelMistake(GAME_ID, state.idx);
     say(`Cầu dài ${len} cm, khe chỉ ${state.gap} cm. Dư ${len - state.gap} cm nên ván không đặt vừa!`, 'sad', 'soft');
     await wait(900);
     $('#bridge').classList.remove('wobble');
@@ -212,6 +214,7 @@ async function run() {
     sfx.fall();
     placeCar(edge + 30, { y: 150, rot: 70, ms: 600 });
     state.fails++;
+    reportLevelMistake(GAME_ID, state.idx);
     say(`Ối! Cầu dài ${len} cm, còn thiếu ${state.gap - len} cm nữa mới tới bờ!`, 'sad', 'soft');
     await wait(1300);
     if (token !== state.runToken) return;
@@ -242,6 +245,8 @@ function win() {
   const done = Object.keys(progress).length;
   const totalStars = Object.values(progress).reduce((a, b) => a + b, 0);
   window.reportResult?.({
+    level: state.idx,
+    levelName: levelNameOf(state.idx),
     gameId: 'xay-cau', stars, score: totalStars, progressText: `${done}/${LEVELS.length} cây cầu`,
   });
 
@@ -291,3 +296,6 @@ window.addEventListener('resize', () => {
 });
 
 renderLevelGrid();
+
+// ?man=N (từ thử thách ôn lại): mở thẳng màn N
+openLevelFromUrl();

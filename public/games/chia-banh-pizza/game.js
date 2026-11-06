@@ -11,6 +11,10 @@ const FRIENDS = ['🐰', '🐻', '🐱', '🐶', '🦊', '🐼', '🐷', '🐨']
 const PRAISE = ['Giỏi quá!', 'Chính xác!', 'Ngon tuyệt! 😋', 'Bé hiểu phân số rồi!'];
 
 const $ = (s) => document.querySelector(s);
+// Sổ tay lỗi sai: mỗi mức độ là một màn
+const skillOf = () => [state.level - 1, buttonLabel(`[data-level="${state.level}"]`)];
+
+const GAME_ID = 'chia-banh-pizza';
 const state = {
   level: 1, sound: true, voice: true,
   round: 0, score: 0, firstTry: 0, wrongs: 0, task: null, sel: [], locked: false, timer: 0,
@@ -338,6 +342,7 @@ function correct(message = pick(PRAISE)) {
 function miss(text = pick(['Chưa đúng, thử lại nhé!', 'Gần đúng rồi!', 'Bé nhìn kỹ lại xem!'])) {
   state.wrongs++;
   sfx.wrong();
+  reportMistakeAt(GAME_ID, ...skillOf());
   window.mascotSay(text, 'sad', 'soft', 0);
 }
 
@@ -356,7 +361,7 @@ function endGame() {
   show('result');
   sfx.fanfare();
   confetti(stars * 30);
-  window.reportResult?.({ gameId: 'chia-banh-pizza', stars, score: state.score });
+  window.reportResult?.({ gameId: 'chia-banh-pizza', stars, score: state.score, level: skillOf()[0], levelName: skillOf()[1] });
   speak(stars === 3 ? 'Tuyệt vời! Bé là vua chia bánh!' : `Bé được ${stars} sao. Cố lên nhé!`);
 }
 
@@ -400,3 +405,13 @@ $('#voiceBtn').addEventListener('click', (e) => {
 });
 
 renderMenuBest();
+
+// ?man=N (từ thử thách ôn lại): chọn sẵn mức độ rồi bắt đầu
+{
+  const m = levelFromUrl();
+  const btn = document.querySelector(`[data-level="${m + 1}"]`);
+  if (m >= 0 && btn) {
+    btn.click();
+    startGame();
+  }
+}

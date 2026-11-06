@@ -3,6 +3,7 @@ const STEP_MS = 750;
 // LEVELS-START (scripts/check-levels.mjs đọc đoạn này để kiểm tra từng món)
 // steps: [id, biểu tượng, việc làm, các bước phải làm trước]. Thứ tự liệt kê là một lời giải đúng;
 // bước nào không phụ thuộc nhau thì đổi chỗ được. extras: thẻ thừa [biểu tượng, việc làm, lời chê].
+const GAME_ID = 'dau-bep-nhi';
 const LEVELS = [
   { dish: ['🍹', 'Nước cam'], tip: 'Chạm vào thẻ bước theo đúng thứ tự, rồi bấm Nấu thử!',
     steps: [['cat', '🔪', 'Cắt cam làm đôi'], ['vat', '🍊', 'Vắt cam vào ly', ['cat']], ['moi', '🥤', 'Mời bố mẹ uống', ['vat']]] },
@@ -213,6 +214,7 @@ async function run() {
   if (result.ok) return win();
 
   state.fails++;
+  reportLevelMistake(GAME_ID, state.idx);
   sfx.bad();
   const card = state.cards[state.recipe[result.at]];
   renderCards(-1, result.at);
@@ -240,6 +242,8 @@ function win() {
   const done = Object.keys(progress).length;
   const totalStars = Object.values(progress).reduce((a, b) => a + b, 0);
   window.reportResult?.({
+    level: state.idx,
+    levelName: levelNameOf(state.idx),
     gameId: 'dau-bep-nhi', stars, score: totalStars, progressText: `${done}/${LEVELS.length} món`,
   });
 
@@ -288,3 +292,6 @@ $('#soundBtn').addEventListener('click', (e) => {
 });
 
 renderLevelGrid();
+
+// ?man=N (từ thử thách ôn lại): mở thẳng màn N
+openLevelFromUrl();
