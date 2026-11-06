@@ -204,6 +204,17 @@ export const GAMES: Game[] = [
     src: "/games/khu-vuon-dien-tich/index.html",
   },
   {
+    id: "xuong-hinh",
+    title: "Xưởng Hình Lớp 5",
+    emoji: "🔺",
+    subject: "toan",
+    description: "Tìm đường cao, chọn công thức, tính diện tích tam giác, hình thang, hình tròn",
+    teaches: "Đường cao và diện tích hình tam giác, tam giác vuông, diện tích hình thang, tìm chiều cao hoặc tổng hai đáy khi biết diện tích, bán kính và đường kính, chu vi và diện tích hình tròn",
+    skills: ["Diện tích tam giác", "Hình thang", "Hình tròn", "Chu vi"],
+    grades: [5],
+    src: "/games/xuong-hinh/index.html",
+  },
+  {
     id: "thuoc-do-goc",
     title: "Thước Đo Góc",
     emoji: "📐",

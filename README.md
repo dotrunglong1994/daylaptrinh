@@ -45,7 +45,7 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 
 ## Các game
 
-34 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
+35 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
 Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bản đồ mặc định lọc theo lớp đó, trang chủ gợi ý
 3 game hợp lớp mà bé chưa chơi hoặc chưa đủ 3 sao (`suggestGames` trong `src/lib/games.ts`, xen kẽ toán và lập trình).
 
@@ -66,6 +66,7 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 | 🍬 Hũ Kẹo May Mắn | Toán | 2–5 | Chắc chắn / có thể / không thể, so sánh khả năng, tỉ số |
 | 🍕 Chia Bánh Pizza | Toán | 3–5 | Phân số: tô, đọc, chia đều, so sánh |
 | 🌻 Khu Vườn Diện Tích | Toán | 3–5 | Đếm ô, chu vi, diện tích, công thức, tính ngược |
+| 🔺 Xưởng Hình Lớp 5 | Toán | 5 | Chạm vào đường cao, diện tích tam giác và tam giác vuông, hình thang, tìm chiều cao / tổng hai đáy, bán kính – đường kính, chu vi và diện tích hình tròn; chọn công thức trước, mỗi công thức sai là một lỗi hay gặp |
 | 📐 Thước Đo Góc | Toán | 4–5 | Góc nhọn/vuông/tù/bẹt, đọc thước đo độ (hai vòng số), xoay tia, góc kim đồng hồ, góc còn thiếu |
 | 🧊 Kho Hộp Lập Phương | Toán | 5 | Đếm khối lập phương, xếp đầy hộp, thể tích hình hộp và hình lập phương, đổi cm³ – dm³ – m³ – lít, bể nước |
 | 🏎️ Đường Đua Vận Tốc | Toán | 5 | Quãng đường, vận tốc, thời gian; chỉnh tốc độ cho xe về đích đúng giờ; giờ và phút; hai xe ngược chiều, đuổi kịp |

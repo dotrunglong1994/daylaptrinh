@@ -1,0 +1,38 @@
+:root { --sky1: #ffe8cc; --sky2: #fff4e6; --accent: #f76707; }
+
+.steps { list-style: none; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+.steps li {
+  font-weight: 800; font-size: .95rem; padding: 4px 12px; border-radius: 999px;
+  background: rgba(255, 255, 255, .6); opacity: .55;
+}
+.steps li.now { background: #fff; opacity: 1; box-shadow: 0 3px 0 #ffc078; }
+.steps li.done { background: #d3f9d8; opacity: 1; }
+
+.question { font-size: 1.25rem; font-weight: 800; text-align: center; line-height: 1.45; }
+.fig { padding: 6px; }
+.fig svg { display: block; width: 100%; max-height: 260px; }
+
+.shape { fill: #fff4e6; stroke: none; }
+circle.shape { stroke: #e8590c; stroke-width: 3; }
+.seg .vis { stroke: #e8590c; stroke-width: 3.5; stroke-linecap: round; }
+.seg .vis.dash { stroke: #1c7ed6; stroke-dasharray: 7 6; }
+.seg .hit { stroke: transparent; stroke-width: 22; stroke-linecap: round; }
+.mark { fill: none; stroke: #1c7ed6; stroke-width: 2; }
+.dot { fill: #23395b; }
+.dot, .lbl, .mark, .shape { pointer-events: none; }
+.lbl { font-size: 15px; font-weight: 800; fill: #23395b; paint-order: stroke; stroke: #fff; stroke-width: 4px; }
+.lbl.h { fill: #1c7ed6; }
+.lbl.muted { fill: #868e96; font-weight: 700; }
+
+.tapping .seg { cursor: pointer; }
+.tapping .seg:hover .vis { stroke-width: 6; }
+.seg.right .vis { stroke: #2bb673; stroke-width: 6; }
+.seg.wrong .vis { stroke: #fa5252; stroke-width: 6; }
+
+.solution { font-size: 1.25rem; text-align: center; line-height: 1.6; }
+.choices.wide { grid-template-columns: 1fr 1fr; }
+
+@media (max-width: 520px) {
+  .question { font-size: 1.08rem; }
+  .steps li { font-size: .82rem; padding: 3px 9px; }
+}
