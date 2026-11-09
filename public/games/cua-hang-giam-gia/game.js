@@ -116,6 +116,33 @@ function numberOptions(r) {
   for (const v of near) if (opts.length < 4 && v > 0 && Number.isInteger(v) && !opts.includes(v)) opts.push(v);
   return opts;
 }
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const kinds = LEVELS[levelIdx].kinds;
+  const r = makeRound(levelIdx, Math.floor(rand() * kinds.length), rand);
+  const ans = answerOf(r);
+  if (r.kind === 'grid') return { q: `${r.p}% của một tấm bảng 100 ô là bao nhiêu ô?`, a: `${r.p} ô` };
+  if (r.kind === 'compare') {
+    const sign = ans > 0 ? '>' : ans < 0 ? '<' : '=';
+    return { q: `Điền dấu >, < hoặc =: ${r.a.s} … ${r.b.s}`, a: `${r.a.s} ${sign} ${r.b.s}` };
+  }
+  if (r.kind === 'add' || r.kind === 'sub') {
+    const [x, y] = r.foods;
+    const q = r.kind === 'add'
+      ? `Mua ${fmtDec(r.a, 1)} kg ${x[1]} và ${fmtDec(r.b, 2)} kg ${y[1]}. Tất cả nặng bao nhiêu ki-lô-gam?`
+      : `Có ${fmtDec(r.a, 1)} kg ${x[1]}, bán đi ${fmtDec(r.b, 2)} kg. Còn lại bao nhiêu ki-lô-gam?`;
+    return { q, a: `${fmtDec(r.a, 1)} ${r.kind === 'add' ? '+' : '−'} ${fmtDec(r.b, 2)} = ${fmtDec(ans)} kg` };
+  }
+  if (r.kind === 'pct') return { q: `${r.p}% của ${r.n} là bao nhiêu?`, a: `${r.n} : 100 × ${r.p} = ${ans}` };
+  const off = (r.price * r.p) / 100;
+  if (r.kind === 'off') return { q: `${r.item[1]} giá ${fmtMoney(r.price)}, giảm ${r.p}%. Được giảm bao nhiêu tiền?`, a: `${fmtMoney(off)}` };
+  if (r.kind === 'pay') return { q: `${r.item[1]} giá ${fmtMoney(r.price)}, giảm ${r.p}%. Phải trả bao nhiêu tiền?`, a: `${fmtMoney(r.price)} − ${fmtMoney(off)} = ${fmtMoney(ans)}` };
+  return {
+    q: `${r.item[1]} giá ${fmtMoney(r.price)}. Cửa hàng A giảm ${r.p}%, cửa hàng B giảm ${fmtMoney(r.cut)}. Mua ở cửa hàng nào rẻ hơn?`,
+    a: `A: ${fmtMoney(r.payA)}, B: ${fmtMoney(r.payB)}, cửa hàng ${ans} rẻ hơn`,
+  };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

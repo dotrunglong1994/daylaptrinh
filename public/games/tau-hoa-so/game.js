@@ -94,6 +94,28 @@ function roundOptions(r) {
   }
   return opts;
 }
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const L = LEVELS[levelIdx];
+  const r = makeRound(levelIdx, Math.floor(rand() * ROUNDS_PER_LEVEL), rand);
+  if (r.kind === 'build') {
+    const parts = L.places.map((p) => `${Math.floor(r.n / p) % 10} ${PLACE_NAMES[p].toLowerCase()}`);
+    if (!L.words) return { q: `Số gồm ${parts.join(' và ')} là số nào?`, a: fmt(r.n) };
+    return rand() < 0.5
+      ? { q: `Viết số: ${readNumber(r.n)}.`, a: fmt(r.n) }
+      : { q: `Đọc số ${fmt(r.n)} bằng chữ.`, a: readNumber(r.n) };
+  }
+  if (r.kind === 'compare') {
+    const sign = r.a > r.b ? '>' : r.a < r.b ? '<' : '=';
+    return { q: `Điền dấu >, < hoặc =: ${fmt(r.a)} … ${fmt(r.b)}`, a: `${fmt(r.a)} ${sign} ${fmt(r.b)}` };
+  }
+  if (r.kind === 'order') {
+    return { q: `Xếp các số theo thứ tự từ bé đến lớn: ${r.nums.map(fmt).join('; ')}.`, a: [...r.nums].sort((x, y) => x - y).map(fmt).join('; ') };
+  }
+  const place = { 10: 'hàng chục', 100: 'hàng trăm', 1000: 'hàng nghìn' }[r.to];
+  return { q: `Làm tròn số ${fmt(r.n)} đến ${place}.`, a: fmt(roundTo(r.n, r.to)) };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);
