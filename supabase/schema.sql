@@ -133,3 +133,31 @@ revoke all on function public.create_class(text, int) from public, anon;
 revoke all on function public.join_class(text, text, text, text, jsonb) from public, anon;
 grant execute on function public.create_class(text, int) to authenticated;
 grant execute on function public.join_class(text, text, text, text, jsonb) to authenticated;
+
+-- ---------- Bài giao cho cả lớp ----------
+-- Giáo viên giao một màn (hoặc cả game, l = -1) cho lớp. Bài mới nhất của lớp là bài đang giao.
+-- Phụ huynh có bé trong lớp đọc được bài để hiện ở "Thử thách hôm nay"; bé làm xong thì tóm tắt (summary.asg) báo lại.
+
+create table if not exists public.class_assignments (
+  id uuid primary key default gen_random_uuid(),
+  class_id uuid not null references public.classes (id) on delete cascade,
+  g text not null check (char_length(g) between 1 and 40),
+  l int not null default -1 check (l >= -1 and l < 100),
+  level_name text not null default '' check (char_length(level_name) <= 80),
+  note text not null default '' check (char_length(note) <= 200),
+  created_at timestamptz not null default now()
+);
+create index if not exists class_assignments_class on public.class_assignments (class_id, created_at desc);
+
+alter table public.class_assignments enable row level security;
+
+drop policy if exists "assign_teacher" on public.class_assignments;
+create policy "assign_teacher" on public.class_assignments
+  for all to authenticated
+  using (class_id in (select id from public.classes where teacher_id = auth.uid()))
+  with check (class_id in (select id from public.classes where teacher_id = auth.uid()));
+
+drop policy if exists "assign_members_read" on public.class_assignments;
+create policy "assign_members_read" on public.class_assignments
+  for select to authenticated
+  using (class_id in (select class_id from public.class_members where user_id = auth.uid()));

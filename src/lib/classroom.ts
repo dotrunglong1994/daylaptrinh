@@ -28,7 +28,20 @@ export type ClassSummary = {
   weak: { g: string; l: number; n: string; w: number; d: number; q?: string }[];
   /** Số màn đã vững */
   strong: number;
+  /** Bài cô giao: id bài → số sao cao nhất bé đạt ở màn đó kể từ ngày giao (chỉ ghi bài đã làm) */
+  asg?: Record<string, number>;
   at: string;
+};
+
+/** Bài giao cho cả lớp: một màn (l từ 0) hoặc cả game (l = -1). Bài mới nhất của lớp là bài đang giao. */
+export type Assignment = {
+  id: string;
+  class_id: string;
+  g: string;
+  l: number;
+  level_name: string;
+  note: string;
+  created_at: string;
 };
 
 export type Membership = {
@@ -46,7 +59,19 @@ export type MemberRow = Membership & { user_id: string; summary: Partial<ClassSu
 
 const WEAK_MAX = 8;
 
-export function kidSummary(kid: KidData, now = Date.now()): ClassSummary {
+/** Số sao cao nhất bé đạt ở bài giao kể từ ngày giao (0 = chưa làm). Màn tính theo nhật ký lượt chơi. */
+export function assignmentStars(kid: Pick<KidData, "log">, a: Pick<Assignment, "g" | "l" | "created_at">) {
+  const from = dayKey(Date.parse(a.created_at));
+  return kid.log.reduce(
+    (best, p) => (p.g === a.g && p.d >= from && (a.l < 0 || p.l === a.l) && p.s > best ? p.s : best),
+    0,
+  );
+}
+
+export function kidSummary(kid: KidData, now = Date.now(), assignments: Assignment[] = []): ClassSummary {
+  const asg = Object.fromEntries(
+    assignments.map((a) => [a.id, assignmentStars(kid, a)] as const).filter(([, stars]) => stars > 0),
+  );
   const week = new Set(Array.from({ length: 7 }, (_, i) => dayKey(now - i * 86_400_000)));
   const recent = kid.log.filter((p) => week.has(p.d));
   const games = Object.fromEntries(
@@ -66,6 +91,7 @@ export function kidSummary(kid: KidData, now = Date.now()): ClassSummary {
       .slice(0, WEAK_MAX)
       .map((s) => ({ g: s.g, l: s.l, n: s.name, w: s.wrong, d: s.wrongDays.length, q: s.recent[0]?.slice(0, 160) })),
     strong: strongSkills(kid.skills).length,
+    ...(Object.keys(asg).length ? { asg } : {}),
     at: new Date(now).toISOString(),
   };
 }
@@ -76,7 +102,9 @@ function explain(err: { message?: string; code?: string } | null): string {
   if (/CLASS_NOT_FOUND/.test(msg)) return "Không tìm thấy lớp có mã này. Bố mẹ kiểm tra lại mã cô giáo gửi nhé.";
   if (/CLASS_FULL/.test(msg)) return "Lớp này đã đủ 60 bạn.";
   if (err?.code === "PGRST202" || err?.code === "PGRST205" || /schema cache|does not exist/.test(msg)) {
-    return "Chưa tạo bảng lớp học trên Supabase. Hãy chạy lại file supabase/schema.sql trong SQL Editor.";
+    return /assignment/.test(msg)
+      ? "Chưa tạo bảng bài giao trên Supabase. Hãy chạy lại file supabase/schema.sql trong SQL Editor."
+      : "Chưa tạo bảng lớp học trên Supabase. Hãy chạy lại file supabase/schema.sql trong SQL Editor.";
   }
   if (/fetch|network/i.test(msg)) return "Không kết nối được máy chủ. Kiểm tra mạng rồi thử lại.";
   return msg;
@@ -84,14 +112,36 @@ function explain(err: { message?: string; code?: string } | null): string {
 
 /* ---------- Phụ huynh: lớp của các bé ---------- */
 
-type MineState = { user: string | null; list: Membership[]; loaded: boolean; error: string | null };
-let mine: MineState = { user: null, list: [], loaded: false, error: null };
+type MineState = {
+  user: string | null;
+  list: Membership[];
+  /** Bài đang giao của các lớp mà bé trong nhà đã vào (mỗi lớp một bài) */
+  assignments: Assignment[];
+  loaded: boolean;
+  loadedAt: number;
+  error: string | null;
+};
+let mine: MineState = { user: null, list: [], assignments: [], loaded: false, loadedAt: 0, error: null };
 const listeners = new Set<() => void>();
 const setMine = (patch: Partial<MineState>) => {
   mine = { ...mine, ...patch };
   listeners.forEach((l) => l());
 };
-const EMPTY: MineState = { user: null, list: [], loaded: false, error: null };
+const EMPTY: MineState = { user: null, list: [], assignments: [], loaded: false, loadedAt: 0, error: null };
+
+/** Bài cô giao cho một bé (các lớp bé đã vào), kèm tên lớp */
+export function assignmentsForKid(state: MineState, kidId: string | null) {
+  return state.list
+    .filter((m) => m.kid_id === kidId)
+    .flatMap((m) => {
+      const a = state.assignments.find((x) => x.class_id === m.class_id);
+      return a ? [{ ...a, className: m.class_name }] : [];
+    });
+}
+
+/** Bài mới nhất của mỗi lớp (danh sách đã xếp mới trước) */
+const latestPerClass = (rows: Assignment[]) =>
+  rows.filter((a, i) => rows.findIndex((b) => b.class_id === a.class_id) === i);
 
 /** Các lớp mà các bé trong nhà đã vào (theo tài khoản đang đăng nhập) */
 export function useMyClasses() {
@@ -108,6 +158,9 @@ export function useMyClasses() {
 }
 
 const COLUMNS = "class_id, kid_id, class_name, kid_name, avatar, joined_at, updated_at";
+const ASSIGN_COLUMNS = "id, class_id, g, l, level_name, note, created_at";
+/** Sau mỗi lần đồng bộ, tải lại lớp và bài giao nếu bản đang có cũ hơn chừng này */
+const REFRESH_MS = 2 * 60_000;
 /** Tóm tắt đã gửi gần nhất của mỗi bé (bỏ trường `at`), để không gửi lại khi không có gì mới */
 const sent = new Map<string, string>();
 
@@ -120,8 +173,20 @@ export async function loadMyClasses() {
     .eq("user_id", user)
     .order("joined_at");
   if (cloudUserId() !== user) return;
-  if (error) return setMine({ user, loaded: true, error: explain(error) });
-  setMine({ user, list: (data ?? []) as Membership[], loaded: true, error: null });
+  if (error) return setMine({ user, loaded: true, loadedAt: Date.now(), error: explain(error) });
+  const list = (data ?? []) as Membership[];
+  let assignments: Assignment[] = [];
+  if (list.length) {
+    const res = await cloudClient()
+      .from("class_assignments")
+      .select(ASSIGN_COLUMNS)
+      .in("class_id", [...new Set(list.map((m) => m.class_id))])
+      .order("created_at", { ascending: false });
+    // Chưa chạy bảng bài giao trên Supabase thì vẫn dùng lớp học bình thường
+    assignments = latestPerClass((res.data ?? []) as Assignment[]);
+  }
+  if (cloudUserId() !== user) return;
+  setMine({ user, list, assignments, loaded: true, loadedAt: Date.now(), error: null });
 }
 
 const sameSummary = (a: ClassSummary) => JSON.stringify({ ...a, at: "" });
@@ -130,12 +195,12 @@ const sameSummary = (a: ClassSummary) => JSON.stringify({ ...a, at: "" });
 export async function pushSummaries() {
   const user = cloudUserId();
   if (!user) return;
-  if (mine.user !== user || !mine.loaded) await loadMyClasses();
+  if (mine.user !== user || !mine.loaded || Date.now() - mine.loadedAt > REFRESH_MS) await loadMyClasses();
   const kids = getSavedData().kids;
   for (const m of mine.list) {
     const kid = kids.find((k) => k.id === m.kid_id);
     if (!kid?.profile) continue;
-    const summary = kidSummary(kid);
+    const summary = kidSummary(kid, Date.now(), mine.assignments.filter((a) => a.class_id === m.class_id));
     const key = `${user}|${m.class_id}|${m.kid_id}`;
     const sig = sameSummary(summary) + kid.profile.name + kid.profile.avatar;
     if (sent.get(key) === sig) continue;
@@ -224,6 +289,31 @@ export async function removeMember(m: MemberRow): Promise<string | null> {
     .from("class_members")
     .delete()
     .match({ class_id: m.class_id, user_id: m.user_id, kid_id: m.kid_id });
+  return error ? explain(error) : null;
+}
+
+/** Bài đang giao của lớp (bài mới nhất), null nếu chưa giao */
+export async function currentAssignment(classId: string): Promise<{ data: Assignment | null; error: string | null }> {
+  const { data, error } = await cloudClient()
+    .from("class_assignments")
+    .select(ASSIGN_COLUMNS)
+    .eq("class_id", classId)
+    .order("created_at", { ascending: false })
+    .limit(1);
+  return { data: ((data ?? [])[0] as Assignment) ?? null, error: error ? explain(error) : null };
+}
+
+/** Giao bài mới cho lớp (thay bài đang giao). l = -1: chơi màn nào của game cũng được. */
+export async function assignWork(classId: string, g: string, l: number, levelName: string, note: string): Promise<string | null> {
+  const { error } = await cloudClient()
+    .from("class_assignments")
+    .insert({ class_id: classId, g, l, level_name: levelName.slice(0, 80), note: note.trim().slice(0, 200) });
+  return error ? explain(error) : null;
+}
+
+/** Thôi giao bài: xóa mọi bài của lớp (bài cũ hơn không hiện lại) */
+export async function clearAssignments(classId: string): Promise<string | null> {
+  const { error } = await cloudClient().from("class_assignments").delete().eq("class_id", classId);
   return error ? explain(error) : null;
 }
 

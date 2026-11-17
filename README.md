@@ -42,7 +42,7 @@ Email có sẵn của Supabase chỉ gửi 2 email mỗi giờ và chỉ tới t
 | `/phieu-bai-tap` | Phiếu bài tập in ra giấy theo Sổ tay lỗi sai: câu bé đã sai, 5 câu tương tự mỗi màn, đáp án ở trang cuối |
 | `/huy-hieu` | Huy hiệu bé đã đạt và tiến độ các huy hiệu còn lại (nút 🏅 trên thanh trên) |
 | `/phu-huynh` | Góc phụ huynh: chọn bé để xem, sao, xu, lượt chơi, báo cáo 7 ngày qua, tiến độ theo lớp, vào lớp của cô giáo bằng mã, xóa tiến độ / hồ sơ bé |
-| `/giao-vien` | Lớp học cho giáo viên: tạo lớp, mã lớp gửi phụ huynh, bảng tiến độ cả lớp, màn cả lớp hay sai (cần đăng nhập) |
+| `/giao-vien` | Lớp học cho giáo viên: tạo lớp, mã lớp gửi phụ huynh, giao bài cho cả lớp, bảng tiến độ cả lớp, màn cả lớp hay sai (cần đăng nhập) |
 | `/giao-vien/phieu?lop=<id>` | Phiếu bài tập in cho cả lớp theo các màn cả lớp hay sai, đáp án cho thầy cô |
 | `/tri-nao` | Phòng Tập Trí Não cho người lớn: kỷ lục, điểm hôm nay, chuỗi ngày tập |
 | `/tri-nao/[gameId]` | Chơi một game trí não |
@@ -95,7 +95,7 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 ## Lớp học cho giáo viên
 
 Cần Supabase và đăng nhập (giáo viên và phụ huynh đều đăng nhập bằng mã OTP qua email). Bảng `classes`,
-`class_members` và hai hàm `create_class`, `join_class` nằm trong `supabase/schema.sql` (chạy lại cả file được, không mất dữ liệu).
+`class_members`, `class_assignments` và hai hàm `create_class`, `join_class` nằm trong `supabase/schema.sql` (chạy lại cả file được, không mất dữ liệu).
 
 - Giáo viên mở `/giao-vien`, tạo lớp (tên, khối) và nhận mã 6 ký tự (bỏ chữ dễ nhầm 0/O, 1/I/L), có nút chép lời mời gửi phụ huynh.
 - Phụ huynh vào Góc phụ huynh, đăng nhập, nhập mã ở thẻ "🏫 Lớp học của <bé>" (`ClassJoin.tsx`). Mỗi bé vào lớp riêng.
@@ -103,6 +103,12 @@ Cần Supabase và đăng nhập (giáo viên và phụ huynh đều đăng nh�
   sao, lượt chơi, số ngày học và lượt chơi 7 ngày qua, ngày chơi gần nhất, sao từng game, tối đa 8 màn còn hay sai.
   Không gửi lại khi tóm tắt không đổi.
 - Giáo viên thấy bảng học sinh (bấm tên để xem chi tiết), "Màn cả lớp hay sai" (gộp theo màn, số bé sai), cho bé rời lớp, xóa lớp.
+- **Bài cô giao** (bảng `class_assignments`, `AssignPanel.tsx`): cô chọn game và màn (hoặc "màn nào cũng được", `l = -1`;
+  tên màn đọc từ đoạn LEVELS của game qua `src/lib/levels.ts`), thêm lời dặn, hoặc bấm "📌 Giao màn này" ở mục Màn cả lớp
+  hay sai. Bài mới nhất của lớp là bài đang giao. Bé thấy bài ở đầu "Thử thách hôm nay" (`DailyChallenge.tsx`, mở thẳng
+  `/choi/<id>?man=N`). Bé chơi màn đó từ ngày giao (theo `progress.log`) thì tóm tắt gửi lớp có `asg[id] = số sao`
+  (`assignmentStars`), cô thấy "x/y bé đã làm xong". Phụ huynh của bé trong lớp chỉ đọc được bài, không sửa được.
+  Máy của bé cần đăng nhập tài khoản phụ huynh thì mới thấy bài và báo kết quả.
 - **Phiếu cho cả lớp** (`/giao-vien/phieu?lop=<id>`, nút 🖨️ cạnh "Màn cả lớp hay sai"): tối đa 6 màn cả lớp hay sai, mỗi màn có
   vài câu các bé đã sai và 5 câu luyện thêm, dòng "Họ và tên" để trống cho từng em, đáp án cho thầy cô ở trang cuối.
   Phiếu của một bé và phiếu cả lớp dùng chung component `Worksheet.tsx`.

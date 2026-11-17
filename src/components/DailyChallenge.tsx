@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { CHALLENGE_BONUS, challengeDone, challengeGames, challengeReview } from "@/lib/challenge";
-import { SUBJECTS } from "@/lib/games";
+import { assignmentStars, assignmentsForKid, useMyClasses } from "@/lib/classroom";
+import { SUBJECTS, getGame } from "@/lib/games";
 import { dayKey } from "@/lib/pet";
 import { useProgress } from "@/lib/progress";
 import { useNow } from "@/lib/useNow";
@@ -11,6 +12,7 @@ import { useNow } from "@/lib/useNow";
 export default function DailyChallenge() {
   const progress = useProgress();
   const now = useNow();
+  const mine = useMyClasses();
   if (!progress.loaded || !progress.profile || !now) return null;
   const day = dayKey(now);
   const games = challengeGames(day, progress.profile.grade, progress.log, progress.skills);
@@ -19,6 +21,7 @@ export default function DailyChallenge() {
   if (!games.length) return null;
   const done = challengeDone(progress.log, day, games);
   const claimed = progress.challenge?.day === day;
+  const tasks = assignmentsForKid(mine, progress.kidId).filter((a) => getGame(a.g));
 
   return (
     <section className={`card challenge${claimed ? " claimed" : ""}`}>
@@ -33,6 +36,34 @@ export default function DailyChallenge() {
           ? `Bé đã hoàn thành thử thách hôm nay và nhận ${CHALLENGE_BONUS} xu. Mai có thử thách mới nhé!`
           : `Chơi xong cả ${games.length} game (ít nhất 1 sao mỗi game) để nhận thêm ${CHALLENGE_BONUS} 🪙.`}
       </p>
+      {tasks.length > 0 && (
+        <ul className="suggest-list assign-list">
+          {tasks.map((a) => {
+            const g = getGame(a.g)!;
+            const stars = assignmentStars(progress, a);
+            const color = SUBJECTS.find((s) => s.id === g.subject)?.color;
+            return (
+              <li key={a.id}>
+                <Link
+                  href={a.l >= 0 ? `/choi/${g.id}?man=${a.l + 1}` : `/choi/${g.id}`}
+                  className={`node assign-node${stars ? " done" : ""}`}
+                  style={{ "--c": color } as React.CSSProperties}
+                >
+                  <span className="node-emoji">{stars ? "✅" : g.emoji}</span>
+                  <span className="node-info">
+                    <em className="assign-tag">📌 Bài cô giao · {a.className}</em>
+                    <strong>{a.l >= 0 ? a.level_name || `Màn ${a.l + 1}` : g.title}</strong>
+                    <small>
+                      {stars ? `Xong rồi! ${"⭐".repeat(stars)}` : a.l >= 0 ? g.title : "Chơi màn nào cũng được"}
+                      {!stars && a.note && ` · “${a.note}”`}
+                    </small>
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      )}
       <ol className="suggest-list">
         {games.map((g) => {
           const color = SUBJECTS.find((s) => s.id === g.subject)?.color;

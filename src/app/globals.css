@@ -473,3 +473,19 @@ tr:last-child td { border-bottom: 0; }
   .ws-part { border: 1px solid #ccc; break-inside: avoid; }
   .ws-answers { break-before: page; }
 }
+
+/* ---------- Bài cô giao ---------- */
+.assign-card { margin: 16px 0; display: flex; flex-direction: column; gap: 8px; }
+.assign-card h2 { font-size: 1.3rem; }
+.assign-card .row { margin-top: 4px; }
+.assign-now { display: flex; gap: 12px; align-items: center; }
+.assign-emoji { font-size: 2.2rem; }
+.assign-kids { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.assign-kids li { background: #f1f3f5; border-radius: 999px; padding: 2px 12px; font-weight: 700; }
+.assign-kids li.done { background: #d3f9d8; }
+.assign-form { border-top: 1px dashed var(--line); padding-top: 10px; }
+.assign-form select.name-input, .assign-form input.name-input { font-size: 1.05rem; text-align: left; }
+.skill-actions { margin-top: 0; gap: 6px; }
+.assign-list { margin-bottom: 14px; }
+.assign-node { border: 3px dashed var(--c); }
+.assign-tag { font-style: normal; font-size: .85rem; font-weight: 800; color: var(--primary); }

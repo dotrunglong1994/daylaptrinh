@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import AssignPanel, { type AssignDraft } from "@/components/AssignPanel";
 import LoginForm from "@/components/LoginForm";
 import {
   classWeakSkills,
   createClass,
+  currentAssignment,
   deleteClass,
   listClasses,
   listMembers,
   removeMember,
+  type Assignment,
   type ClassRow,
   type MemberRow,
 } from "@/lib/classroom";
@@ -150,11 +153,14 @@ function ClassView({ cls, onDeleted }: { cls: ClassRow; onDeleted: () => void })
   const [open, setOpen] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [assignment, setAssignment] = useState<Assignment | null>(null);
+  const [draft, setDraft] = useState<AssignDraft | null>(null);
 
   const reload = useCallback(async () => {
-    const { data, error } = await listMembers(cls.id);
-    setError(error);
-    setMembers(data);
+    const [mem, asg] = await Promise.all([listMembers(cls.id), currentAssignment(cls.id)]);
+    setError(mem.error ?? asg.error);
+    setMembers(mem.data);
+    setAssignment(asg.data);
   }, [cls.id]);
 
   useEffect(() => {
@@ -211,6 +217,16 @@ function ClassView({ cls, onDeleted }: { cls: ClassRow; onDeleted: () => void })
       </div>
 
       {error && <p className="form-error">⚠️ {error}</p>}
+
+      <AssignPanel
+        classId={cls.id}
+        grade={cls.grade}
+        assignment={assignment}
+        members={list}
+        draft={draft}
+        setDraft={setDraft}
+        onChanged={() => reload()}
+      />
 
       <h2 className="section-title skill-title">
         👧 Học sinh
@@ -281,9 +297,20 @@ function ClassView({ cls, onDeleted }: { cls: ClassRow; onDeleted: () => void })
                         {game?.emoji} <b>{w.n}</b> <small className="muted">· {game?.title ?? w.g}</small>
                       </span>
                       {game && (
-                        <Link href={`/choi/${w.g}?man=${w.l + 1}`} className="btn ghost small">
-                          Mở màn này
-                        </Link>
+                        <span className="row skill-actions">
+                          <Link href={`/choi/${w.g}?man=${w.l + 1}`} className="btn ghost small">
+                            Mở màn này
+                          </Link>
+                          <button
+                            className="btn ghost small"
+                            onClick={() => {
+                              setDraft({ g: w.g, l: w.l });
+                              document.querySelector(".assign-card")?.scrollIntoView({ behavior: "smooth", block: "center" });
+                            }}
+                          >
+                            📌 Giao màn này
+                          </button>
+                        </span>
                       )}
                     </div>
                     <small className="muted">
