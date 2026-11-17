@@ -47,7 +47,7 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 
 ## Các game
 
-35 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
+36 game, mỗi game ghi các lớp phù hợp theo chương trình GDPT 2018 (`grades` trong `src/lib/games.ts`).
 Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bản đồ mặc định lọc theo lớp đó, trang chủ gợi ý
 3 game hợp lớp mà bé chưa chơi hoặc chưa đủ 3 sao (`suggestGames` trong `src/lib/games.ts`, xen kẽ toán và lập trình).
 
@@ -83,6 +83,7 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 | 🐞 Bắt Bọ | Lập trình | 3–5 | Tìm và sửa lỗi chương trình (debug) |
 | 🐢 Họa Sĩ Rùa | Lập trình | 3–5 | Vẽ hình bằng lệnh, vòng lặp, góc quay |
 | 🎬 Thị Trấn Sự Kiện | Lập trình | 3–5 | Sự kiện như Scratch: cờ xanh, bấm vào nhân vật, phím, gửi / nhận tin |
+| 🧩 Xưởng Lập Trình | Lập trình | 2–5 | Kéo thả khối lệnh (đi, quay, nói, đổi trang phục, bút màu, chờ, lặp lại) dưới sự kiện cờ xanh / bấm vào nhân vật để làm hoạt hình; màn cuối là sân chơi tự do, bài làm lưu theo từng bé |
 | 💡 Bóng Đèn Nhị Phân | Lập trình | 3–5 | Số nhị phân (hoạt động "Đếm chấm" của CS Unplugged), mật thư |
 | 📏 Xếp Hàng Thông Minh | Lập trình | 3–5 | Sắp xếp nổi bọt, tìm kiếm tuần tự và tìm kiếm nhị phân |
 | 🚃 Tàu Danh Sách | Lập trình | 4–5 | Danh sách: toa thứ mấy, độ dài, thêm / xóa toa, vòng lặp tính tổng, đếm theo điều kiện, tìm lớn nhất |

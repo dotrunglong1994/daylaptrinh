@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Xưởng Lập Trình</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/mascot.css" />
+  <link rel="stylesheet" href="../shared/kit.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="stage">
+    <p id="question" class="question card"></p>
+    <div class="studio">
+      <div class="scene-card card">
+        <div class="scene-bar">
+          <button id="flagBtn" class="flag-btn" title="Chạy chương trình">
+            <svg class="flag-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 2v20" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><path d="M6 3c4-2 7 2 13 0v10c-6 2-9-2-13 0z" fill="#fff"/></svg>
+            Chạy
+          </button>
+          <button id="stopBtn" class="stop-btn" title="Dừng và đặt lại">■ Dừng</button>
+          <span id="limit" class="limit"></span>
+        </div>
+        <div id="scene" class="scene"></div>
+      </div>
+      <div class="code-card card">
+        <div class="code-cols">
+          <div class="col">
+            <p class="col-title">🧰 Hộp khối</p>
+            <div id="palette" class="palette"></div>
+          </div>
+          <div class="col">
+            <p class="col-title">📜 Chương trình</p>
+            <div id="workspace" class="workspace"></div>
+          </div>
+        </div>
+        <div class="code-bar">
+          <small>Kéo khối sang phải để thêm, kéo ra ngoài để bỏ. Chạm vào số để đổi.</small>
+          <button id="clearBtn" class="btn ghost small">🗑️ Xóa hết</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="dropLine" class="drop-line hidden"></div>
+
+  <script src="../shared/mascot.js"></script>
+  <script src="../shared/bridge.js"></script>
+  <script src="../shared/kit.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

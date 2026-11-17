@@ -369,6 +369,17 @@ export const GAMES: Game[] = [
     src: "/games/thi-tran-su-kien/index.html",
   },
   {
+    id: "xuong-lap-trinh",
+    title: "Xưởng Lập Trình",
+    emoji: "🧩",
+    subject: "lap-trinh",
+    description: "Kéo thả khối lệnh để làm phim hoạt hình",
+    teaches: "Lập trình bằng khối kéo thả: sự kiện cờ xanh và bấm vào nhân vật, đi, quay, nói, đổi trang phục, bút màu, chờ, lặp lại; tự làm phim hoạt hình, bài làm được lưu cho từng bé",
+    skills: ["Khối lệnh", "Sự kiện", "Vòng lặp", "Hoạt hình"],
+    grades: [2, 3, 4, 5],
+    src: "/games/xuong-lap-trinh/index.html",
+  },
+  {
     id: "bong-den-nhi-phan",
     title: "Bóng Đèn Nhị Phân",
     emoji: "💡",
