@@ -1,26 +1,14 @@
 const ROUNDS = 8;
-// Dạng bài: paint = tô phân số, read = đọc phân số, share = chia đều, compare = so sánh
+// LEVELS-START
+// Mỗi mức độ (Dễ / Vừa / Khó) là một màn. Dạng bài: paint = tô phân số, read = đọc phân số, share = chia đều, compare = so sánh
 const LEVELS = {
-  1: { tasks: ['paint', 'read'], dens: [2, 3, 4] },
-  2: { tasks: ['paint', 'read', 'share'], dens: [2, 3, 4, 6, 8] },
-  3: { tasks: ['paint', 'read', 'share', 'compare'], dens: [2, 3, 4, 5, 6, 8] },
+  1: { name: 'Dễ: tô và đọc phân số', tasks: ['paint', 'read'], dens: [2, 3, 4] },
+  2: { name: 'Vừa: chia đều cái bánh', tasks: ['paint', 'read', 'share'], dens: [2, 3, 4, 6, 8] },
+  3: { name: 'Khó: so sánh phân số', tasks: ['paint', 'read', 'share', 'compare'], dens: [2, 3, 4, 5, 6, 8] },
 };
 // Các cặp phân số bằng nhau cho bài so sánh
 const EQUAL_PAIRS = [[1, 2, 2, 4], [1, 2, 4, 8], [1, 3, 2, 6], [2, 4, 4, 8], [1, 4, 2, 8], [2, 3, 4, 6]];
-const FRIENDS = ['🐰', '🐻', '🐱', '🐶', '🦊', '🐼', '🐷', '🐨'];
-const PRAISE = ['Giỏi quá!', 'Chính xác!', 'Ngon tuyệt! 😋', 'Bé hiểu phân số rồi!'];
 
-const $ = (s) => document.querySelector(s);
-// Sổ tay lỗi sai: mỗi mức độ là một màn
-const skillOf = () => [state.level - 1, buttonLabel(`[data-level="${state.level}"]`)];
-
-const GAME_ID = 'chia-banh-pizza';
-const state = {
-  level: 1, sound: true, voice: true,
-  round: 0, score: 0, firstTry: 0, wrongs: 0, task: null, sel: [], locked: false, timer: 0,
-};
-
-/* ---------- Tiện ích ---------- */
 const rand = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
 const pick = (arr) => arr[rand(0, arr.length - 1)];
 function shuffle(arr) {
@@ -31,9 +19,39 @@ function shuffle(arr) {
   return arr;
 }
 const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+const sameValue = (a, b) => a[0] * b[1] === a[1] * b[0];
+// 1 đáp án đúng + 3 đáp án nhiễu là các lỗi hay gặp (đảo tử/mẫu, đếm phần còn lại…)
+function fracOptions(num, den) {
+  const correct = [num, den];
+  const cands = shuffle([[den - num, den], [num, den + 1], [num, den - 1], [den, num], [num + 1, den], [num - 1, den]]);
+  const out = [];
+  const add = (c) => {
+    const [a, b] = c;
+    if (a < 1 || b < 2 || sameValue(c, correct) || out.some((o) => o[0] === a && o[1] === b)) return;
+    out.push(c);
+  };
+  for (const c of cands) if (out.length < 3) add(c);
+  while (out.length < 3) add([rand(1, 3), rand(2, 9)]);
+  return shuffle([correct, ...out]);
+}
+// LEVELS-END
+
+const FRIENDS = ['🐰', '🐻', '🐱', '🐶', '🦊', '🐼', '🐷', '🐨'];
+const PRAISE = ['Giỏi quá!', 'Chính xác!', 'Ngon tuyệt! 😋', 'Bé hiểu phân số rồi!'];
+
+const $ = (s) => document.querySelector(s);
+// Sổ tay lỗi sai: mỗi mức độ là một màn
+const skillOf = () => [state.level - 1, LEVELS[state.level].name];
+
+const GAME_ID = 'chia-banh-pizza';
+const state = {
+  level: 1, sound: true, voice: true,
+  round: 0, score: 0, firstTry: 0, wrongs: 0, task: null, sel: [], locked: false, timer: 0,
+};
+
+/* ---------- Tiện ích ---------- */
 const frac = (num, den) => `<span class="frac"><b>${num}</b><i></i><b>${den}</b></span>`;
 const sayFrac = (num, den) => `${num} phần ${den}`;
-const sameValue = (a, b) => a[0] * b[1] === a[1] * b[0];
 
 function loadBest() {
   try { return JSON.parse(localStorage.getItem(kidKey('pizza-best')) || '{}'); } catch { return {}; }
@@ -146,21 +164,6 @@ function makeTask() {
   }
   const diff = left[0] * right[1] - right[0] * left[1];
   return { type, kind, left, right, answer: diff > 0 ? 'left' : diff < 0 ? 'right' : 'equal' };
-}
-
-// 1 đáp án đúng + 3 đáp án nhiễu là các lỗi hay gặp (đảo tử/mẫu, đếm phần còn lại…)
-function fracOptions(num, den) {
-  const correct = [num, den];
-  const cands = shuffle([[den - num, den], [num, den + 1], [num, den - 1], [den, num], [num + 1, den], [num - 1, den]]);
-  const out = [];
-  const add = (c) => {
-    const [a, b] = c;
-    if (a < 1 || b < 2 || sameValue(c, correct) || out.some((o) => o[0] === a && o[1] === b)) return;
-    out.push(c);
-  };
-  for (const c of cands) if (out.length < 3) add(c);
-  while (out.length < 3) add([rand(1, 3), rand(2, 9)]);
-  return shuffle([correct, ...out]);
 }
 
 /* ---------- Điều hướng ---------- */

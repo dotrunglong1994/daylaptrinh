@@ -1,3 +1,4 @@
+// LEVELS-START
 const DIRS = {
   up: { dx: 0, dy: -1, icon: '⬆️' },
   down: { dx: 0, dy: 1, icon: '⬇️' },
@@ -19,6 +20,17 @@ const LEVELS = [
   { name: 'Đi vòng thật xa', map: ['S......', '######.', 'G......'], par: 3, slots: 4, repeat: true, tip: 'Đi một vòng thật xa nào!' },
   { name: 'Mê cung', map: ['S..#....', '##.#.##.', '...#..#.', '.###.##.', '......#G'], par: 8, slots: 10, repeat: true, tip: 'Mê cung cuối cùng! Bé làm được mà 💪' },
 ];
+
+function parseLevel(def) {
+  const level = { ...def, walls: new Set(), rows: def.map.length, cols: def.map[0].length };
+  def.map.forEach((row, y) => [...row].forEach((c, x) => {
+    if (c === 'S') level.start = { x, y };
+    if (c === 'G') level.goal = { x, y };
+    if (c === '#') level.walls.add(`${x},${y}`);
+  }));
+  return level;
+}
+// LEVELS-END
 
 const $ = (s) => document.querySelector(s);
 const state = { idx: 0, level: null, program: [], pos: null, running: false, runToken: 0, sound: true };
@@ -83,16 +95,6 @@ $('#levelGrid').addEventListener('click', (e) => {
 });
 
 /* ---------- Bản đồ ---------- */
-function parseLevel(def) {
-  const level = { ...def, walls: new Set(), rows: def.map.length, cols: def.map[0].length };
-  def.map.forEach((row, y) => [...row].forEach((c, x) => {
-    if (c === 'S') level.start = { x, y };
-    if (c === 'G') level.goal = { x, y };
-    if (c === '#') level.walls.add(`${x},${y}`);
-  }));
-  return level;
-}
-
 function cellSize(level) {
   const avail = Math.min($('#boardWrap').clientWidth || window.innerWidth - 32, 720);
   return Math.max(36, Math.min(72, Math.floor(avail / level.cols)));
