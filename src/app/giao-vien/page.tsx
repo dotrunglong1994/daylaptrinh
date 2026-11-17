@@ -264,7 +264,12 @@ function ClassView({ cls, onDeleted }: { cls: ClassRow; onDeleted: () => void })
 
       {weak.length > 0 && (
         <>
-          <h2 className="section-title">🌱 Màn cả lớp hay sai</h2>
+          <h2 className="section-title skill-title">
+            🌱 Màn cả lớp hay sai
+            <Link href={`/giao-vien/phieu?lop=${cls.id}`} className="btn ghost small">
+              🖨️ In phiếu cho cả lớp
+            </Link>
+          </h2>
           <div className="card">
             <ul className="skill-list">
               {weak.map((w) => {

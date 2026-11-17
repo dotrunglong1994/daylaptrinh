@@ -42,6 +42,7 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 | `/huy-hieu` | Huy hiệu bé đã đạt và tiến độ các huy hiệu còn lại (nút 🏅 trên thanh trên) |
 | `/phu-huynh` | Góc phụ huynh: chọn bé để xem, sao, xu, lượt chơi, báo cáo 7 ngày qua, tiến độ theo lớp, vào lớp của cô giáo bằng mã, xóa tiến độ / hồ sơ bé |
 | `/giao-vien` | Lớp học cho giáo viên: tạo lớp, mã lớp gửi phụ huynh, bảng tiến độ cả lớp, màn cả lớp hay sai (cần đăng nhập) |
+| `/giao-vien/phieu?lop=<id>` | Phiếu bài tập in cho cả lớp theo các màn cả lớp hay sai, đáp án cho thầy cô |
 | `/tri-nao` | Phòng Tập Trí Não cho người lớn: kỷ lục, điểm hôm nay, chuỗi ngày tập |
 | `/tri-nao/[gameId]` | Chơi một game trí não |
 
@@ -101,6 +102,9 @@ Cần Supabase và đăng nhập (giáo viên và phụ huynh đều đăng nh�
   sao, lượt chơi, số ngày học và lượt chơi 7 ngày qua, ngày chơi gần nhất, sao từng game, tối đa 8 màn còn hay sai.
   Không gửi lại khi tóm tắt không đổi.
 - Giáo viên thấy bảng học sinh (bấm tên để xem chi tiết), "Màn cả lớp hay sai" (gộp theo màn, số bé sai), cho bé rời lớp, xóa lớp.
+- **Phiếu cho cả lớp** (`/giao-vien/phieu?lop=<id>`, nút 🖨️ cạnh "Màn cả lớp hay sai"): tối đa 6 màn cả lớp hay sai, mỗi màn có
+  vài câu các bé đã sai và 5 câu luyện thêm, dòng "Họ và tên" để trống cho từng em, đáp án cho thầy cô ở trang cuối.
+  Phiếu của một bé và phiếu cả lớp dùng chung component `Worksheet.tsx`.
 - Quyền (RLS): giáo viên chỉ xem lớp của mình và tóm tắt của học sinh trong lớp; phụ huynh chỉ xem, sửa, xóa dòng của con mình
   và không xem được danh sách lớp. Giáo viên không thấy email hay dữ liệu khác của gia đình. Tối đa 20 lớp mỗi giáo viên, 60 bé mỗi lớp.
 

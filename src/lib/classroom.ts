@@ -227,15 +227,16 @@ export async function removeMember(m: MemberRow): Promise<string | null> {
   return error ? explain(error) : null;
 }
 
-/** Màn nhiều bé trong lớp còn sai nhất: số bé sai, tổng câu sai. */
+/** Màn nhiều bé trong lớp còn sai nhất: số bé sai, tổng câu sai, vài câu các bé đã sai (tối đa 3). */
 export function classWeakSkills(members: MemberRow[]) {
-  const map = new Map<string, { g: string; l: number; n: string; kids: string[]; wrong: number }>();
+  const map = new Map<string, { g: string; l: number; n: string; kids: string[]; wrong: number; qs: string[] }>();
   for (const m of members) {
     for (const w of m.summary.weak ?? []) {
       const key = `${w.g}#${w.l}`;
-      const cur = map.get(key) ?? { g: w.g, l: w.l, n: w.n, kids: [], wrong: 0 };
+      const cur = map.get(key) ?? { g: w.g, l: w.l, n: w.n, kids: [], wrong: 0, qs: [] };
       cur.kids.push(m.kid_name);
       cur.wrong += w.w;
+      if (w.q && cur.qs.length < 3 && !cur.qs.includes(w.q)) cur.qs.push(w.q);
       map.set(key, cur);
     }
   }
