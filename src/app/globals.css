@@ -56,10 +56,6 @@ button:disabled { cursor: default; opacity: .5; }
 .logo { font-size: 1.5rem; font-weight: 800; white-space: nowrap; }
 .nav { display: flex; gap: 6px; flex: 1; }
 .nav a { padding: 4px 12px; border-radius: 12px; font-weight: 700; white-space: nowrap; }
-@media (max-width: 960px) {
-  .logo span, .avatar-name { display: none; }
-  .nav a { padding: 4px 8px; }
-}
 .nav a:hover { background: #fff; }
 .wallet { display: flex; align-items: center; gap: 8px; font-weight: 800; }
 .wallet > span, .wallet-link { background: #fff; padding: 2px 12px; border-radius: 999px; }
@@ -67,12 +63,23 @@ button:disabled { cursor: default; opacity: .5; }
 .avatar-btn { display: flex; align-items: center; gap: 6px; background: #fff; padding: 2px 12px 2px 4px; border-radius: 999px; font-weight: 800; }
 .avatar { font-size: 1.5rem; }
 
+/* Màn hình vừa (máy tính bảng): logo + ví ở hàng trên, menu xuống hàng dưới, không bị ví che */
+@media (max-width: 960px) {
+  .site-header { gap: 8px 12px; }
+  .wallet { margin-left: auto; }
+  .nav { order: 3; flex-basis: 100%; justify-content: center; }
+  .nav a { padding: 4px 10px; }
+}
+
+/* Điện thoại: menu chia 4 ô bằng nhau, biểu tượng ở trên, chữ ở dưới */
 @media (max-width: 640px) {
-  .site-header { gap: 8px; }
   .logo span, .avatar-name { display: none; }
-  .nav a { padding: 4px 8px; font-size: .95rem; }
-  /* Màn hình hẹp: thanh menu cuộn ngang trong chỗ của nó, không làm cả trang tràn */
-  .nav { min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .site-header { padding: 8px 12px 6px; }
+  .wallet { gap: 6px; }
+  .wallet > span, .wallet-link { padding: 2px 8px; }
+  .nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .nav a { display: flex; flex-direction: column; align-items: center; padding: 2px 0; font-size: .85rem; line-height: 1.2; }
+  .nav-icon { font-size: 1.25rem; }
 }
 
 /* ---------- Khủng long ---------- */

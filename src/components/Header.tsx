@@ -8,6 +8,13 @@ import { totalStars, useProgress } from "@/lib/progress";
 import KidPicker from "./KidPicker";
 import ProfileModal from "./ProfileModal";
 
+const NAV = [
+  ["/ban-do", "🗺️", "Bản đồ"],
+  ["/thu-cung", "🐾", "Thú cưng"],
+  ["/phu-huynh", "👨‍👩‍👧", "Phụ huynh"],
+  ["/tri-nao", "🧠", "Trí não"],
+] as const;
+
 // Đã trả lời "Ai đang chơi?" trong phiên này (mở tab mới thì hỏi lại)
 const WHO_KEY = "bhv-who";
 function answeredWho() {
@@ -42,10 +49,11 @@ export default function Header() {
           🎈 <span>{SITE_NAME}</span>
         </Link>
         <nav className="nav">
-          <Link href="/ban-do">🗺️ Bản đồ</Link>
-          <Link href="/thu-cung">🐾 Thú cưng</Link>
-          <Link href="/phu-huynh">👨‍👩‍👧 Phụ huynh</Link>
-          <Link href="/tri-nao">🧠 Trí não</Link>
+          {NAV.map(([href, icon, label]) => (
+            <Link key={href} href={href}>
+              <span className="nav-icon">{icon}</span> <span className="nav-label">{label}</span>
+            </Link>
+          ))}
         </nav>
         {progress.loaded && (
           <div className="wallet">
