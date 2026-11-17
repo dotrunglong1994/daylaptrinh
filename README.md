@@ -28,7 +28,8 @@ phần đăng nhập bằng mã OTP gửi qua email để đồng bộ tiến đ
 Cách đồng bộ (`src/lib/cloud.ts`): localStorage vẫn là nơi lưu chính, mỗi lần ghi sẽ đẩy lên sau 1,5 giây.
 Khi đăng nhập hoặc quay lại tab, bản nào có `savedAt` mới hơn sẽ thắng. Lần đầu nối một máy đã có dữ liệu với
 tài khoản cũng đã có dữ liệu khác, website hỏi phụ huynh muốn giữ bản nào.
-Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng thật nên cấu hình SMTP riêng.
+Email có sẵn của Supabase chỉ gửi 2 email mỗi giờ và chỉ tới thành viên dự án; dùng thật cần SMTP riêng, xem
+[docs/cai-smtp-resend.md](docs/cai-smtp-resend.md) (Resend miễn phí, cần một tên miền).
 
 ## Các trang
 
@@ -247,4 +248,4 @@ chơi game lưu lựa chọn vào localStorage `bhv-read-aloud`.
 
 ## Việc tiếp theo
 
-- Cấu hình SMTP riêng cho Supabase (email miễn phí bị giới hạn vài email mỗi giờ).
+- Cấu hình SMTP riêng cho Supabase theo [docs/cai-smtp-resend.md](docs/cai-smtp-resend.md) (việc làm trên dashboard, cần tên miền).

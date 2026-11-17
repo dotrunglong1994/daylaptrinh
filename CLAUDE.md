@@ -74,3 +74,4 @@ trình duyệt bằng "người giải tự động" (xem phần Kiểm thử), 
 ## Kế hoạch còn lại
 
 1. Cấu hình SMTP riêng cho Supabase (email miễn phí bị giới hạn vài email/giờ; lớp học cũng dùng đăng nhập email).
+   Hướng dẫn từng bước cho chủ dự án: `docs/cai-smtp-resend.md`.
