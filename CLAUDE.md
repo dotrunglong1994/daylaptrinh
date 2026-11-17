@@ -74,4 +74,3 @@ trình duyệt bằng "người giải tự động" (xem phần Kiểm thử), 
 ## Kế hoạch còn lại
 
 1. Cấu hình SMTP riêng cho Supabase (email miễn phí bị giới hạn vài email/giờ; lớp học cũng dùng đăng nhập email).
-2. Khối lệnh kéo thả kiểu Scratch để bé tự làm game nhỏ.
