@@ -154,7 +154,8 @@ Cần Supabase và đăng nhập (giáo viên và phụ huynh đều đăng nh�
   trong đoạn LEVELS của game (trả `{ q, a }`, hoặc `null` nếu câu cần hình); trang tải `game.js` rồi chỉ chạy đoạn đó
   (`src/lib/worksheet.ts`). Game có `printRound`: Nhà Máy Cửu Chương, Thám Tử Đề Bài, Bài Kiểm Tra, Xưởng Hình, Đường Đua
   Vận Tốc, Tàu Hỏa Số, Cửa Hàng Giảm Giá, Bắn Bóng Số, Đồng Hồ, Siêu Thị Mini, Xây Cầu, Bếp Cân Đong, Cân Thăng Bằng,
-  Khu Vườn Diện Tích, Kho Hộp Lập Phương (danh sách `PRINTABLE`; game chia màn theo phép tính × mức độ khai báo `PRINT_LEVELS`); màn của game khác được nhắc "chơi lại trên máy". Kiểm tra trong `scripts/checks/phieu-bai-tap.mjs`.
+  Khu Vườn Diện Tích, Kho Hộp Lập Phương, Tờ Lịch Nhà Bé, Hũ Kẹo May Mắn, Thước Đo Góc, Bóng Đèn Nhị Phân, Tàu Danh Sách,
+  Cổng Logic, Rô-bốt Nhà Kho, Đèn Giao Thông (danh sách `PRINTABLE`; game chia màn theo phép tính × mức độ khai báo `PRINT_LEVELS`); màn của game khác được nhắc "chơi lại trên máy". Kiểm tra trong `scripts/checks/phieu-bai-tap.mjs`.
 - **Báo cáo 7 ngày** (`WeeklyReport.tsx`, Góc phụ huynh): số ngày có học, lượt chơi so với tuần trước, biểu đồ lượt chơi
   mỗi ngày, game bé làm tốt / cần luyện thêm, game nên chơi tiếp.
 

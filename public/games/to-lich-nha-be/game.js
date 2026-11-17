@@ -143,6 +143,31 @@ function labelOf(r, v) {
 }
 
 const answerOf = (r) => r.ans;
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// Trên giấy không có tờ lịch nên câu cần xem lịch cho biết ngày 1 của tháng là thứ mấy để bé tự đếm.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const L = LEVELS[levelIdx];
+  const r = makeRound(levelIdx, ri(rand, 0, L.kinds.length - 1), rand);
+  const W = (w) => WEEKDAYS[w];
+  const month = `Tháng ${r.m} năm ${r.y} có ${r.last} ngày, ngày 1 là ${W(weekdayOf(r.y, r.m, 1))}.`;
+  if (r.kind === 'sheet') {
+    const w = weekdayOf(r.y, r.m, r.d);
+    return {
+      q: `Tờ lịch bóc hôm nay ghi: ${W(w)}, ngày ${r.d} tháng ${r.m}. Bóc tờ này đi thì tờ lịch ngày mai ghi thứ mấy, ngày bao nhiêu?`,
+      a: `${W((w + 1) % 7)}, ngày ${r.d + 1} tháng ${r.m}`,
+    };
+  }
+  if (r.kind === 'weekday' || (r.kind === 'tap' && r.target === 'date')) {
+    const d = r.d ?? r.ans;
+    return { q: `${month} Ngày ${d} tháng ${r.m} là thứ mấy?`, a: W(weekdayOf(r.y, r.m, d)) };
+  }
+  if (r.kind === 'tap') {
+    return { q: `${month} Ngày ${W(r.w)} ${r.target === 'first' ? 'đầu tiên' : 'cuối cùng'} của tháng ${r.m} là ngày bao nhiêu?`, a: `Ngày ${r.ans}` };
+  }
+  if (r.kind === 'count') return { q: `${month} Tháng ${r.m} có mấy ngày ${W(r.w)}?`, a: `${r.ans} ngày` };
+  return { q: questionOf(r), a: labelOf(r, r.ans) };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

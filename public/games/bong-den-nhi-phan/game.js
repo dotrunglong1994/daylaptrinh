@@ -39,6 +39,36 @@ function readOptions(r, bits) {
   for (const v of [lit, ...flips, ans + 1, ans - 1]) if (opts.length < 4 && v > 0 && !opts.includes(v)) opts.push(v);
   return opts;
 }
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// Dãy bóng viết bằng số 0 (tắt) và 1 (sáng). Số tạo câu mới được bốc ngẫu nhiên theo số bóng của màn.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const L = LEVELS[levelIdx];
+  const ri = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const pv = placeValues(L.bits);
+  const lamps = `${L.bits} bóng đèn ghi ${pv.join(', ')} chấm (bóng sáng = 1, bóng tắt = 0).`;
+  const sum = (s) => [...s].map((b, i) => (b === '1' ? pv[i] : 0)).filter(Boolean).join(' + ');
+  const t = L.rounds[ri(0, L.rounds.length - 1)];
+  const max = 2 ** L.bits - 1;
+  if (t.letter) {
+    const n = ri(1, 26);
+    const s = toBits(n, L.bits);
+    return { q: `Mật thư: ${lamps} Đọc dãy ${s} ra số rồi tra 1 = A, 2 = B, 3 = C… Dãy đó là chữ gì?`, a: `${sum(s)} = ${n} → ${LETTERS[n - 1]}` };
+  }
+  if (t.read) {
+    const n = ri(1, max);
+    const s = toBits(n, L.bits);
+    return { q: `${lamps} Dãy bóng ${s} là số mấy?`, a: `${sum(s)} = ${n}` };
+  }
+  if (t.from) {
+    const n = ri(2, max);
+    const s = toBits(n, L.bits);
+    return { q: `${lamps} Các bóng đang là ${toBits(n - 1, L.bits)} (số ${n - 1}). Đếm tiếp: bật tắt bóng thế nào để được số ${n}? Viết dãy mới.`, a: `${s} (${sum(s)} = ${n})` };
+  }
+  const n = ri(Math.max(1, 2 ** (L.bits - 2)), max);
+  const s = toBits(n, L.bits);
+  return { q: `${lamps} Bật những bóng nào để được ${n} chấm? Viết dãy số 0 và 1.`, a: `${s} (${sum(s)} = ${n})` };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

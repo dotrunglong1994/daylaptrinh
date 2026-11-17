@@ -66,6 +66,35 @@ function makeRound(levelIdx, k, rand = Math.random) {
 }
 
 const answerOf = (r) => (r.kind === 'name' ? KIND_NAMES[kindOf(r.deg)] : r.deg);
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// Trên giấy không có thước nên câu đọc / vẽ góc tả bằng lời: vòng số trong có số 0 bên phải, vòng ngoài có số 0 bên trái.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const L = LEVELS[levelIdx];
+  const r = makeRound(levelIdx, ri(rand, 0, L.kinds.length - 1), rand);
+  const kindName = (deg) => KIND_NAMES[kindOf(deg)].toLowerCase();
+  const side = r.base === 'left' ? 'trái' : 'phải';
+  const ring = r.base === 'left' ? 'vòng ngoài' : 'vòng trong';
+  const other = r.base === 'left' ? 'vòng trong' : 'vòng ngoài';
+  if (r.kind === 'name') return { q: `Một góc có số đo ${r.deg}°. Đó là góc nhọn, góc vuông, góc tù hay góc bẹt?`, a: KIND_NAMES[kindOf(r.deg)] };
+  if (r.kind === 'read') {
+    return {
+      q: `Đặt thước đo góc, tia gốc nằm bên ${side}, đi qua số 0 của ${ring}. Tia còn lại đi qua vạch mà ${ring} ghi ${r.deg}, ${other} ghi ${180 - r.deg}. Góc đó bao nhiêu độ, là góc gì?`,
+      a: `${r.deg}° (đọc ${ring}), ${kindName(r.deg)}`,
+    };
+  }
+  if (r.kind === 'set') {
+    return {
+      q: `Tia gốc nằm bên ${side}. Muốn vẽ góc ${r.deg}°, em chấm điểm ở vạch ${r.deg} của vòng số nào: vòng trong (số 0 bên phải) hay vòng ngoài (số 0 bên trái)? Góc vẽ được là góc gì?`,
+      a: `Vạch ${r.deg} của ${ring} (${other} ghi ${180 - r.deg}), ${kindName(r.deg)}`,
+    };
+  }
+  if (r.kind === 'clock') return { q: `Lúc ${r.hour} giờ đúng, kim giờ và kim phút tạo thành góc bao nhiêu độ?`, a: `${Math.min(r.hour, 12 - r.hour)} khoảng × 30° = ${r.deg}°` };
+  return {
+    q: `Một góc ${r.whole === 90 ? 'vuông' : 'bẹt'} được chia thành hai góc. Một góc là ${r.known}°. Góc còn lại bao nhiêu độ?`,
+    a: `${r.whole}° − ${r.known}° = ${r.deg}°`,
+  };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

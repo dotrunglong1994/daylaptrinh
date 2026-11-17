@@ -100,6 +100,26 @@ function makeRound(levelIdx, k, rand = Math.random) {
 }
 
 const answerOf = (r) => r.ans;
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// Đoàn tàu viết thành một hàng: 🚂 rồi các toa, toa ngay sau đầu máy là toa thứ 1.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const L = LEVELS[levelIdx];
+  const r = makeRound(levelIdx, ri(rand, 0, L.kinds.length - 1), rand);
+  const train = `Đoàn tàu: 🚂 ${r.list.join(' ')}.`;
+  const nums = `Các toa chở số: ${r.list.join(', ')}.`;
+  const cmds = r.ops ? `Làm lần lượt: ${r.ops.map(opText).join('; ')}.` : '';
+  if (r.kind === 'tap') return { q: `${train} Toa thứ ${r.at} chở gì?`, a: r.list[r.at - 1] };
+  if (r.kind === 'find') return { q: `${train} Toa ${r.list[r.at - 1]} là toa thứ mấy?`, a: `Toa thứ ${r.at}` };
+  if (r.kind === 'length') return { q: `${train} ${cmds} Lúc cuối tàu có mấy toa?`, a: `${r.ans} toa` };
+  if (r.kind === 'edit') return { q: `${train} ${cmds} Viết lại đoàn tàu lúc cuối.`, a: `🚂 ${[...r.ans].join(' ')}` };
+  if (r.kind === 'sum') return { q: `${nums} Vòng lặp đi qua từng toa, cộng số trên toa vào biến tổng (lúc đầu tổng = 0). Cuối cùng tổng bằng mấy?`, a: `${r.list.join(' + ')} = ${r.ans}` };
+  if (r.kind === 'count') {
+    const big = r.list.filter((x) => x > r.limit);
+    return { q: `${nums} Vòng lặp đi qua từng toa: NẾU số trên toa lớn hơn ${r.limit} thì cộng 1 vào biến đếm. Cuối cùng biến đếm bằng mấy?`, a: `${r.ans}${big.length ? ` (các số ${big.join(', ')})` : ''}` };
+  }
+  return { q: `${nums} Vòng lặp đi qua từng toa: gặp số lớn hơn biến lớn nhất thì thay vào. Cuối cùng biến lớn nhất bằng mấy?`, a: String(r.ans) };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

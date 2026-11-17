@@ -117,6 +117,65 @@ function predictOptions(round) {
 }
 
 const reached = (vars, target) => Object.entries(target).every(([k, v]) => vars[k] === v);
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// Lấy một câu của màn rồi đổi các số trong chương trình (đoán số) hoặc đổi số cần đạt (ghép thẻ lệnh).
+// Chương trình viết trên một dòng: các lệnh cách nhau bằng dấu chấm phẩy, thân vòng lặp nằm trong ngoặc.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const L = LEVELS[levelIdx];
+  const ri = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const t = L.rounds[ri(0, L.rounds.length - 1)];
+  const oneLine = (code) => code.map((l, i) => {
+    const inLoop = l.startsWith('  ');
+    const prev = i > 0 && code[i - 1].startsWith('  ');
+    const next = code[i + 1]?.startsWith('  ');
+    return `${inLoop && !prev ? '{ ' : ''}${l.trim()}${inLoop && !next ? ' }' : ''}`;
+  }).join('; ').replace(/:; \{ /g, ' { ');
+  if (t.type === 'predict') {
+    for (let tries = 0; tries < 50; tries++) {
+      // Số lần lặp 2–4, các số khác đổi một chút (nhân thì giữ nhỏ)
+      const code = t.code.map((l) => l.replace(/(×\s)?\b(\d+)\b/g, (m, times, d) => {
+        if (/^\s*lặp/.test(l)) return String(ri(2, 4));
+        if (times) return `× ${ri(2, 3)}`;
+        return d === '0' ? d : String(Math.max(1, Number(d) + ri(-2, 3)));
+      }));
+      const ans = run(code).vars[t.ask];
+      if (!(ans >= 0) || ans > 200) continue;
+      return { q: `Rô-bốt chạy chương trình: ${oneLine(code)}. Chạy xong, hộp ${t.ask} có số mấy?`, a: String(ans) };
+    }
+    return null;
+  }
+  // build: thử mọi cách ghép tối đa max thẻ, lấy một đích đạt được và cách ngắn nhất để đạt
+  const start = { ...t.start };
+  const swap = 'B' in t.target && t.target.A === t.start.B;
+  if (swap) {
+    start.A = ri(1, 9);
+    do start.B = ri(1, 9); while (start.B === start.A);
+  }
+  const best = new Map();
+  const walk = (seq) => {
+    if (seq.length) {
+      const vars = run(seq, start).vars;
+      const key = JSON.stringify(swap ? { A: vars.A, B: vars.B } : vars);
+      if (!best.has(key) || best.get(key).length > seq.length) best.set(key, seq);
+    }
+    if (seq.length < t.max) for (const c of t.cards) walk([...seq, c]);
+  };
+  walk([]);
+  let target;
+  if (swap) target = { A: start.B, B: start.A };
+  else {
+    const name = Object.keys(t.target)[0];
+    const goals = [...best.keys()].map((k) => JSON.parse(k)).filter((v) => v[name] !== start[name] && v[name] <= 50);
+    target = goals[ri(0, goals.length - 1)];
+  }
+  const sol = best.get(JSON.stringify(target));
+  const has = (v) => Object.entries(v).map(([k, n]) => `${k} = ${n}`).join(', ');
+  return {
+    q: `Lúc đầu các hộp có: ${has(start)}. Chỉ dùng các thẻ lệnh ${t.cards.map((c) => `"${c}"`).join(', ')} (mỗi thẻ dùng lại được), nhiều nhất ${t.max} lệnh. Viết chương trình để có ${has(target)}.`,
+    a: `Ví dụ: ${sol.join('; ')}`,
+  };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

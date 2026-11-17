@@ -4,6 +4,7 @@
 /** Game có printRound. Thêm id vào đây khi viết printRound cho game mới. */
 export const PRINTABLE = new Set(["nha-may-cuu-chuong", "tham-tu-de-bai", "kiem-tra", "xuong-hinh", "duong-dua-van-toc", "tau-hoa-so", "cua-hang-giam-gia",
   "ban-bong-so", "dong-ho", "sieu-thi-mini", "xay-cau", "bep-can-dong", "can-thang-bang", "khu-vuon-dien-tich", "hop-lap-phuong",
+  "to-lich-nha-be", "hu-keo-may-man", "thuoc-do-goc", "bong-den-nhi-phan", "tau-danh-sach", "cong-logic", "robot-nha-kho", "den-giao-thong",
 ]);
 
 export type PrintItem = { q: string; a: string };

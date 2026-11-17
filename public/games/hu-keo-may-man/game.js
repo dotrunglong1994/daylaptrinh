@@ -98,6 +98,62 @@ function wantText(want) {
     more: `dễ bốc được kẹo ${NAMES[v[0]]} hơn kẹo ${NAMES[v[1]]}`,
   }[k];
 }
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// Lấy một câu của màn, đổi màu kẹo cho nhau và đổi số kẹo một chút, rồi tính lại đáp án.
+// Câu tự bỏ kẹo có nhiều cách đúng nên lời giải ghi một ví dụ.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const L = LEVELS[levelIdx];
+  const ri = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const t = L.rounds[ri(0, L.rounds.length - 1)];
+  const keys = Object.keys(NAMES);
+  const perm = [...keys];
+  for (let i = perm.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [perm[i], perm[j]] = [perm[j], perm[i]];
+  }
+  const col = (c) => perm[keys.indexOf(c)];
+  // Đổi màu, đổi số kẹo một chút (tổng không quá 10 viên)
+  const jarOf = (jar) => {
+    const out = {};
+    for (const [c, n] of Object.entries(jar)) out[col(c)] = Math.max(1, n + ri(-1, 2));
+    while (totalOf(out) > MAX_JAR) for (const c in out) if (out[c] > 1) out[c]--;
+    return out;
+  };
+  const jarText = (jar) => Object.entries(jar).filter(([, n]) => n > 0).map(([c, n]) => `${n} kẹo ${NAMES[c]}`).join(', ');
+  const frac = (jar, c) => `${countOf(jar, c)}/${totalOf(jar)}`;
+  if (t.type === 'word') {
+    const jar = jarOf(t.jar);
+    const c = col(t.c);
+    return { q: `Hũ có ${jarText(jar)}. Nhắm mắt bốc 1 viên: bốc được kẹo ${NAMES[c]} là chắc chắn, có thể hay không thể?`, a: ['Chắc chắn', 'Có thể', 'Không thể'][wordAnswer(jar, c)] };
+  }
+  if (t.type === 'ratio') {
+    const jar = jarOf(t.jar);
+    const c = col(t.c);
+    return { q: `Hũ có ${jarText(jar)}. Nhắm mắt bốc 1 viên: khả năng bốc được kẹo ${NAMES[c]} là mấy phần?`, a: `${countOf(jar, c)} phần ${totalOf(jar)} (${frac(jar, c)})` };
+  }
+  if (t.type === 'pair') {
+    const r = { a: jarOf(t.a), b: jarOf(t.b), c: col(t.c) };
+    const ans = ['Hũ B dễ hơn', 'Như nhau', 'Hũ A dễ hơn'][pairAnswer(r) + 1];
+    return {
+      q: `Hũ A có ${jarText(r.a)}. Hũ B có ${jarText(r.b)}. Nhắm mắt bốc 1 viên: hũ nào dễ bốc được kẹo ${NAMES[r.c]} hơn, hay như nhau?`,
+      a: `${ans} (hũ A: ${frac(r.a, r.c)}, hũ B: ${frac(r.b, r.c)})`,
+    };
+  }
+  // fill: đổi màu trong yêu cầu, tìm một hũ ví dụ đúng yêu cầu
+  const mapWant = (w) => Object.fromEntries(Object.entries(w).map(([k, v]) => [k, Array.isArray(v) ? v.map(col) : col(v)]));
+  const r = { ...t, want: mapWant(t.want), also: t.also && mapWant(t.also), palette: t.palette.map(col), min: ri(Math.max(3, t.min - 1), t.min + 2) };
+  for (let tries = 0; tries < 5000; tries++) {
+    const jar = Object.fromEntries(r.palette.map((c) => [c, ri(0, 6)]));
+    if (!fillOk(r, jar)) continue;
+    const need = r.also ? ` và ${wantText(r.also)}` : '';
+    return {
+      q: `Có kẹo ${r.palette.map((c) => NAMES[c]).join(', ')}. Bỏ từ ${r.min} đến ${MAX_JAR} viên vào hũ sao cho ${wantText(r.want)}${need}. Em bỏ những viên nào?`,
+      a: `Ví dụ: ${jarText(jar)}`,
+    };
+  }
+  return null;
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

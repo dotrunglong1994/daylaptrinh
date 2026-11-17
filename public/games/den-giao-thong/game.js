@@ -69,6 +69,38 @@ function matches(cond, scene) {
   if (cond in OBSTACLES) return scene.obstacle === cond;
   return scene.light === cond;
 }
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// Cho sẵn một bộ luật (có khi chọn sai việc, có khi xếp sai thứ tự) và một tình huống: xe làm gì, như vậy đúng chưa?
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const L = LEVELS[levelIdx];
+  const pick = (arr) => arr[Math.floor(rand() * arr.length)];
+  const act = (a) => `${ACTIONS[a].icon} ${ACTIONS[a].label}`;
+  const rules = [...L.rules];
+  if (L.order) {
+    for (let i = rules.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [rules[i], rules[j]] = [rules[j], rules[i]];
+    }
+  }
+  // Việc của mỗi luật: thường là việc đúng, đôi khi chọn nhầm
+  const plan = rules.map((cond) => {
+    const good = cond === 'else' ? [] : expected(cond in OBSTACLES ? { obstacle: cond } : { light: cond });
+    const a = good.length && rand() < 0.6 ? good[0] : pick(L.actions);
+    return { cond, a };
+  });
+  const scene = pick(L.scenes);
+  const sceneText = [CONDS[scene.light], scene.obstacle && CONDS[scene.obstacle]].filter(Boolean).join(' và ');
+  const ruleText = plan.map((p, i) => `${i + 1}. ${p.cond === 'else' ? 'NGƯỢC LẠI' : `Nếu ${CONDS[p.cond]}`} thì ${act(p.a)}`).join('; ');
+  const hit = plan.find((p) => matches(p.cond, scene));
+  const good = expected(scene);
+  const did = hit ? act(hit.a) : 'Xe không biết làm gì (không có luật nào đúng)';
+  const ok = hit && good.includes(hit.a);
+  return {
+    q: `Xe đọc luật từ trên xuống và làm theo luật ĐẦU TIÊN đúng: ${ruleText}. Xe gặp ${sceneText}. Xe làm gì? Như vậy đã an toàn chưa?`,
+    a: `${did}. ${ok ? 'An toàn!' : `Chưa an toàn: phải ${good.map(act).join(' hoặc ')}.`}`,
+  };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

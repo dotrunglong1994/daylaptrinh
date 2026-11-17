@@ -116,6 +116,28 @@ function makeRound(levelIdx, k, rand = Math.random) {
 }
 
 const answerOf = (r) => r.ans;
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// Mỗi bạn viết bằng lời: con vật và các đồ bạn mang theo.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const L = LEVELS[levelIdx];
+  const r = makeRound(levelIdx, ri(rand, 0, L.kinds.length - 1), rand);
+  const friendText = (f) => `${f.animal} ${f.attrs.length ? `có ${f.attrs.map((a) => `${ATTRS[a].name} ${ATTRS[a].emoji}`).join(', ')}` : 'không mang gì'}`;
+  if (r.kind === 'truth') {
+    const facts = r.facts.map(([t, v]) => `"${t}" là ${v ? 'Đúng' : 'Sai'}`).join(', ');
+    return { q: `Biết ${facts}. Câu "${r.expr}" Đúng hay Sai?`, a: TF[r.ans] };
+  }
+  const rule = `Luật của cổng: ${ruleText(r.rule)}.`;
+  if (r.kind === 'pass') return { q: `${rule} Bạn ${friendText(r.friends[0])}. Bạn có được qua cổng không?`, a: PASS[r.ans] };
+  const friends = `Các bạn: ${r.friends.map(friendText).join('; ')}.`;
+  if (r.kind === 'select') {
+    const ok = r.friends.filter((f) => evalRule(r.rule, f.attrs)).map((f) => f.animal);
+    return { q: `${rule} ${friends} Những bạn nào được qua cổng?`, a: ok.join(' ') };
+  }
+  const seen = r.friends.map((f, i) => `${f.animal} ${r.marks[i] ? 'được qua' : 'không qua'}`).join(', ');
+  const opts = shuffled(r.options, rand).map((o, i) => `(${'abc'[i]}) ${o}`).join('; ');
+  return { q: `${friends} Ở cổng: ${seen}. Luật của cổng là luật nào? ${opts}`, a: r.ans };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);
