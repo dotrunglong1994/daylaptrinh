@@ -1,21 +1,47 @@
 const TOTAL = 10; // số câu ở chế độ luyện tập
 const TIME_LIMIT = 60; // giây ở chế độ thử thách
-const OPS = { '+': 'cộng', '−': 'trừ', '×': 'nhân', '÷': 'chia' };
 const COLORS = ['#ff5e7e', '#ffb627', '#4cc9f0', '#52c47a', '#b388eb', '#ff8c42'];
 const PRAISE = ['Giỏi quá!', 'Tuyệt vời!', 'Đúng rồi!', 'Xuất sắc!', 'Siêu ghê!'];
 const COMFORT = ['Gần đúng rồi!', 'Thử lại nhé!', 'Không sao đâu!'];
+// LEVELS-START (trang /phieu-bai-tap và scripts/checks/phieu-bai-tap.mjs đọc đoạn này)
+const OPS = { '+': 'cộng', '−': 'trừ', '×': 'nhân', '÷': 'chia' };
 // Phạm vi số cho từng mức độ: cộng/trừ dùng max, nhân/chia dùng bảng [a] × [b]
 const LEVELS = {
   1: { max: 10, table: [2, 5], times: [1, 5], speed: 40 },
   2: { max: 20, table: [2, 9], times: [1, 10], speed: 52 },
   3: { max: 100, table: [6, 10], times: [2, 10], speed: 64 },
 };
+const SKILL_OPS = ['+', '−', '×', '÷', 'mix'];
+// Màn của Sổ tay lỗi sai: phép tính × mức độ (0 = Cộng · Dễ … 14 = Trộn · Khó)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- scripts/checks/phieu-bai-tap.mjs đọc tên màn ở đây
+const PRINT_LEVELS = SKILL_OPS.flatMap((op) => ['Dễ', 'Vừa', 'Khó'].map((lv) => ({ name: `${OPS[op] ?? 'trộn'} · ${lv}` })));
+
+// Một phép tính của mức độ L (rnd() trả số trong [0, 1))
+function makeOp(op, L, rnd = Math.random) {
+  const ri = (lo, hi) => lo + Math.floor(rnd() * (hi - lo + 1));
+  let a, b, ans;
+  if (op === '+') { a = ri(1, L.max - 1); b = ri(1, L.max - a); ans = a + b; }
+  if (op === '−') { a = ri(2, L.max); b = ri(1, a); ans = a - b; }
+  if (op === '×') { a = ri(...L.table); b = ri(...L.times); ans = a * b; }
+  if (op === '÷') { b = ri(...L.table); ans = ri(...L.times); a = b * ans; }
+  return { a, b, op, ans };
+}
+
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const ops = Object.keys(OPS);
+  const skill = SKILL_OPS[Math.floor(levelIdx / 3)];
+  const op = skill === 'mix' ? ops[Math.floor(rand() * ops.length)] : skill;
+  const q = makeOp(op, LEVELS[(levelIdx % 3) + 1], rand);
+  return { q: `${q.a} ${q.op} ${q.b} = …`, a: `${q.a} ${q.op} ${q.b} = ${q.ans}` };
+}
+// LEVELS-END
 
 const $ = (s) => document.querySelector(s);
 const field = $('#field');
 
-// Sổ tay lỗi sai: mỗi phép tính × mức độ là một màn (0–14)
-const SKILL_OPS = ['+', '−', '×', '÷', 'mix'];
+// Sổ tay lỗi sai: mỗi phép tính × mức độ là một màn (0–14), xem SKILL_OPS
 const skillOf = () => [
   SKILL_OPS.indexOf(state.op) * 3 + state.level - 1,
   `${buttonLabel(`[data-op="${state.op}"]`)} · ${buttonLabel(`[data-level="${state.level}"]`)}`,
@@ -102,13 +128,7 @@ function makeQuestion() {
   const L = LEVELS[state.level];
   let q;
   do {
-    const op = state.op === 'mix' ? pick(Object.keys(OPS)) : state.op;
-    let a, b, ans;
-    if (op === '+') { a = rand(1, L.max - 1); b = rand(1, L.max - a); ans = a + b; }
-    if (op === '−') { a = rand(2, L.max); b = rand(1, a); ans = a - b; }
-    if (op === '×') { a = rand(...L.table); b = rand(...L.times); ans = a * b; }
-    if (op === '÷') { b = rand(...L.table); ans = rand(...L.times); a = b * ans; }
-    q = { a, b, op, ans };
+    q = makeOp(state.op === 'mix' ? pick(Object.keys(OPS)) : state.op, L);
   } while (state.q && q.a === state.q.a && q.b === state.q.b && q.op === state.q.op);
   return q;
 }

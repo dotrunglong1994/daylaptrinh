@@ -86,6 +86,62 @@ function numberOptions(r) {
   for (const v of [mix, extra, ans + 1, ans - 1, ans + 2, ans - 2]) if (opts.length < 4 && v > 0 && !opts.includes(v)) opts.push(v);
   return opts;
 }
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// Trên giấy không có lưới ô vuông nên vườn là hình chữ nhật tả bằng số hàng, số ô (có thể bị cắt một góc).
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const L = LEVELS[levelIdx];
+  const ri = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const type = L.rounds[ri(0, L.rounds.length - 1)].type;
+  const big = levelIdx >= 7;
+  const n1 = ri(3, big ? 12 : 9);
+  const n2 = ri(2, big ? 9 : 6);
+  const [w, h] = [Math.max(n1, n2), Math.min(n1, n2)]; // chiều dài không ngắn hơn chiều rộng
+  const rows = (cw, ch) => `${ch} hàng, mỗi hàng ${cw} ô vuông cạnh 1 m`;
+  if (type === 'area' && levelIdx === 1) {
+    // Hình chữ nhật bị cắt một góc cw × ch
+    const cw = ri(1, w - 1);
+    const ch = ri(1, h - 1);
+    return {
+      q: `Vườn là hình chữ nhật ${rows(w, h)}, nhưng bị cắt mất một góc ${ch} hàng × ${cw} ô. Diện tích vườn bao nhiêu mét vuông?`,
+      a: `${w} × ${h} − ${cw} × ${ch} = ${w * h - cw * ch} m²`,
+    };
+  }
+  if (type === 'area') return { q: `Vườn hình chữ nhật gồm ${rows(w, h)}. Diện tích vườn bao nhiêu mét vuông?`, a: `${w} × ${h} = ${w * h} m²` };
+  if (type === 'perim') {
+    return { q: `Vườn hình chữ nhật dài ${w} m, rộng ${h} m. Cần bao nhiêu mét hàng rào để rào quanh vườn?`, a: `(${w} + ${h}) × 2 = ${(w + h) * 2} m` };
+  }
+  if (type === 'compare') {
+    let w2;
+    let h2;
+    do { w2 = ri(3, 9); h2 = ri(2, Math.min(6, w2)); } while (w2 === w && h2 === h);
+    const sign = w * h > w2 * h2 ? 'Vườn A rộng hơn' : w * h < w2 * h2 ? 'Vườn B rộng hơn' : 'Hai vườn rộng bằng nhau';
+    return {
+      q: `Vườn A hình chữ nhật dài ${w} m, rộng ${h} m. Vườn B dài ${w2} m, rộng ${h2} m. Vườn nào rộng hơn (diện tích lớn hơn)?`,
+      a: `A: ${w} × ${h} = ${w * h} m², B: ${w2} × ${h2} = ${w2 * h2} m². ${sign}`,
+    };
+  }
+  if (type === 'draw') {
+    if (rand() < 0.3) {
+      const s = ri(2, 9);
+      return { q: `Vẽ vườn hình vuông có diện tích ${s * s} m². Cạnh vườn dài bao nhiêu mét?`, a: `${s} × ${s} = ${s * s}, cạnh ${s} m` };
+    }
+    const [x, y] = w === h ? [w + 1, h] : [Math.max(w, h), Math.min(w, h)];
+    return {
+      q: `Vẽ vườn hình chữ nhật có diện tích ${x * y} m² và chu vi ${(x + y) * 2} m. Chiều dài, chiều rộng bao nhiêu mét?`,
+      a: `Dài ${x} m, rộng ${y} m (${x} × ${y} = ${x * y}, (${x} + ${y}) × 2 = ${(x + y) * 2})`,
+    };
+  }
+  // calc: công thức, hoặc tính ngược ở màn "Tính ngược"
+  const ask = levelIdx === 6 ? ['h', 'w'][ri(0, 1)] : ['area', 'perim'][ri(0, 1)];
+  const square = ask === 'w' || rand() < 0.3;
+  const [x, y] = square ? [w, w] : [w, h];
+  const shape = square ? `hình vuông cạnh ${x} m` : `hình chữ nhật dài ${x} m, rộng ${y} m`;
+  if (ask === 'area') return { q: `Vườn ${shape}. Tính diện tích vườn.`, a: square ? `${x} × ${x} = ${x * x} m²` : `${x} × ${y} = ${x * y} m²` };
+  if (ask === 'perim') return { q: `Vườn ${shape}. Tính chu vi vườn.`, a: square ? `${x} × 4 = ${x * 4} m` : `(${x} + ${y}) × 2 = ${(x + y) * 2} m` };
+  if (ask === 'w') return { q: `Vườn hình vuông có chu vi ${x * 4} m. Cạnh vườn dài bao nhiêu mét?`, a: `${x * 4} : 4 = ${x} m` };
+  return { q: `Vườn hình chữ nhật có diện tích ${x * y} m², chiều dài ${x} m. Chiều rộng bao nhiêu mét?`, a: `${x * y} : ${x} = ${y} m` };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

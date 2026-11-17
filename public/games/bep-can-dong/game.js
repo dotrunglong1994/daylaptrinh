@@ -73,6 +73,34 @@ function quizOptions(step) {
   }
   return opts;
 }
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// Lấy một bước của món: đổi đơn vị, hoặc tính cần mấy muỗng/cốc mỗi loại (lượng đổi ngẫu nhiên, giữ muỗng của màn).
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const L = LEVELS[levelIdx];
+  const ri = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const step = L.steps[ri(0, L.steps.length - 1)];
+  if (step.tool === 'quiz') {
+    const liquid = step.unit === 'ml';
+    const v = ri(1, 3) * 1000 + [0, 5, 50, 200, 250, 500, 750][ri(0, 6)];
+    return { q: `Đổi: ${fmtAmt(v, liquid)} = … ${step.unit}`, a: `${v} ${step.unit}` };
+  }
+  const liquid = step.tool === 'jug';
+  const sizes = step.scoops.map(parseAmt).sort((x, y) => y - x);
+  const small = sizes[sizes.length - 1];
+  const amount = ri(2, Math.floor(parseAmt(step.max) / small)) * small;
+  // Ít muỗng nhất: dp[v] = các muỗng ghép đủ v
+  const dp = [[]];
+  for (let v = small; v <= amount; v += small) {
+    for (const s of sizes) if (s <= v && dp[v - s] && (!dp[v] || dp[v - s].length + 1 < dp[v].length)) dp[v] = [...dp[v - s], s];
+  }
+  const cup = liquid ? 'cốc' : 'muỗng';
+  const count = sizes.map((s) => [s, dp[amount].filter((x) => x === s).length]).filter(([, n]) => n);
+  return {
+    q: `Cần ${fmtAmt(amount, liquid)} ${step.item[1]}. Bé có ${sizes.map((s) => `${cup} ${fmtAmt(s, liquid)}`).join(', ')}. ${sizes.length > 1 ? `Cần mấy ${cup} mỗi loại (ít ${cup} nhất)?` : `Cần mấy ${cup}?`}`,
+    a: `${count.map(([s, n]) => `${n} ${cup} ${fmtAmt(s, liquid)}`).join(' và ')} (${[...dp[amount]].sort((x, y) => y - x).join(' + ')} = ${amount} ${liquid ? 'ml' : 'g'})`,
+  };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

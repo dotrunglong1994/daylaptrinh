@@ -88,6 +88,37 @@ function makeRound(levelIdx, k, rand = Math.random) {
 }
 
 const answerOf = (r) => r.ans;
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// Câu đếm khối không có hình nên nói rõ số khối theo chiều dài, chiều rộng và số tầng.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const r = makeRound(levelIdx, Math.floor(rand() * ROUNDS), rand);
+  const { a, b, c } = r;
+  const box = `Hộp xếp các khối lập phương nhỏ: chiều dài ${a} khối, chiều rộng ${b} khối, cao ${c} tầng.`;
+  const num = (x) => String(x).replace('.', ',');
+  if (r.kind === 'count') return { q: `${box} Hộp xếp đầy thì có bao nhiêu khối?`, a: `${a} × ${b} × ${c} = ${r.ans} khối` };
+  if (r.kind === 'fill') {
+    const m = Math.floor(r.placed / (a * b));
+    const j = (r.placed - m * a * b) / a;
+    return {
+      q: `${box} Đã xếp đầy ${m} tầng${j ? ` và ${j} hàng (mỗi hàng ${a} khối) của tầng tiếp theo` : ''}. Cần thêm bao nhiêu khối để hộp đầy?`,
+      a: `${a} × ${b} × ${c} − ${r.placed} = ${r.ans} khối`,
+    };
+  }
+  if (r.kind === 'formula') return { q: `Hình hộp chữ nhật dài ${a} cm, rộng ${b} cm, cao ${c} cm. Tính thể tích.`, a: `${a} × ${b} × ${c} = ${r.ans} cm³` };
+  if (r.kind === 'cube') return { q: `Hình lập phương cạnh ${a} cm. Tính thể tích.`, a: `${a} × ${a} × ${a} = ${r.ans} cm³` };
+  if (r.kind === 'reverse') {
+    return { q: `Hình hộp chữ nhật có thể tích ${r.v} cm³, dài ${a} cm, rộng ${b} cm. Chiều cao bao nhiêu xăng-ti-mét?`, a: `${r.v} : (${a} × ${b}) = ${c} cm` };
+  }
+  if (r.kind === 'unit') {
+    const [from, to] = { 'dm-cm': ['dm³', 'cm³'], 'cm-dm': ['cm³', 'dm³'], 'dm-l': ['dm³', 'lít'], 'm-dm': ['m³', 'dm³'] }[r.u];
+    return { q: `Đổi: ${num(r.n)} ${from} = … ${to}`, a: `${num(r.ans)} ${to}` };
+  }
+  return {
+    q: `Bể cá dài ${a} dm, rộng ${b} dm, cao ${c} dm. Nước trong bể cao ${r.h} dm. Bể đang chứa bao nhiêu lít nước?`,
+    a: `${a} × ${b} × ${r.h} = ${r.ans} dm³ = ${r.ans} lít`,
+  };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

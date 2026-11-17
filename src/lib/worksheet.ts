@@ -2,7 +2,9 @@
 // trong đoạn LEVELS của game.js (không đụng DOM), trả về { q, a } hoặc null nếu câu đó cần hình vẽ.
 
 /** Game có printRound. Thêm id vào đây khi viết printRound cho game mới. */
-export const PRINTABLE = new Set(["nha-may-cuu-chuong", "tham-tu-de-bai", "kiem-tra", "xuong-hinh", "duong-dua-van-toc", "tau-hoa-so", "cua-hang-giam-gia"]);
+export const PRINTABLE = new Set(["nha-may-cuu-chuong", "tham-tu-de-bai", "kiem-tra", "xuong-hinh", "duong-dua-van-toc", "tau-hoa-so", "cua-hang-giam-gia",
+  "ban-bong-so", "dong-ho", "sieu-thi-mini", "xay-cau", "bep-can-dong", "can-thang-bang", "khu-vuon-dien-tich", "hop-lap-phuong",
+]);
 
 export type PrintItem = { q: string; a: string };
 type PrintRound = (levelIdx: number) => PrintItem | null;

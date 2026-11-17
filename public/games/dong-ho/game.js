@@ -74,6 +74,37 @@ function readOptions(round, level) {
   for (const x of near) if (!opts.includes(x) && opts.length < 4) opts.push(x);
   return opts;
 }
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// Trên giấy không có mặt đồng hồ nên tả vị trí hai kim bằng lời, hoặc hỏi kim dài chỉ số mấy.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const L = LEVELS[levelIdx];
+  const ri = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const num = (n) => (L.roman ? ROMAN[n % 12] : String(n % 12 || 12));
+  const say = (t) => (digital(t) === timeText(t, L.style) ? digital(t) : `${timeText(t, L.style)} (${digital(t)})`);
+  const afters = L.rounds.filter((r) => r.type === 'after');
+  if (afters.length && (afters.length === L.rounds.length || rand() < 0.4)) {
+    const r = afters[ri(0, afters.length - 1)];
+    const step = Math.max(L.step, 5);
+    const from = ri(0, 719 / step) * step % 720;
+    const add = Math.sign(r.add) * ri(2, 11) * (L.step === 1 ? 5 : step) + (L.step === 1 ? ri(-2, 2) : 0);
+    const end = norm(from + add);
+    return {
+      q: r.story.replace('{from}', timeText(from, L.style)).replace('{add}', Math.abs(add)),
+      a: `${digital(from)} ${add < 0 ? '−' : '+'} ${Math.abs(add)} phút = ${say(end)}`,
+    };
+  }
+  const t = ri(0, Math.floor(719 / L.step)) * L.step;
+  const h = hourOf(t);
+  const m = t % 60;
+  const short = m === 0 ? `chỉ số ${num(h)}` : `nằm giữa số ${num(h)} và số ${num(h + 1)}`;
+  const k = Math.floor(m / 5);
+  const long = m % 5 === 0 ? `chỉ số ${num(k)}` : `chỉ quá số ${num(k)} thêm ${m % 5} vạch nhỏ`;
+  if (m % 5 === 0 && rand() < 0.35) {
+    return { q: `Lúc ${timeText(t, L.style)}, kim dài chỉ vào số mấy trên mặt đồng hồ?`, a: `Kim dài chỉ số ${num(k)}` };
+  }
+  return { q: `Kim ngắn ${short}, kim dài ${long}. Đồng hồ chỉ mấy giờ?`, a: say(t) };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);

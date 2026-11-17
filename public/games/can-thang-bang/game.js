@@ -62,6 +62,34 @@ function findOptions(task) {
   }
   return shuffle([x, ...out]);
 }
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// levelIdx đếm từ 0 (Sổ tay lỗi sai ghi mức độ − 1). Đề lấy từ makeTask nên dùng Math.random của game.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx) {
+  const id = levelIdx + 1;
+  const t = makeTask(id);
+  const weights = (list) => (list.length > 1 ? `các quả cân ${list.join(', ')}` : `quả cân ${list[0]}`);
+  if (t.type === 'balance') {
+    const total = sum(t.left);
+    // Ít quả cân nhất (lấy quả to trước, các bộ quả cân của game đều lấy được như vậy)
+    const pieces = [];
+    let rest = total;
+    for (const w of [...t.tray].sort((a, b) => b - a)) while (rest >= w) { pieces.push(w); rest -= w; }
+    return {
+      q: `Bên trái cân có ${weights(t.left)}. Bé chỉ có quả cân ${t.tray.join(', ')}. Đặt những quả cân nào lên bên phải để cân thăng bằng (dùng ít quả nhất)?`,
+      a: `Bên trái nặng ${t.left.join(' + ')} = ${total}. Bên phải: ${pieces.join(' + ')} = ${total}`,
+    };
+  }
+  const a = sum(t.left);
+  const total = sum(t.right);
+  const boxes = t.k > 1 ? `${t.k} hộp quà 🎁 nặng bằng nhau` : 'một hộp quà 🎁';
+  return {
+    q: `Cân thăng bằng: bên trái có ${boxes} và ${weights(t.left)}, bên phải có ${weights(t.right)}. ${t.k > 1 ? 'Mỗi hộp' : 'Hộp quà'} nặng bao nhiêu?`,
+    a: t.k > 1
+      ? `${total} − ${a} = ${t.k * t.x}, ${t.k * t.x} : ${t.k} = ${t.x}. Mỗi hộp nặng ${t.x}`
+      : `${total} − ${a} = ${t.x}. Hộp quà nặng ${t.x}`,
+  };
+}
 // LEVELS-END
 
 const PRAISE = ['Thăng bằng rồi! ⚖️', 'Chính xác!', 'Giỏi quá!', 'Bé tính siêu ghê!'];

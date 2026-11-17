@@ -1,4 +1,5 @@
 const ROUNDS = 5; // số khách mỗi lượt chơi, mỗi khách có 2 bước: tính tổng + thối tiền
+// LEVELS-START (trang /phieu-bai-tap và scripts/checks/phieu-bai-tap.mjs đọc đoạn này)
 const ITEMS = [
   { emoji: '🍎', name: 'Táo' }, { emoji: '🍌', name: 'Chuối' }, { emoji: '🥛', name: 'Sữa' },
   { emoji: '🍞', name: 'Bánh mì' }, { emoji: '🥚', name: 'Trứng' }, { emoji: '🍬', name: 'Kẹo' },
@@ -16,6 +17,30 @@ const LEVELS = {
   2: { items: [2, 3], price: [1, 9], pays: [10, 20, 50], bills: [1, 2, 5, 10, 20] },
   3: { items: [3, 4], price: [2, 20], pays: [50, 100], bills: [1, 2, 5, 10, 20, 50] },
 };
+const money = (k) => `${(k * 1000).toLocaleString('vi-VN')}đ`;
+
+// Đơn hàng của mức độ L: khách đưa tờ tiền nhỏ nhất lớn hơn tổng, để luôn có tiền thối (rnd() trả số trong [0, 1))
+function orderFor(L, rnd = Math.random) {
+  const ri = (lo, hi) => lo + Math.floor(rnd() * (hi - lo + 1));
+  const pool = ITEMS.slice();
+  const items = Array.from({ length: ri(...L.items) }, () => ({ ...pool.splice(ri(0, pool.length - 1), 1)[0], price: ri(...L.price) }));
+  const total = items.reduce((s, it) => s + it.price, 0);
+  const paid = L.pays.find((p) => p > total) ?? Math.ceil((total + 1) / 10) * 10;
+  return { customer: CUSTOMERS[ri(0, CUSTOMERS.length - 1)], items, total, paid, change: paid - total };
+}
+
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx (mức độ − 1), null nếu câu cần hình
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const o = orderFor(LEVELS[levelIdx + 1], rand);
+  const list = o.items.map((it) => `${it.name.toLowerCase()} ${money(it.price)}`).join(', ');
+  return {
+    q: `${o.customer.name} mua ${list}. Tất cả bao nhiêu tiền? ${o.customer.name} đưa ${money(o.paid)} thì được thối lại bao nhiêu?`,
+    a: `${o.items.map((it) => money(it.price)).join(' + ')} = ${money(o.total)}. Thối lại ${money(o.paid)} − ${money(o.total)} = ${money(o.change)}`,
+  };
+}
+// LEVELS-END
+
 const PRAISE = ['Giỏi quá!', 'Chính xác!', 'Tuyệt vời!', 'Bé tính nhanh ghê!'];
 
 const $ = (s) => document.querySelector(s);
@@ -38,7 +63,6 @@ function shuffle(arr) {
   }
   return arr;
 }
-const money = (k) => `${(k * 1000).toLocaleString('vi-VN')}đ`;
 const billHtml = (k, tag = 'div', attrs = '') =>
   `<${tag} class="bill" style="--c:${BILL_COLORS[k]}" ${attrs}><span>${(k * 1000).toLocaleString('vi-VN')}<small>đ</small></span></${tag}>`;
 
@@ -97,13 +121,7 @@ function speak(text) {
 
 /* ---------- Tạo đơn hàng ---------- */
 function makeOrder() {
-  const L = LEVELS[state.level];
-  const count = rand(...L.items);
-  const items = shuffle(ITEMS.slice()).slice(0, count).map((it) => ({ ...it, price: rand(...L.price) }));
-  const total = items.reduce((s, it) => s + it.price, 0);
-  // Khách đưa tờ tiền nhỏ nhất lớn hơn tổng, để luôn có tiền thối
-  const paid = L.pays.find((p) => p > total) ?? Math.ceil((total + 1) / 10) * 10;
-  return { customer: pick(CUSTOMERS), items, total, paid, change: paid - total };
+  return orderFor(LEVELS[state.level]);
 }
 
 function totalOptions(order) {

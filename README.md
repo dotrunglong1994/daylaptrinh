@@ -140,7 +140,8 @@ Cần Supabase và đăng nhập (giáo viên và phụ huynh đều đăng nh�
   in lại câu bé đã sai và 5 câu tương tự, đáp án ở trang riêng cho bố mẹ. Câu tương tự lấy từ `printRound(levelIdx, rand)`
   trong đoạn LEVELS của game (trả `{ q, a }`, hoặc `null` nếu câu cần hình); trang tải `game.js` rồi chỉ chạy đoạn đó
   (`src/lib/worksheet.ts`). Game có `printRound`: Nhà Máy Cửu Chương, Thám Tử Đề Bài, Bài Kiểm Tra, Xưởng Hình, Đường Đua
-  Vận Tốc, Tàu Hỏa Số, Cửa Hàng Giảm Giá (danh sách `PRINTABLE`); màn của game khác được nhắc "chơi lại trên máy". Kiểm tra trong `scripts/checks/phieu-bai-tap.mjs`.
+  Vận Tốc, Tàu Hỏa Số, Cửa Hàng Giảm Giá, Bắn Bóng Số, Đồng Hồ, Siêu Thị Mini, Xây Cầu, Bếp Cân Đong, Cân Thăng Bằng,
+  Khu Vườn Diện Tích, Kho Hộp Lập Phương (danh sách `PRINTABLE`; game chia màn theo phép tính × mức độ khai báo `PRINT_LEVELS`); màn của game khác được nhắc "chơi lại trên máy". Kiểm tra trong `scripts/checks/phieu-bai-tap.mjs`.
 - **Báo cáo 7 ngày** (`WeeklyReport.tsx`, Góc phụ huynh): số ngày có học, lượt chơi so với tuần trước, biểu đồ lượt chơi
   mỗi ngày, game bé làm tốt / cần luyện thêm, game nên chơi tiếp.
 

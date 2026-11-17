@@ -28,6 +28,44 @@ function parseLen(text) {
 
 // "1m20cm" → "1 m 20 cm"
 const prettyLen = (text) => text.replace(/(\d+)(dm|cm|m)/g, '$1 $2 ').trim();
+// Phiếu bài tập in ra giấy (Góc phụ huynh): một câu chữ và lời giải của màn levelIdx, null nếu câu cần hình
+// Khe núi đổi độ dài ngẫu nhiên nhưng giữ các loại ván và cách viết đơn vị của màn.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rand = Math.random) {
+  const L = LEVELS[levelIdx];
+  const ri = (lo, hi) => lo + Math.floor(rand() * (hi - lo + 1));
+  const sizes = L.planks.map(parseLen);
+  const unit = Math.min(...sizes) >= 10 ? 10 : 1;
+  const base = parseLen(L.gap);
+  const useM = /\d+m/.test(L.gap);
+  // "120" → "1 m 20 cm" ở màn có mét, còn lại viết cm
+  const show = (cm) => (useM && cm >= 100 ? `${Math.floor(cm / 100)} m${cm % 100 ? ` ${cm % 100} cm` : ''}` : `${cm} cm`);
+  if (useM && rand() < 0.3) {
+    const cm = ri(1, 3) * 100 + ri(1, 9) * 10;
+    return rand() < 0.5
+      ? { q: `Đổi: ${show(cm)} = … cm`, a: `${cm} cm` }
+      : { q: `Đổi: ${cm} cm = … m … cm`, a: show(cm) };
+  }
+  // Ít tấm ván nhất để ghép vừa khít mỗi độ dài
+  const best = (cm) => {
+    const dp = [[]];
+    for (let v = unit; v <= cm; v += unit) {
+      for (const s of sizes) if (s <= v && dp[v - s] && (!dp[v] || dp[v - s].length + 1 < dp[v].length)) dp[v] = [...dp[v - s], s];
+    }
+    return dp[cm];
+  };
+  let gap;
+  let pieces;
+  do {
+    gap = Math.max(unit * 4, Math.round((base * (0.6 + rand() * 0.9)) / unit) * unit);
+    pieces = best(gap);
+  } while (!pieces);
+  const names = L.planks.map(prettyLen).join(', ');
+  return {
+    q: `Khe núi rộng ${show(gap)}. Bé có các loại ván dài ${names}, mỗi loại lấy được nhiều tấm. Chọn ván ghép vừa khít khe núi, dùng ít tấm nhất.`,
+    a: `${pieces.length} tấm, ví dụ ${pieces.sort((x, y) => y - x).map(show).join(' + ')} = ${show(gap)}`,
+  };
+}
 // LEVELS-END
 
 const $ = (s) => document.querySelector(s);
