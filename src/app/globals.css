@@ -71,6 +71,8 @@ button:disabled { cursor: default; opacity: .5; }
   .site-header { gap: 8px; }
   .logo span, .avatar-name { display: none; }
   .nav a { padding: 4px 8px; font-size: .95rem; }
+  /* Màn hình hẹp: thanh menu cuộn ngang trong chỗ của nó, không làm cả trang tràn */
+  .nav { min-width: 0; overflow-x: auto; scrollbar-width: none; }
 }
 
 /* ---------- Khủng long ---------- */
@@ -226,6 +228,26 @@ tr:last-child td { border-bottom: 0; }
 .small-note { font-size: .9rem; }
 .link-btn { color: var(--primary); font-weight: 700; text-decoration: underline; }
 .form-error { color: #c92a2a; font-weight: 700; }
+.form-ok { color: #2b8a3e; font-weight: 700; }
+
+/* ---------- Lớp học ---------- */
+.class-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.class-list li { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.class-list .row { margin-top: 0; }
+.cloud-inputs .grade-select { flex: 0 0 120px; font-size: 1.1rem; text-align: left; }
+.class-view { margin-top: 8px; }
+.class-code-card { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.class-code-card > div { display: flex; flex-direction: column; }
+.class-code-card p { flex: 1 1 220px; }
+.class-code { font-size: 2.2rem; letter-spacing: 6px; color: var(--primary); line-height: 1.1; }
+.table-wrap { overflow-x: auto; padding: 8px; }
+.class-table { width: 100%; border-collapse: collapse; min-width: 560px; }
+.class-table th, .class-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.class-table th { font-size: .95rem; color: var(--muted); }
+.class-table tr.open td { background: #fff7f9; }
+.class-table .student-detail td { background: #fffbfc; }
+.class-table .student-detail .week-lists { margin-top: 4px; }
+.student-btn { font-weight: 800; text-align: left; }
 .sync-status { font-weight: 700; }
 .sync-status.error { color: #c92a2a; }
 .sync-status.synced { color: #2b8a3e; }

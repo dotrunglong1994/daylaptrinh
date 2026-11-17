@@ -19,7 +19,7 @@ Mặc định tiến độ chỉ lưu trong trình duyệt, không cần đăng 
 phần đăng nhập bằng mã OTP gửi qua email để đồng bộ tiến độ giữa các máy.
 
 1. Chép `.env.example` thành `.env.local`, điền Project URL (`https://<ref>.supabase.co`) và anon key.
-2. Supabase → SQL Editor: chạy `supabase/schema.sql` (tạo bảng `progress` có RLS, mỗi tài khoản một dòng).
+2. Supabase → SQL Editor: chạy `supabase/schema.sql` (tạo bảng `progress` có RLS, mỗi tài khoản một dòng, và các bảng lớp học).
 3. Supabase → Authentication → Emails → mẫu **Magic Link**: thêm `{{ .Token }}` để email có mã số.
    Bấm vào liên kết trong email cũng đăng nhập được.
 4. Supabase → Authentication → URL Configuration: thêm địa chỉ website (vd. `http://localhost:3000/**`) vào Redirect URLs.
@@ -40,7 +40,8 @@ Email miễn phí của Supabase giới hạn vài email mỗi giờ; dùng th�
 | `/thu-cung` | Thú cưng ảo: cho ăn, vuốt ve, hành trình tuần (rương đồ hiếm), cửa hàng, chuỗi ngày học |
 | `/phieu-bai-tap` | Phiếu bài tập in ra giấy theo Sổ tay lỗi sai: câu bé đã sai, 5 câu tương tự mỗi màn, đáp án ở trang cuối |
 | `/huy-hieu` | Huy hiệu bé đã đạt và tiến độ các huy hiệu còn lại (nút 🏅 trên thanh trên) |
-| `/phu-huynh` | Góc phụ huynh: chọn bé để xem, sao, xu, lượt chơi, báo cáo 7 ngày qua, tiến độ theo lớp, xóa tiến độ / hồ sơ bé |
+| `/phu-huynh` | Góc phụ huynh: chọn bé để xem, sao, xu, lượt chơi, báo cáo 7 ngày qua, tiến độ theo lớp, vào lớp của cô giáo bằng mã, xóa tiến độ / hồ sơ bé |
+| `/giao-vien` | Lớp học cho giáo viên: tạo lớp, mã lớp gửi phụ huynh, bảng tiến độ cả lớp, màn cả lớp hay sai (cần đăng nhập) |
 | `/tri-nao` | Phòng Tập Trí Não cho người lớn: kỷ lục, điểm hôm nay, chuỗi ngày tập |
 | `/tri-nao/[gameId]` | Chơi một game trí não |
 
@@ -87,6 +88,20 @@ Hồ sơ bé có thể chọn lớp (`profile.grade`, không bắt buộc): bả
 | 🚃 Tàu Danh Sách | Lập trình | 4–5 | Danh sách: toa thứ mấy, độ dài, thêm / xóa toa, vòng lặp tính tổng, đếm theo điều kiện, tìm lớn nhất |
 | 🚪 Cổng Logic | Lập trình | 4–5 | Điều kiện VÀ / HOẶC / KHÔNG: ai qua cổng, chọn mọi bạn qua cổng, Đúng hay Sai, tìm luật của cổng |
 | 📦 Rô-bốt Nhà Kho | Lập trình | 4–5 | Biến: gán, cộng dồn, biến trong vòng lặp, đổi chỗ hai biến |
+
+## Lớp học cho giáo viên
+
+Cần Supabase và đăng nhập (giáo viên và phụ huynh đều đăng nhập bằng mã OTP qua email). Bảng `classes`,
+`class_members` và hai hàm `create_class`, `join_class` nằm trong `supabase/schema.sql` (chạy lại cả file được, không mất dữ liệu).
+
+- Giáo viên mở `/giao-vien`, tạo lớp (tên, khối) và nhận mã 6 ký tự (bỏ chữ dễ nhầm 0/O, 1/I/L), có nút chép lời mời gửi phụ huynh.
+- Phụ huynh vào Góc phụ huynh, đăng nhập, nhập mã ở thẻ "🏫 Lớp học của <bé>" (`ClassJoin.tsx`). Mỗi bé vào lớp riêng.
+- Sau mỗi lần đồng bộ (`onSynced` trong `cloud.ts`), `src/lib/classroom.ts` gửi bản tóm tắt `ClassSummary` của từng bé đã vào lớp:
+  sao, lượt chơi, số ngày học và lượt chơi 7 ngày qua, ngày chơi gần nhất, sao từng game, tối đa 8 màn còn hay sai.
+  Không gửi lại khi tóm tắt không đổi.
+- Giáo viên thấy bảng học sinh (bấm tên để xem chi tiết), "Màn cả lớp hay sai" (gộp theo màn, số bé sai), cho bé rời lớp, xóa lớp.
+- Quyền (RLS): giáo viên chỉ xem lớp của mình và tóm tắt của học sinh trong lớp; phụ huynh chỉ xem, sửa, xóa dòng của con mình
+  và không xem được danh sách lớp. Giáo viên không thấy email hay dữ liệu khác của gia đình. Tối đa 20 lớp mỗi giáo viên, 60 bé mỗi lớp.
 
 ## Nhiều bé trong một tài khoản
 
@@ -171,6 +186,7 @@ public/games/shared/        khủng long cổ vũ và đọc to (mascot.js/.css)
 src/lib/games.ts            danh sách game và đảo; game không có `src` hiện "Sắp ra mắt"
 src/lib/progress.ts         lưu tiến độ trong localStorage
 src/lib/cloud.ts            đăng nhập OTP và đồng bộ tiến độ với Supabase (bảng trong supabase/schema.sql)
+src/lib/classroom.ts        lớp học: tóm tắt tiến độ gửi cho giáo viên, vào lớp / rời lớp, tạo lớp, danh sách học sinh
 src/lib/pet.ts              thú cưng: loài, thức ăn, đồ trong cửa hàng, cách chỉ số giảm theo giờ
 src/lib/useNow.ts           đồng hồ dùng chung (chỉ đọc giờ trên trình duyệt)
 src/lib/brain.ts            danh sách game Phòng Tập Trí Não
@@ -225,4 +241,4 @@ chơi game lưu lựa chọn vào localStorage `bhv-read-aloud`.
 
 ## Việc tiếp theo
 
-- Thêm lớp học cho giáo viên.
+- Khối lệnh kéo thả kiểu Scratch để bé tự làm game nhỏ.

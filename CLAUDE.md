@@ -66,11 +66,12 @@ trình duyệt bằng "người giải tự động" (xem phần Kiểm thử), 
 - Game đọc/ghi localStorage phải bọc khóa bằng `kidKey(key)` (shared/bridge.js) để mỗi bé có tiến độ riêng.
 - Dữ liệu tiến độ là của cả nhà (`SavedData` có `kids`); thêm trường cho bé thì thêm vào `KidData`, `blankKid` và `kidFields`
   trong `src/lib/progress.ts`, nếu không trường đó sẽ bị mất khi ghi.
+- Lớp học (`/giao-vien`, `src/lib/classroom.ts`) chỉ dùng được khi đăng nhập; sửa bảng thì sửa `supabase/schema.sql`
+  (giữ chạy lại được: `if not exists`, `drop policy if exists`, `create or replace`).
 - Tiến độ lưu localStorage là chính; Supabase (đăng nhập OTP email) chỉ là tùy chọn đồng bộ. Không làm website phụ
   thuộc vào việc đăng nhập.
 
 ## Kế hoạch còn lại
 
-1. Cấu hình SMTP riêng cho Supabase (email miễn phí bị giới hạn vài email/giờ).
-2. Lớp học cho giáo viên.
-3. Khối lệnh kéo thả kiểu Scratch để bé tự làm game nhỏ.
+1. Cấu hình SMTP riêng cho Supabase (email miễn phí bị giới hạn vài email/giờ; lớp học cũng dùng đăng nhập email).
+2. Khối lệnh kéo thả kiểu Scratch để bé tự làm game nhỏ.

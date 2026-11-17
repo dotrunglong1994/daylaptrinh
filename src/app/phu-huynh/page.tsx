@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ClassJoin from "@/components/ClassJoin";
 import CloudPanel from "@/components/CloudPanel";
 import InstallCard from "@/components/InstallCard";
 import SkillReport from "@/components/SkillReport";
@@ -133,6 +134,7 @@ export default function ParentPage() {
         </table>
       </div>
 
+      <ClassJoin />
       <CloudPanel />
       <InstallCard />
 

@@ -22,8 +22,9 @@ export default function Header() {
   const progress = useProgress();
   const [dialog, setDialog] = useState<"switch" | "edit" | "add" | null>(null);
   const [whoDone, setWhoDone] = useState(false);
-  // Phòng Tập Trí Não dành cho người lớn: không bắt tạo hồ sơ bé
-  const adultArea = usePathname().startsWith("/tri-nao");
+  // Phòng Tập Trí Não và trang giáo viên dành cho người lớn: không bắt tạo hồ sơ bé
+  const path = usePathname();
+  const adultArea = path.startsWith("/tri-nao") || path.startsWith("/giao-vien");
   const needsProfile = progress.loaded && !progress.profile && !adultArea;
   const kidCount = progress.kids.filter((k) => k.profile).length;
   const askWho = progress.loaded && !adultArea && kidCount >= 2 && !whoDone && !dialog && !answeredWho();

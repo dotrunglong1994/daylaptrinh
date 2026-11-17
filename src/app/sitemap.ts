@@ -8,6 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ["/ban-do", 0.9],
     ["/tri-nao", 0.6],
     ["/phu-huynh", 0.5],
+    ["/giao-vien", 0.4],
     ["/thu-cung", 0.4],
     ["/huy-hieu", 0.3],
   ];

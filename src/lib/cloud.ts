@@ -51,8 +51,23 @@ export function useCloud() {
 
 let client: SupabaseClient | null = null;
 const sb = () => (client ??= createClient(URL!, ANON_KEY!));
+/** Dùng chung client và tài khoản đang đăng nhập cho lớp học (classroom.ts) */
+export const cloudClient = sb;
+export const cloudUserId = () => userId;
 
 let userId: string | null = null;
+/** Gọi lại sau mỗi lần tiến độ trên máy và trên tài khoản khớp nhau (để gửi tóm tắt cho lớp học) */
+const syncedListeners = new Set<() => void>();
+export function onSynced(listener: () => void) {
+  syncedListeners.add(listener);
+  return () => {
+    syncedListeners.delete(listener);
+  };
+}
+const synced = (patch: Partial<CloudState>) => {
+  setState({ status: "synced", error: null, lastSynced: new Date().toISOString(), ...patch });
+  syncedListeners.forEach((l) => l());
+};
 let pushTimer: ReturnType<typeof setTimeout> | undefined;
 
 const linkedUser = () => {
@@ -87,7 +102,7 @@ async function push() {
     .upsert({ user_id: userId, data, updated_at: new Date().toISOString() });
   if (error) return setState({ status: "error", error: explain(error) });
   setLinkedUser(userId);
-  setState({ status: "synced", error: null, lastSynced: new Date().toISOString() });
+  synced({});
 }
 
 /** So sánh bản trên máy với bản trên tài khoản rồi chọn hướng đồng bộ. */
@@ -108,7 +123,7 @@ export async function syncNow() {
   const remoteTime = Date.parse(remote.savedAt ?? "") || 0;
   if (localTime === remoteTime) {
     setLinkedUser(userId);
-    return setState({ status: "synced", lastSynced: new Date().toISOString() });
+    return synced({});
   }
   if (!sameAccount) return setState({ status: "conflict", remote });
   return remoteTime > localTime ? pull(remote) : push();
@@ -117,7 +132,7 @@ export async function syncNow() {
 function pull(remote: SavedData) {
   replaceSavedData(remote);
   setLinkedUser(userId!);
-  setState({ status: "synced", remote: null, error: null, lastSynced: new Date().toISOString() });
+  synced({ remote: null });
 }
 
 /** Phụ huynh chọn giữ bản nào khi máy và tài khoản khác nhau. */
@@ -131,7 +146,7 @@ export function resolveConflict(keep: "local" | "remote") {
 export async function sendCode(email: string) {
   const { error } = await sb().auth.signInWithOtp({
     email,
-    options: { shouldCreateUser: true, emailRedirectTo: `${location.origin}/phu-huynh` },
+    options: { shouldCreateUser: true, emailRedirectTo: `${location.origin}${location.pathname}` },
   });
   if (!error) return null;
   if (error.status === 429 || /rate limit/i.test(error.message)) {

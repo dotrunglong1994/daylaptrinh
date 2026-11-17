@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { cloudEnabled, resolveConflict, sendCode, signOut, syncNow, useCloud, verifyCode } from "@/lib/cloud";
+import { cloudEnabled, resolveConflict, signOut, syncNow, useCloud } from "@/lib/cloud";
+import LoginForm from "./LoginForm";
 import { getSavedData, totalStars, type SavedData } from "@/lib/progress";
 
 const timeFmt = new Intl.DateTimeFormat("vi-VN", { timeStyle: "short", dateStyle: "short" });
@@ -22,37 +22,7 @@ function summary(d: SavedData) {
 /** Tài khoản phụ huynh: đăng nhập bằng mã gửi qua email để lưu tiến độ lên mạng. */
 export default function CloudPanel() {
   const cloud = useCloud();
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [sentTo, setSentTo] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
-
   if (!cloudEnabled || cloud.status === "off" || cloud.status === "loading") return null;
-
-  async function onSend(e: React.FormEvent) {
-    e.preventDefault();
-    const target = email.trim().toLowerCase();
-    if (!target) return;
-    setBusy(true);
-    setMessage(null);
-    const err = await sendCode(target);
-    setBusy(false);
-    if (err) return setMessage(err);
-    setSentTo(target);
-    setCode("");
-  }
-
-  async function onVerify(e: React.FormEvent) {
-    e.preventDefault();
-    if (!sentTo) return;
-    setBusy(true);
-    setMessage(null);
-    const err = await verifyCode(sentTo, code.trim());
-    setBusy(false);
-    if (err) return setMessage(err);
-    setSentTo(null);
-  }
 
   // Đã đăng nhập
   if (cloud.email) {
@@ -124,55 +94,7 @@ export default function CloudPanel() {
         tiếp được trên máy tính bảng hay điện thoại khác. Không cần mật khẩu: chúng tôi gửi một mã đăng nhập vào email.
       </p>
 
-      {sentTo ? (
-        <form className="cloud-form" onSubmit={onVerify}>
-          <label htmlFor="otp">
-            Nhập mã đã gửi tới <b>{sentTo}</b> (hoặc bấm vào liên kết trong email):
-          </label>
-          <div className="cloud-inputs">
-            <input
-              id="otp"
-              className="name-input otp-input"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 10))}
-              placeholder="123456"
-              autoFocus
-            />
-            <button className="btn primary" disabled={busy || code.length < 6}>
-              {busy ? "Đang kiểm tra…" : "Đăng nhập"}
-            </button>
-          </div>
-          <p className="muted small-note">
-            Không thấy email? Xem thư mục Spam, hoặc{" "}
-            <button type="button" className="link-btn" onClick={() => setSentTo(null)}>
-              đổi email / gửi lại mã
-            </button>
-            .
-          </p>
-        </form>
-      ) : (
-        <form className="cloud-form" onSubmit={onSend}>
-          <label htmlFor="email">Email của bố mẹ:</label>
-          <div className="cloud-inputs">
-            <input
-              id="email"
-              type="email"
-              className="name-input"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="bome@email.com"
-              required
-            />
-            <button className="btn primary" disabled={busy || !email.trim()}>
-              {busy ? "Đang gửi…" : "Gửi mã"}
-            </button>
-          </div>
-        </form>
-      )}
-      {message && <p className="form-error">⚠️ {message}</p>}
+      <LoginForm emailLabel="Email của bố mẹ:" placeholder="bome@email.com" />
     </div>
   );
 }
