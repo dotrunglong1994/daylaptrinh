@@ -242,4 +242,4 @@ chơi game lưu lựa chọn vào localStorage `bhv-read-aloud`.
 
 ## Việc tiếp theo
 
-- Khối lệnh kéo thả kiểu Scratch để bé tự làm game nhỏ.
+- Cấu hình SMTP riêng cho Supabase (email miễn phí bị giới hạn vài email mỗi giờ).
