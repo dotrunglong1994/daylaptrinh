@@ -105,9 +105,11 @@ Cần Supabase và đăng nhập (giáo viên và phụ huynh đều đăng nh�
 - Giáo viên thấy bảng học sinh (bấm tên để xem chi tiết), "Màn cả lớp hay sai" (gộp theo màn, số bé sai), cho bé rời lớp, xóa lớp.
 - **Bài cô giao** (bảng `class_assignments`, `AssignPanel.tsx`): cô chọn game và màn (hoặc "màn nào cũng được", `l = -1`;
   tên màn đọc từ đoạn LEVELS của game qua `src/lib/levels.ts`), thêm lời dặn, hoặc bấm "📌 Giao màn này" ở mục Màn cả lớp
-  hay sai. Bài mới nhất của lớp là bài đang giao. Bé thấy bài ở đầu "Thử thách hôm nay" (`DailyChallenge.tsx`, mở thẳng
+  hay sai, chọn **hạn nộp** (mặc định sau 3 ngày, để trống là không có hạn). Bài mới nhất của lớp, nếu cô chưa bấm
+  "Thôi giao bài" (`closed`), là bài đang giao; bài cũ được giữ, cô mở "📚 Bài đã giao trước" để xem lại (10 bài gần nhất). Bé thấy bài ở đầu "Thử thách hôm nay" (`DailyChallenge.tsx`, mở thẳng
   `/choi/<id>?man=N`). Bé chơi màn đó từ ngày giao (theo `progress.log`) thì tóm tắt gửi lớp có `asg[id] = số sao`
-  (`assignmentStars`), cô thấy "x/y bé đã làm xong". Phụ huynh của bé trong lớp chỉ đọc được bài, không sửa được.
+  (`assignmentStars`) và `asgd[id] = ngày làm xong đầu tiên`; cô thấy bé chia thành "Đúng hạn", "Nộp muộn", "Chưa làm"
+  (`memberStatus`). Bé thấy "⏰ Còn 2 ngày", "Hôm nay là hạn nộp!" hoặc "Đã quá hạn" (`daysLeft`), quá hạn vẫn làm được. Phụ huynh của bé trong lớp chỉ đọc được bài, không sửa được.
   Máy của bé cần đăng nhập tài khoản phụ huynh thì mới thấy bài và báo kết quả.
 - **Phiếu cho cả lớp** (`/giao-vien/phieu?lop=<id>`, nút 🖨️ cạnh "Màn cả lớp hay sai"): tối đa 6 màn cả lớp hay sai, mỗi màn có
   vài câu các bé đã sai và 5 câu luyện thêm, dòng "Họ và tên" để trống cho từng em, đáp án cho thầy cô ở trang cuối.

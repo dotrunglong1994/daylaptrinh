@@ -496,3 +496,18 @@ tr:last-child td { border-bottom: 0; }
 .assign-list { margin-bottom: 14px; }
 .assign-node { border: 3px dashed var(--c); }
 .assign-tag { font-style: normal; font-size: .85rem; font-weight: 800; color: var(--primary); }
+
+/* Bài cô giao: hạn nộp, đúng hạn / muộn, bài đã giao trước */
+.assign-kids li.done.late { background: #fff3bf; }
+.assign-groups { display: flex; flex-direction: column; gap: 8px; }
+.assign-group h3 { font-size: 1rem; margin-bottom: 4px; }
+.assign-due { font-style: normal; font-weight: 800; }
+em.assign-due { display: block; font-size: .85rem; color: #e67700; }
+em.assign-due.urgent { color: #e03131; }
+.assign-history { border-top: 1px dashed var(--line); padding-top: 8px; }
+.assign-history > summary { cursor: pointer; font-weight: 800; }
+.assign-history > ul { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.assign-history > ul > li > details { background: #f8f9fa; border-radius: 12px; padding: 8px 12px; }
+.assign-history > ul > li > details > summary { cursor: pointer; display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.assign-history > ul > li > details[open] > summary { margin-bottom: 8px; }
+.assign-count { white-space: nowrap; font-weight: 700; }

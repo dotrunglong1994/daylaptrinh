@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { CHALLENGE_BONUS, challengeDone, challengeGames, challengeReview } from "@/lib/challenge";
-import { assignmentStars, assignmentsForKid, useMyClasses } from "@/lib/classroom";
+import { assignmentStars, assignmentsForKid, daysLeft, useMyClasses } from "@/lib/classroom";
 import { SUBJECTS, getGame } from "@/lib/games";
 import { dayKey } from "@/lib/pet";
 import { useProgress } from "@/lib/progress";
@@ -42,6 +42,17 @@ export default function DailyChallenge() {
             const g = getGame(a.g)!;
             const stars = assignmentStars(progress, a);
             const color = SUBJECTS.find((s) => s.id === g.subject)?.color;
+            const left = daysLeft(a.due, day);
+            const due =
+              stars || left === null
+                ? null
+                : left > 1
+                  ? `⏰ Còn ${left} ngày`
+                  : left === 1
+                    ? "⏰ Hạn nộp là ngày mai"
+                    : left === 0
+                      ? "⏰ Hôm nay là hạn nộp!"
+                      : "⏰ Đã quá hạn, bé làm ngay nhé";
             return (
               <li key={a.id}>
                 <Link
@@ -57,6 +68,7 @@ export default function DailyChallenge() {
                       {stars ? `Xong rồi! ${"⭐".repeat(stars)}` : a.l >= 0 ? g.title : "Chơi màn nào cũng được"}
                       {!stars && a.note && ` · “${a.note}”`}
                     </small>
+                    {due && <em className={`assign-due${left !== null && left <= 0 ? " urgent" : ""}`}>{due}</em>}
                   </span>
                 </Link>
               </li>

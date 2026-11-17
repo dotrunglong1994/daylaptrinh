@@ -7,7 +7,7 @@ import LoginForm from "@/components/LoginForm";
 import {
   classWeakSkills,
   createClass,
-  currentAssignment,
+  listAssignments,
   deleteClass,
   listClasses,
   listMembers,
@@ -153,14 +153,14 @@ function ClassView({ cls, onDeleted }: { cls: ClassRow; onDeleted: () => void })
   const [open, setOpen] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  const [assignment, setAssignment] = useState<Assignment | null>(null);
+  const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [draft, setDraft] = useState<AssignDraft | null>(null);
 
   const reload = useCallback(async () => {
-    const [mem, asg] = await Promise.all([listMembers(cls.id), currentAssignment(cls.id)]);
+    const [mem, asg] = await Promise.all([listMembers(cls.id), listAssignments(cls.id)]);
     setError(mem.error ?? asg.error);
     setMembers(mem.data);
-    setAssignment(asg.data);
+    setAssignments(asg.data);
   }, [cls.id]);
 
   useEffect(() => {
@@ -221,7 +221,8 @@ function ClassView({ cls, onDeleted }: { cls: ClassRow; onDeleted: () => void })
       <AssignPanel
         classId={cls.id}
         grade={cls.grade}
-        assignment={assignment}
+        assignments={assignments}
+        today={now ? dayKey(now) : null}
         members={list}
         draft={draft}
         setDraft={setDraft}

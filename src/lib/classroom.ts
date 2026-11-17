@@ -30,10 +30,12 @@ export type ClassSummary = {
   strong: number;
   /** Bài cô giao: id bài → số sao cao nhất bé đạt ở màn đó kể từ ngày giao (chỉ ghi bài đã làm) */
   asg?: Record<string, number>;
+  /** Bài cô giao: id bài → ngày đầu tiên bé làm xong (YYYY-MM-DD), để cô biết bé nộp đúng hạn hay muộn */
+  asgd?: Record<string, string>;
   at: string;
 };
 
-/** Bài giao cho cả lớp: một màn (l từ 0) hoặc cả game (l = -1). Bài mới nhất của lớp là bài đang giao. */
+/** Bài giao cho cả lớp: một màn (l từ 0) hoặc cả game (l = -1). Bài mới nhất của lớp, nếu chưa đóng, là bài đang giao. */
 export type Assignment = {
   id: string;
   class_id: string;
@@ -42,6 +44,10 @@ export type Assignment = {
   level_name: string;
   note: string;
   created_at: string;
+  /** Hạn nộp (YYYY-MM-DD, hết ngày đó), null = không có hạn */
+  due: string | null;
+  /** Cô đã "thôi giao" bài này */
+  closed: boolean;
 };
 
 export type Membership = {
@@ -58,19 +64,48 @@ export type ClassRow = { id: string; name: string; grade: number | null; code: s
 export type MemberRow = Membership & { user_id: string; summary: Partial<ClassSummary> };
 
 const WEAK_MAX = 8;
+/** Số bài gần nhất của mỗi lớp mà bé báo kết quả (cô xem lại được) */
+const HISTORY = 10;
+
+const fits = (p: KidData["log"][number], a: Pick<Assignment, "g" | "l">, from: string) =>
+  p.g === a.g && p.d >= from && (a.l < 0 || p.l === a.l) && p.s > 0;
 
 /** Số sao cao nhất bé đạt ở bài giao kể từ ngày giao (0 = chưa làm). Màn tính theo nhật ký lượt chơi. */
 export function assignmentStars(kid: Pick<KidData, "log">, a: Pick<Assignment, "g" | "l" | "created_at">) {
   const from = dayKey(Date.parse(a.created_at));
-  return kid.log.reduce(
-    (best, p) => (p.g === a.g && p.d >= from && (a.l < 0 || p.l === a.l) && p.s > best ? p.s : best),
-    0,
-  );
+  return kid.log.reduce((best, p) => (fits(p, a, from) && p.s > best ? p.s : best), 0);
+}
+
+/** Ngày đầu tiên bé làm xong bài giao (ít nhất 1 sao), null nếu chưa làm */
+export function assignmentDoneDay(kid: Pick<KidData, "log">, a: Pick<Assignment, "g" | "l" | "created_at">) {
+  const from = dayKey(Date.parse(a.created_at));
+  return kid.log.reduce<string | null>((min, p) => (fits(p, a, from) && (!min || p.d < min) ? p.d : min), null);
+}
+
+/** Số ngày từ hôm nay đến hạn nộp: 0 = hôm nay hết hạn, âm = đã quá hạn, null = không có hạn */
+export function daysLeft(due: string | null, today: string) {
+  if (!due) return null;
+  return Math.round((Date.parse(due) - Date.parse(today)) / 86_400_000);
+}
+
+/** Bé làm bài thế nào: đúng hạn, muộn hay chưa làm. Đọc cả tóm tắt cũ (chỉ có asg, không có ngày làm xong). */
+export function memberStatus(m: Pick<MemberRow, "summary">, a: Pick<Assignment, "id" | "due">) {
+  const stars = m.summary.asg?.[a.id] ?? 0;
+  if (!stars) return { stars: 0, state: "todo" as const, day: null };
+  const day = m.summary.asgd?.[a.id] ?? null;
+  const late = !!(a.due && day && day > a.due);
+  return { stars, state: late ? ("late" as const) : ("ontime" as const), day };
 }
 
 export function kidSummary(kid: KidData, now = Date.now(), assignments: Assignment[] = []): ClassSummary {
   const asg = Object.fromEntries(
     assignments.map((a) => [a.id, assignmentStars(kid, a)] as const).filter(([, stars]) => stars > 0),
+  );
+  const asgd = Object.fromEntries(
+    assignments.flatMap((a) => {
+      const d = asg[a.id] ? assignmentDoneDay(kid, a) : null;
+      return d ? [[a.id, d] as const] : [];
+    }),
   );
   const week = new Set(Array.from({ length: 7 }, (_, i) => dayKey(now - i * 86_400_000)));
   const recent = kid.log.filter((p) => week.has(p.d));
@@ -91,7 +126,7 @@ export function kidSummary(kid: KidData, now = Date.now(), assignments: Assignme
       .slice(0, WEAK_MAX)
       .map((s) => ({ g: s.g, l: s.l, n: s.name, w: s.wrong, d: s.wrongDays.length, q: s.recent[0]?.slice(0, 160) })),
     strong: strongSkills(kid.skills).length,
-    ...(Object.keys(asg).length ? { asg } : {}),
+    ...(Object.keys(asg).length ? { asg, asgd } : {}),
     at: new Date(now).toISOString(),
   };
 }
@@ -115,7 +150,7 @@ function explain(err: { message?: string; code?: string } | null): string {
 type MineState = {
   user: string | null;
   list: Membership[];
-  /** Bài đang giao của các lớp mà bé trong nhà đã vào (mỗi lớp một bài) */
+  /** Các bài gần nhất của các lớp mà bé trong nhà đã vào (mới trước, tối đa HISTORY bài mỗi lớp) */
   assignments: Assignment[];
   loaded: boolean;
   loadedAt: number;
@@ -129,19 +164,25 @@ const setMine = (patch: Partial<MineState>) => {
 };
 const EMPTY: MineState = { user: null, list: [], assignments: [], loaded: false, loadedAt: 0, error: null };
 
-/** Bài cô giao cho một bé (các lớp bé đã vào), kèm tên lớp */
+/** Bài cô đang giao cho một bé (các lớp bé đã vào, mỗi lớp bài mới nhất nếu chưa đóng), kèm tên lớp */
 export function assignmentsForKid(state: MineState, kidId: string | null) {
   return state.list
     .filter((m) => m.kid_id === kidId)
     .flatMap((m) => {
       const a = state.assignments.find((x) => x.class_id === m.class_id);
-      return a ? [{ ...a, className: m.class_name }] : [];
+      return a && !a.closed ? [{ ...a, className: m.class_name }] : [];
     });
 }
 
-/** Bài mới nhất của mỗi lớp (danh sách đã xếp mới trước) */
-const latestPerClass = (rows: Assignment[]) =>
-  rows.filter((a, i) => rows.findIndex((b) => b.class_id === a.class_id) === i);
+/** Giữ tối đa HISTORY bài mỗi lớp (danh sách đã xếp mới trước) */
+const recentPerClass = (rows: Assignment[]) => {
+  const count = new Map<string, number>();
+  return rows.filter((a) => {
+    const n = (count.get(a.class_id) ?? 0) + 1;
+    count.set(a.class_id, n);
+    return n <= HISTORY;
+  });
+};
 
 /** Các lớp mà các bé trong nhà đã vào (theo tài khoản đang đăng nhập) */
 export function useMyClasses() {
@@ -158,7 +199,7 @@ export function useMyClasses() {
 }
 
 const COLUMNS = "class_id, kid_id, class_name, kid_name, avatar, joined_at, updated_at";
-const ASSIGN_COLUMNS = "id, class_id, g, l, level_name, note, created_at";
+const ASSIGN_COLUMNS = "id, class_id, g, l, level_name, note, created_at, due, closed";
 /** Sau mỗi lần đồng bộ, tải lại lớp và bài giao nếu bản đang có cũ hơn chừng này */
 const REFRESH_MS = 2 * 60_000;
 /** Tóm tắt đã gửi gần nhất của mỗi bé (bỏ trường `at`), để không gửi lại khi không có gì mới */
@@ -183,7 +224,7 @@ export async function loadMyClasses() {
       .in("class_id", [...new Set(list.map((m) => m.class_id))])
       .order("created_at", { ascending: false });
     // Chưa chạy bảng bài giao trên Supabase thì vẫn dùng lớp học bình thường
-    assignments = latestPerClass((res.data ?? []) as Assignment[]);
+    assignments = recentPerClass((res.data ?? []) as Assignment[]);
   }
   if (cloudUserId() !== user) return;
   setMine({ user, list, assignments, loaded: true, loadedAt: Date.now(), error: null });
@@ -292,28 +333,39 @@ export async function removeMember(m: MemberRow): Promise<string | null> {
   return error ? explain(error) : null;
 }
 
-/** Bài đang giao của lớp (bài mới nhất), null nếu chưa giao */
-export async function currentAssignment(classId: string): Promise<{ data: Assignment | null; error: string | null }> {
+/** Các bài đã giao của lớp, mới trước (bài đầu, nếu chưa đóng, là bài đang giao) */
+export async function listAssignments(classId: string): Promise<{ data: Assignment[]; error: string | null }> {
   const { data, error } = await cloudClient()
     .from("class_assignments")
     .select(ASSIGN_COLUMNS)
     .eq("class_id", classId)
     .order("created_at", { ascending: false })
-    .limit(1);
-  return { data: ((data ?? [])[0] as Assignment) ?? null, error: error ? explain(error) : null };
+    .limit(HISTORY);
+  return { data: (data ?? []) as Assignment[], error: error ? explain(error) : null };
 }
 
-/** Giao bài mới cho lớp (thay bài đang giao). l = -1: chơi màn nào của game cũng được. */
-export async function assignWork(classId: string, g: string, l: number, levelName: string, note: string): Promise<string | null> {
+/** Giao bài mới cho lớp (thay bài đang giao). l = -1: chơi màn nào của game cũng được. due: YYYY-MM-DD hoặc null. */
+export async function assignWork(
+  classId: string,
+  g: string,
+  l: number,
+  levelName: string,
+  note: string,
+  due: string | null,
+): Promise<string | null> {
   const { error } = await cloudClient()
     .from("class_assignments")
-    .insert({ class_id: classId, g, l, level_name: levelName.slice(0, 80), note: note.trim().slice(0, 200) });
+    .insert({ class_id: classId, g, l, level_name: levelName.slice(0, 80), note: note.trim().slice(0, 200), due });
   return error ? explain(error) : null;
 }
 
-/** Thôi giao bài: xóa mọi bài của lớp (bài cũ hơn không hiện lại) */
-export async function clearAssignments(classId: string): Promise<string | null> {
-  const { error } = await cloudClient().from("class_assignments").delete().eq("class_id", classId);
+/** Thôi giao bài: đóng bài đang giao (vẫn giữ để xem lại, bé không thấy nữa) */
+export async function closeAssignments(classId: string): Promise<string | null> {
+  const { error } = await cloudClient()
+    .from("class_assignments")
+    .update({ closed: true })
+    .eq("class_id", classId)
+    .eq("closed", false);
   return error ? explain(error) : null;
 }
 
