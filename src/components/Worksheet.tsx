@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getGame } from "@/lib/games";
-import { loadPrintRound, makeItems, PRINTABLE, type PrintItem } from "@/lib/worksheet";
+import { itemKey, loadPrintRound, makeItems, PRINTABLE, type PrintItem } from "@/lib/worksheet";
 
 const PER_SKILL = 5;
 const MAX_SKILLS = 6;
@@ -119,8 +119,10 @@ export default function Worksheet(props: {
                   {items.map((it) => {
                     n++;
                     return (
-                      <li key={it.q}>
+                      <li key={itemKey(it)}>
                         {it.q}
+                        {/* Hình SVG do game.js của chính website sinh ra (cùng nguồn, như printRound) */}
+                        {it.pic && <span className="ws-pic" dangerouslySetInnerHTML={{ __html: it.pic }} />}
                         <span className="ws-line" />
                       </li>
                     );
@@ -155,8 +157,9 @@ export default function Worksheet(props: {
                 <h3>{skill.name}</h3>
                 <ul>
                   {items.map((it) => (
-                    <li key={it.q}>
-                      <span className="muted">{it.q}</span> → <b>{it.a}</b>
+                    <li key={itemKey(it)}>
+                      <span className="muted">{it.q}</span>
+                      {it.pic && <span className="ws-pic small" dangerouslySetInnerHTML={{ __html: it.pic }} />} → <b>{it.a}</b>
                     </li>
                   ))}
                 </ul>

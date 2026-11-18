@@ -34,6 +34,84 @@ function fracOptions(num, den) {
   while (out.length < 3) add([rand(1, 3), rand(2, 9)]);
   return shuffle([correct, ...out]);
 }
+// Phiếu bài tập in ra giấy: hình bánh đen trắng (phần tô là xám), dùng thuộc tính SVG để in đúng màu.
+function pizzaPrintSvg(den, filled = [], cut = true) {
+  const c = 50;
+  const r = 44;
+  const pt = (k) => {
+    const a = (k / den) * 2 * Math.PI - Math.PI / 2;
+    return `${(c + r * Math.cos(a)).toFixed(1)},${(c + r * Math.sin(a)).toFixed(1)}`;
+  };
+  let s = `<svg viewBox="0 0 100 100" width="100" height="100" xmlns="http://www.w3.org/2000/svg">`;
+  s += `<circle cx="${c}" cy="${c}" r="${r}" fill="#fff" stroke="#000" stroke-width="2"/>`;
+  if (cut) {
+    for (let i = 0; i < den; i++) {
+      const fill = filled.includes(i) ? '#9e9e9e' : 'none';
+      s += `<path d="M${c},${c} L${pt(i)} A${r},${r} 0 0 1 ${pt(i + 1)} Z" fill="${fill}" stroke="#000" stroke-width="1.5"/>`;
+    }
+  }
+  return `${s}</svg>`;
+}
+const twoPizzas = (a, b) =>
+  `<span style="display:inline-flex;gap:28px">${[a, b].map(([n, d]) =>
+    `<span style="display:inline-flex;flex-direction:column;align-items:center">${pizzaPrintSvg(d, range(0, n - 1))}<b>${n}/${d}</b></span>`).join('')}</span>`;
+
+/** Câu in phiếu bài tập: màn levelIdx (từ 0) là mức độ levelIdx + 1; pic là hình bánh (SVG). */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- trang /phieu-bai-tap gọi hàm này
+function printRound(levelIdx, rnd = Math.random) {
+  const L = LEVELS[levelIdx + 1];
+  const ri = (lo, hi) => lo + Math.floor(rnd() * (hi - lo + 1));
+  const one = (arr) => arr[ri(0, arr.length - 1)];
+  const mix = (arr) => {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = ri(0, i);
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  };
+  // Một nửa số câu là dạng mới của mức (tên màn nói về dạng đó), còn lại trộn mọi dạng
+  const type = rnd() < 0.5 ? L.tasks[L.tasks.length - 1] : one(L.tasks);
+  if (type === 'paint') {
+    const den = one(L.dens);
+    const num = ri(1, den - 1);
+    return { q: `Tô màu ${num}/${den} cái bánh.`, a: `Tô ${num} trong ${den} miếng`, pic: pizzaPrintSvg(den) };
+  }
+  if (type === 'read') {
+    const den = one(L.dens);
+    const num = ri(1, den - 1);
+    const filled = mix(range(0, den - 1)).slice(0, num);
+    return { q: 'Phần bánh tô màu là phân số nào?', a: `${num}/${den}`, pic: pizzaPrintSvg(den, filled) };
+  }
+  if (type === 'share') {
+    const den = one(L.dens.filter((d) => d <= 6));
+    return {
+      q: `${den} bạn chia đều 1 cái bánh. Mỗi bạn được mấy phần cái bánh? (Vẽ đường cắt lên bánh nếu cần.)`,
+      a: `1/${den}`,
+      pic: pizzaPrintSvg(den, [], false),
+    };
+  }
+  const kind = one(['sameNum', 'sameDen', 'equal']);
+  let left;
+  let right;
+  if (kind === 'sameNum') {
+    const [a, b] = mix(L.dens.slice());
+    [left, right] = [[1, a], [1, b]];
+  } else if (kind === 'sameDen') {
+    const d = one(L.dens.filter((x) => x >= 3));
+    const [x, y] = mix(range(1, d - 1));
+    [left, right] = [[x, d], [y, d]];
+  } else {
+    const [a, b, c, d] = one(EQUAL_PAIRS);
+    [left, right] = mix([[a, b], [c, d]]);
+  }
+  const diff = left[0] * right[1] - right[0] * left[1];
+  const sign = diff > 0 ? '>' : diff < 0 ? '<' : '=';
+  return {
+    q: `Điền dấu >, < hoặc =: ${left.join('/')} ☐ ${right.join('/')}`,
+    a: `${left.join('/')} ${sign} ${right.join('/')}`,
+    pic: twoPizzas(left, right),
+  };
+}
 // LEVELS-END
 
 const FRIENDS = ['🐰', '🐻', '🐱', '🐶', '🦊', '🐼', '🐷', '🐨'];
@@ -342,10 +420,18 @@ function correct(message = pick(PRAISE)) {
   state.timer = setTimeout(nextTask, 1400);
 }
 
+// Câu hỏi dạng chữ cho Sổ tay lỗi sai và phiếu bài tập (phân số trên màn hình là HTML, đọc ra thành "34")
+function mistakeText(t) {
+  if (t.type === 'paint') return `Cho xúc xích lên ${t.num}/${t.den} cái bánh`;
+  if (t.type === 'read') return `Bánh cắt ${t.den} miếng, ${t.num} miếng có xúc xích. Phần có xúc xích là phân số nào?`;
+  if (t.type === 'share') return `${t.den} bạn chia đều 1 cái bánh. Mỗi bạn được mấy phần cái bánh?`;
+  return `So sánh ${t.left.join('/')} và ${t.right.join('/')}`;
+}
+
 function miss(text = pick(['Chưa đúng, thử lại nhé!', 'Gần đúng rồi!', 'Bé nhìn kỹ lại xem!'])) {
   state.wrongs++;
   sfx.wrong();
-  reportMistakeAt(GAME_ID, ...skillOf());
+  reportMistakeAt(GAME_ID, ...skillOf(), mistakeText(state.task));
   window.mascotSay(text, 'sad', 'soft', 0);
 }
 
