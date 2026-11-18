@@ -165,13 +165,108 @@ const setMine = (patch: Partial<MineState>) => {
 const EMPTY: MineState = { user: null, list: [], assignments: [], loaded: false, loadedAt: 0, error: null };
 
 /** Bài cô đang giao cho một bé (các lớp bé đã vào, mỗi lớp bài mới nhất nếu chưa đóng), kèm tên lớp */
-export function assignmentsForKid(state: MineState, kidId: string | null) {
+export function assignmentsForKid(state: Pick<MineState, "list" | "assignments">, kidId: string | null) {
   return state.list
     .filter((m) => m.kid_id === kidId)
     .flatMap((m) => {
       const a = state.assignments.find((x) => x.class_id === m.class_id);
       return a && !a.closed ? [{ ...a, className: m.class_name }] : [];
     });
+}
+
+/* ---------- Phụ huynh: thông báo bài cô giao ---------- */
+
+// Phụ huynh xem thông báo nào rồi: lưu trên máy này (không cần đổi bảng trên Supabase).
+// ids: bài đã xem; snooze: bài sắp/quá hạn đã bấm "Đã biết" trong ngày (ngày mai nhắc lại nếu bé vẫn chưa làm).
+const SEEN_KEY = "dlt-asg-seen";
+const SEEN_MAX = 100;
+export type SeenState = { ids: string[]; snooze: Record<string, string> };
+const NO_SEEN: SeenState = { ids: [], snooze: {} };
+let seen: SeenState | null = null;
+const seenListeners = new Set<() => void>();
+
+function readSeen(): SeenState {
+  if (seen) return seen;
+  try {
+    const raw = JSON.parse(localStorage.getItem(SEEN_KEY) ?? "null");
+    seen = {
+      ids: Array.isArray(raw?.ids) ? raw.ids.filter((x: unknown) => typeof x === "string") : [],
+      snooze: raw?.snooze && typeof raw.snooze === "object" ? raw.snooze : {},
+    };
+  } catch {
+    seen = { ...NO_SEEN };
+  }
+  return seen;
+}
+
+/** Thông báo phụ huynh đã xem (đọc từ máy này) */
+export function useSeenNotices() {
+  return useSyncExternalStore(
+    (l) => {
+      seenListeners.add(l);
+      const onStorage = (e: StorageEvent) => {
+        if (e.key !== SEEN_KEY) return;
+        seen = null;
+        l();
+      };
+      window.addEventListener("storage", onStorage);
+      return () => {
+        seenListeners.delete(l);
+        window.removeEventListener("storage", onStorage);
+      };
+    },
+    readSeen,
+    () => NO_SEEN,
+  );
+}
+
+export type Notice = Assignment & {
+  className: string;
+  kidId: string;
+  kidName: string;
+  avatar: string;
+  /** new: bài mới chưa xem; due: hôm nay hoặc mai hết hạn; late: đã quá hạn */
+  kind: "new" | "due" | "late";
+  left: number | null;
+  /** Bài mới phụ huynh chưa xem (bài sắp hạn cũng có thể là bài mới) */
+  fresh: boolean;
+};
+
+/** Cần báo phụ huynh: bài mới chưa xem, hoặc bé chưa làm mà hôm nay/mai hết hạn hay đã quá hạn. Bài bé làm rồi thì thôi báo. */
+export function familyNotices(
+  state: Pick<MineState, "list" | "assignments">,
+  kids: Pick<KidData, "id" | "profile" | "log">[],
+  today: string,
+  seenState: SeenState,
+): Notice[] {
+  const out: Notice[] = [];
+  for (const kid of kids) {
+    if (!kid.profile) continue;
+    for (const a of assignmentsForKid(state, kid.id)) {
+      if (assignmentStars(kid, a) > 0) continue;
+      const left = daysLeft(a.due, today);
+      const fresh = !seenState.ids.includes(a.id);
+      const urgent = left !== null && left <= 1;
+      if (!fresh && (!urgent || seenState.snooze[a.id] === today)) continue;
+      const kind = left !== null && left < 0 ? "late" : urgent ? "due" : "new";
+      out.push({ ...a, kidId: kid.id, kidName: kid.profile.name, avatar: kid.profile.avatar, kind, left, fresh });
+    }
+  }
+  const rank = { late: 0, due: 1, new: 2 };
+  return out.sort((x, y) => rank[x.kind] - rank[y.kind] || y.created_at.localeCompare(x.created_at));
+}
+
+/** Phụ huynh bấm "Đã biết": bài mới thành đã xem, bài sắp/quá hạn thôi nhắc đến hết hôm nay */
+export function markNoticesSeen(notices: Pick<Notice, "id" | "kind">[], today: string) {
+  const cur = readSeen();
+  const ids = [...new Set([...notices.map((n) => n.id), ...cur.ids])].slice(0, SEEN_MAX);
+  const snooze = Object.fromEntries(Object.entries(cur.snooze).filter(([, d]) => d === today));
+  for (const n of notices) if (n.kind !== "new") snooze[n.id] = today;
+  seen = { ids, snooze };
+  try {
+    localStorage.setItem(SEEN_KEY, JSON.stringify(seen));
+  } catch {}
+  seenListeners.forEach((l) => l());
 }
 
 /** Giữ tối đa HISTORY bài mỗi lớp (danh sách đã xếp mới trước) */
@@ -287,8 +382,16 @@ export function startClassroom() {
   const stop = onSynced(() => {
     pushSummaries().catch(() => {});
   });
+  // Mở lại tab sau một lúc thì tải lại bài giao, để phụ huynh thấy ngay bài cô mới giao
+  const onVisible = () => {
+    if (document.visibilityState !== "visible" || !cloudUserId()) return;
+    if (mine.user === cloudUserId() && Date.now() - mine.loadedAt < REFRESH_MS) return;
+    loadMyClasses().catch(() => {});
+  };
+  document.addEventListener("visibilitychange", onVisible);
   return () => {
     stop();
+    document.removeEventListener("visibilitychange", onVisible);
     started = false;
   };
 }

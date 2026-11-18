@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AssignNotice from "@/components/AssignNotice";
 import Dino from "@/components/Dino";
 import DailyChallenge from "@/components/DailyChallenge";
 import FamilyBoard from "@/components/FamilyBoard";
@@ -38,6 +39,7 @@ export default function Home() {
         </div>
       </section>
 
+      <AssignNotice />
       <DailyChallenge />
       <FamilyBoard />
       <Suggestions />

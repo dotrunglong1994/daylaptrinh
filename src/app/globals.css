@@ -511,3 +511,27 @@ em.assign-due.urgent { color: #e03131; }
 .assign-history > ul > li > details > summary { cursor: pointer; display: flex; justify-content: space-between; gap: 10px; align-items: center; }
 .assign-history > ul > li > details[open] > summary { margin-bottom: 8px; }
 .assign-count { white-space: nowrap; font-weight: 700; }
+
+/* Báo phụ huynh: bài cô mới giao, bài sắp / quá hạn (AssignNotice.tsx) */
+.assign-notice { margin: 24px 0 0; display: flex; flex-direction: column; gap: 10px; border: 3px solid #ffd43b; background: #fff9db; }
+.assign-notice h2 { font-size: 1.3rem; }
+.assign-notice ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.assign-notice li { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 14px; padding: 8px 12px; border-left: 6px solid var(--primary); }
+.assign-notice li.notice-due { border-left-color: #fd7e14; }
+.assign-notice li.notice-late { border-left-color: #e03131; }
+.notice-kid { font-size: 1.8rem; line-height: 1; }
+.notice-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.notice-info em { font-style: normal; font-size: .85rem; font-weight: 800; color: #868e96; }
+.notice-late .notice-info em { color: #e03131; }
+.notice-due .notice-info em { color: #e67700; }
+.notice-info small { color: #495057; }
+.assign-notice .row.left { margin-top: 0; gap: 10px; align-items: center; flex-wrap: wrap; }
+.nav-icon { position: relative; }
+.nav-dot {
+  position: absolute; top: -6px; right: -10px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 999px;
+  background: #e03131; color: #fff; font-size: .7rem; font-weight: 800; line-height: 18px; text-align: center;
+}
+@media (max-width: 640px) {
+  .assign-notice li { flex-wrap: wrap; }
+  .assign-notice li .btn { margin-left: auto; }
+}

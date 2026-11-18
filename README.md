@@ -111,6 +111,11 @@ Cần Supabase và đăng nhập (giáo viên và phụ huynh đều đăng nh�
   (`assignmentStars`) và `asgd[id] = ngày làm xong đầu tiên`; cô thấy bé chia thành "Đúng hạn", "Nộp muộn", "Chưa làm"
   (`memberStatus`). Bé thấy "⏰ Còn 2 ngày", "Hôm nay là hạn nộp!" hoặc "Đã quá hạn" (`daysLeft`), quá hạn vẫn làm được. Phụ huynh của bé trong lớp chỉ đọc được bài, không sửa được.
   Máy của bé cần đăng nhập tài khoản phụ huynh thì mới thấy bài và báo kết quả.
+- **Báo phụ huynh** (`AssignNotice.tsx`, `familyNotices` trong `classroom.ts`): ở trang chủ và Góc phụ huynh có thẻ
+  "🔔 Cô giáo vừa giao bài mới" cho mọi bé trong nhà: bài mới chưa xem, bài bé chưa làm mà hôm nay/mai hết hạn hoặc đã
+  quá hạn; nút "Phụ huynh" trên menu có chấm đỏ đếm số thông báo. Bấm "Đã biết" thì bài mới thành đã xem, bài sắp/quá hạn
+  thôi nhắc đến hết ngày (mai nhắc lại nếu bé vẫn chưa làm); bé làm xong thì tự hết báo. Đã xem lưu trên máy
+  (`localStorage["dlt-asg-seen"]`), không đổi bảng Supabase. Quay lại tab sau hơn 2 phút thì tải lại bài giao.
 - **Phiếu cho cả lớp** (`/giao-vien/phieu?lop=<id>`, nút 🖨️ cạnh "Màn cả lớp hay sai"): tối đa 6 màn cả lớp hay sai, mỗi màn có
   vài câu các bé đã sai và 5 câu luyện thêm, dòng "Họ và tên" để trống cho từng em, đáp án cho thầy cô ở trang cuối.
   Phiếu của một bé và phiếu cả lớp dùng chung component `Worksheet.tsx`.

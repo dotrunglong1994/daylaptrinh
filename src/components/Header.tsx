@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { SITE_NAME } from "@/lib/games";
 import { totalStars, useProgress } from "@/lib/progress";
+import { useNotices } from "./AssignNotice";
 import KidPicker from "./KidPicker";
 import ProfileModal from "./ProfileModal";
 
@@ -31,6 +32,7 @@ export default function Header() {
   const [whoDone, setWhoDone] = useState(false);
   // Phòng Tập Trí Não và trang giáo viên dành cho người lớn: không bắt tạo hồ sơ bé
   const path = usePathname();
+  const notices = useNotices().notices.length;
   const adultArea = path.startsWith("/tri-nao") || path.startsWith("/giao-vien");
   const needsProfile = progress.loaded && !progress.profile && !adultArea;
   const kidCount = progress.kids.filter((k) => k.profile).length;
@@ -51,7 +53,15 @@ export default function Header() {
         <nav className="nav">
           {NAV.map(([href, icon, label]) => (
             <Link key={href} href={href}>
-              <span className="nav-icon">{icon}</span> <span className="nav-label">{label}</span>
+              <span className="nav-icon">
+                {icon}
+                {href === "/phu-huynh" && notices > 0 && (
+                  <span className="nav-dot" title={`${notices} thông báo bài cô giao`}>
+                    {notices}
+                  </span>
+                )}
+              </span>{" "}
+              <span className="nav-label">{label}</span>
             </Link>
           ))}
         </nav>

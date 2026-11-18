@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import AssignNotice from "@/components/AssignNotice";
 import ClassJoin from "@/components/ClassJoin";
 import CloudPanel from "@/components/CloudPanel";
 import InstallCard from "@/components/InstallCard";
@@ -50,6 +51,8 @@ export default function ParentPage() {
           : "Bé chưa tạo hồ sơ."}{" "}
         {cloud.email ? `Dữ liệu được lưu trên máy này và tài khoản ${cloud.email}.` : "Dữ liệu đang lưu trên trình duyệt này."}
       </p>
+
+      <AssignNotice />
 
       <div className="stats">
         <div className="card stat">
